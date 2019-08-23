@@ -1,0 +1,8 @@
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix rov:   <http://www.w3.org/ns/regorg#> .
+
+<http://data.brreg.no/enhetsregisteret/enhet/986105174>
+        a               <http://xmlns.com/foaf/0.1/Organization> ;
+        dct:identifier  "5d5531e45c40450006848159" ;
+        dct:isPartOf    <http://data.brreg.no/enhetsregisteret/enhet/986105174> ;
+        rov:legalName   "FORSVARET" .
