@@ -1,0 +1,134 @@
+openapi: 3.0.2
+info:
+  title: National Data Directory Template API
+  description: A generic example of an API
+  version: '1.0'
+  termsOfService: 'https://fellesdatakatalog.brreg.no/about'
+  contact:
+    name: Brønnøysundregistrene
+    url: 'https://fellesdatakatalog.brreg.no'
+    email: fellesdatakatalog@brreg.no
+  license:
+    name: License of API
+    url: 'http://data.norge.no/nlod/no/2.0'
+externalDocs:
+  description: Dokumentasjon på Informasjonsforvaltning GitHub
+  url: https://informasjonsforvaltning.github.io/felles-datakatalog/datasett-katalog/api/
+tags:
+  - name: template
+    description: Template Service
+servers:
+  - url: 'https://fellesdatakatalog.brreg.no'
+paths:
+  /template:
+    post:
+      tags:
+        - template
+      summary: Create a new template object
+      operationId: createTemplateObject
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              schema:
+                type: string
+              description: url to the new template object
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemplateObject'
+    get:
+      tags:
+        - template
+      summary: Query for template objects.
+      description: Returns a collection of matching objects
+      operationId: getTemplateObjects
+      parameters:
+        - name: name
+          in: query
+          description: A query string to match a object name
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/ld+json:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+  /template/{id}:
+    get:
+      tags:
+        - template
+      description: Get a specific template object by id
+      operationId: getTemplateObjectById
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/ld+json:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+    put:
+      tags:
+        - template
+      description: Update a specific template object by id
+      operationId: updateTemplateObject
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TemplateObject"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemplateObject'
+components:
+  schemas:
+    TemplateObject:
+      type: object
+      description: A template object
+      properties:
+        id:
+          type: string
+          description: system-generated id (GUID)
+        uri:
+          type: string
+          description: Link to something
+        name:
+          type: string
+          description: The name of the template object
