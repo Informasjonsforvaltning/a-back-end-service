@@ -1,12 +1,11 @@
 #!groovy
-node('helm-kubectl') {
-    stage('Build') {
-        echo 'Building....'
-    }
-    stage('Test') {
-        echo 'Testing....'
-    }
-    stage('Deploy') {
-        echo 'Deploying....'
+pipeline {
+    agent 'helm-kubectl'
+    stages {
+        stage('Stage 1') {
+            steps {
+                echo 'Hello world!'
+            }
+        }
     }
 }
