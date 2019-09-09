@@ -1,11 +1,12 @@
 #!groovy
-pipeline {
-    agent any
-    stages {
-        stage('Stage 1') {
-            steps {
-                echo 'Hello world!'
-            }
-        }
+node {
+    stage('Build') {
+        echo 'Building....'
+    }
+    stage('Test') {
+        echo 'Testing....'
+    }
+    stage('Deploy') {
+        echo 'Deploying....'
     }
 }
