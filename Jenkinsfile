@@ -1,6 +1,8 @@
 #!groovy
 pipeline {
-    agent 'helm-kubectl'
+    agent {
+        label 'helm-kubectl'
+    }
     stages {
         stage('Stage 1') {
             steps {
