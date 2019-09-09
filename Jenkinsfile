@@ -11,7 +11,11 @@ pipeline {
                 label 'jenkins-maven'
             }
             steps {
-                sh 'mvn clean install -B -T 2C'
+                container('java-docker') {
+                    withMaven(maven: 'M3') { "
+                        sh "mvn clean install -B -T 2C"
+                    }
+                } // container
             }
         }
         stage('Test') {
