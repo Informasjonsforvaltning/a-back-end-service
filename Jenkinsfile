@@ -12,7 +12,7 @@ pipeline {
             }
             steps {
                 container('java-docker') {
-                    withMaven(maven: 'M3') { "
+                    withMaven(maven: 'M3') {
                         sh "mvn clean install -B -T 2C"
                     }
                 } // container
