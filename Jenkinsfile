@@ -14,20 +14,27 @@ pipeline {
                 container('java-docker') {
                     withMaven(maven: 'M3') {
                         echo "Build without running tests to check for build problems"
-                        sh "mvn clean install -DskipTests -B -T 2C"
+                        sh "mvn clean install -DskipTests -DskipDockerBuild -B -T 2C"
                     }
-                } // container
+                }
             }
-        }
+        } //end stage build
+
+
         stage('Test') {
             steps {
                 echo 'Todo'
             }
-        }
-        stage('Deploy') {
+        }//end stage test
+
+
+        stage('Deploy to UT1') {
+            when {
+                branch "develop"
+            }
             steps {
                 echo 'Todo'
             }
-        }
+        } //end stage Deploy to UT1
     }
 }
