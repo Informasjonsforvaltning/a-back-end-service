@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Build') {
             agent {
-                label 'java-docker'
+                label 'jenkins-maven'
             }
             steps {
                 sh 'mvn clean install -B -T 2C'
