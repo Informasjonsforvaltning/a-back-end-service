@@ -11,10 +11,10 @@ pipeline {
                 label 'jenkins-maven'
             }
             steps {
-                container('java-docker') {
+                container('cloud-sdk') {
                     withMaven(maven: 'M3') {
                         echo "Build without running tests to check for build problems"
-                        sh "mvn clean install -DskipTests -DskipDockerBuild -B -T 2C"
+                        sh "mvn clean install -DskipTests -B -T 2C"
                     }
                 }
             }
