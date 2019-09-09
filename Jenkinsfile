@@ -13,7 +13,8 @@ pipeline {
             steps {
                 container('java-docker') {
                     withMaven(maven: 'M3') {
-                        sh "mvn clean install -B -T 2C"
+                        echo "Build without running tests to check for build problems"
+                        sh "mvn clean install -DskipTests -B -T 2C"
                     }
                 } // container
             }
