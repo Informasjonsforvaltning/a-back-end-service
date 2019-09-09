@@ -450,14 +450,16 @@
                 <version>2.4.2</version>
                 <executions>
                     <execution>
+                        <!--
                         <id>set-sonar-branch-name</id>
                         <configuration>
                             <propertyName>sonar.branch.name</propertyName>
-                            <command>git symbolic-ref --short -q HEAD</command>
+                            <command>${basedir}/src/main/resources/gitBranchName.sh</command>
                         </configuration>
                         <goals>
                             <goal>exec-set-property</goal>
                         </goals>
+                        -->
                     </execution>
                 </executions>
             </plugin>
