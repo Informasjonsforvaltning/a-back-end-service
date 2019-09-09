@@ -1,5 +1,5 @@
 #!groovy
-node {
+node('helm-kubectl') {
     stage('Build') {
         echo 'Building....'
     }
