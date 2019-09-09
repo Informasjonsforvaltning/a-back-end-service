@@ -21,7 +21,8 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                echo 'Todo
+                echo 'Todo'
+            }
         }
     }
 }
