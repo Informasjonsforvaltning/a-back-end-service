@@ -453,7 +453,7 @@
                         <id>set-sonar-branch-name</id>
                         <configuration>
                             <propertyName>sonar.branch.name</propertyName>
-                            <command>./src/main/resources/gitBranchName.sh</command>
+                            <command>${basedir}/src/main/resources/gitBranchName.sh</command>
                         </configuration>
                         <goals>
                             <goal>exec-set-property</goal>
