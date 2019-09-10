@@ -20,7 +20,7 @@ pipeline {
             }
         } //end stage build
 
-
+        /*
         stage('Test') {
             agent {
                 label 'jenkins-maven'
@@ -35,7 +35,7 @@ pipeline {
                 }
             }
         } //end stage build
-
+        */
 
         //kan lage tilsvarende for deploy til staging, prod
         //med kriterier for branch, tag eller annet
