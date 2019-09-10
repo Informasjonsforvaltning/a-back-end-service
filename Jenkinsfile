@@ -21,29 +21,21 @@ pipeline {
         } //end stage build
 
 
-        stage('Sonar report') {
+        stage('Test') {
             agent {
                 label 'jenkins-maven'
             }
-
             //her kan vi evt bestemme at den kun skal kjøres ved pull requests
-
             steps {
                 container('cloud-sdk') {
                     withMaven(maven: 'M3') {
                         echo "Build"
-                        sh "buildWithSonarReport.sh"
+                        sh "./buildWithSonarReport.sh"
                     }
                 }
             }
         } //end stage build
 
-
-        stage('Test') {
-            steps {
-                echo 'Todo'
-            }
-        }//end stage test
 
 
         stage('Deploy to UT1') {
