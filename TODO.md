@@ -1,3 +1,4 @@
 - [ ] Remove buildCommands.sh
 - [ ] Add Jenkinsfile with pipeline
 - [ ] Add helm-templates to repo
+- [ ] Rename files
