@@ -15,7 +15,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 @SpringBootApplication
 public class Application {
 
-    //force build ghkjlgjkghjgjhgjh fghklasfdøgha
+    //force build ghkjlgjkghjgjhgjh fghklasfdøgha 896uio896
 
     private static Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
