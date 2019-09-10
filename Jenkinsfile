@@ -14,7 +14,24 @@ pipeline {
                 container('cloud-sdk') {
                     withMaven(maven: 'M3') {
                         echo "Build"
-                        //sh "mvn clean install -DskipTests -B -T 2C"
+                        sh "mvn clean install -DskipTests -B -T 2C"
+                    }
+                }
+            }
+        } //end stage build
+
+
+        stage('Sonar report') {
+            agent {
+                label 'jenkins-maven'
+            }
+
+            //her kan vi evt bestemme at den kun skal kjøres ved pull requests
+
+            steps {
+                container('cloud-sdk') {
+                    withMaven(maven: 'M3') {
+                        echo "Build"
                         sh "buildWithSonarReport.sh"
                     }
                 }
