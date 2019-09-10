@@ -13,8 +13,9 @@ pipeline {
             steps {
                 container('cloud-sdk') {
                     withMaven(maven: 'M3') {
-                        echo "Build without running tests to check for build problems"
-                        sh "mvn clean install -DskipTests -B -T 2C"
+                        echo "Build"
+                        //sh "mvn clean install -DskipTests -B -T 2C"
+                        sh "buildWithSonarReport.sh"
                     }
                 }
             }
