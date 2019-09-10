@@ -38,7 +38,18 @@ pipeline {
                 */
                 echo 'midlertidig avslått'
             }
-        } //end stage build
+        } //end stage Sonar analyse
+
+
+        //kan kjøre ting spesielt for pull requests hvis vi ønsker det
+        stage('Pull request stage') {
+            when {
+                changeRequest()
+            }
+            steps {
+                echo 'Denne kjøres kun for pull requests'
+            }
+        } //end stage pull request
 
 
         //kan lage tilsvarende for deploy til staging, prod
