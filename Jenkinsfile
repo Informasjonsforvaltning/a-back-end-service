@@ -37,7 +37,9 @@ pipeline {
         } //end stage build
 
 
-
+        //kan lage tilsvarende for deploy til staging, prod
+        //med kriterier for branch, tag eller annet
+        //men vi må bestemme hva miljøene skal være
         stage('Deploy to UT1') {
             when {
                 branch "develop"
