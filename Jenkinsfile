@@ -14,28 +14,32 @@ pipeline {
                 container('cloud-sdk') {
                     withMaven(maven: 'M3') {
                         echo "Build"
-                        sh "mvn clean install -DskipTests -B -T 2C"
+                        sh "mvn clean install -B -T 2C"
+                        //hvor skal vi laste opp Docker images?
                     }
                 }
             }
         } //end stage build
 
-        /*
-        stage('Test') {
+
+        stage('Sonar analyse') {
             agent {
                 label 'jenkins-maven'
             }
             //her kan vi evt bestemme at den kun skal kjøres ved pull requests
             steps {
+                /*
                 container('cloud-sdk') {
                     withMaven(maven: 'M3') {
                         echo "Build"
                         sh "./buildWithSonarReport.sh"
                     }
                 }
+                */
+                echo 'midlertidig avslått'
             }
         } //end stage build
-        */
+
 
         //kan lage tilsvarende for deploy til staging, prod
         //med kriterier for branch, tag eller annet
