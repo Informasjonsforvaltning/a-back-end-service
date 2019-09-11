@@ -15,6 +15,8 @@ import org.springframework.web.servlet.DispatcherServlet;
 @SpringBootApplication
 public class Application {
 
+    //force build ghkjlgjkghjgjhgjh fghklasfdøgha 896uio896 ghasadjkgh sdfmlgsdfjkghjk<
+
     private static Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
     @Bean(name = DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_BEAN_NAME)
