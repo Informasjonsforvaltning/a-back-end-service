@@ -17,6 +17,8 @@ externalDocs:
 tags:
   - name: template
     description: Template Service
+  - name: version
+    description: Version service
 servers:
   - url: 'https://fellesdatakatalog.brreg.no'
 paths:
@@ -117,6 +119,20 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TemplateObject'
+  /version:
+    get:
+      tags:
+        - version
+      summary: Get version inforamtion about this service.
+      description: Returns a version object with SHA, branch name and date
+      operationId: getVersion
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Version'
 components:
   schemas:
     TemplateObject:
@@ -132,3 +148,16 @@ components:
         name:
           type: string
           description: The name of the template object
+    Version:
+      type: object
+      description: A version object
+      properties:
+        SHA:
+          type: string
+          description: The commit the the service was build from
+        branchName:
+          type: string
+          description: The name of the branch the service was build from
+        builDate:
+          type: string
+          description: The timestamp the build was created
