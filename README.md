@@ -8,6 +8,16 @@
 
 ## To build and run locally
 
+Set environment variables
+
+```
+export SONAR_LOGIN=<obtain-key-from-sonar> 
+export TEMPLATE_MONGO_USERNAME=<anything>
+export TEMPLATE_MONGO_PASSWORD=<anything>
+```
+
+Build and run
+
 ```
   mvn clean install
   docker-compose up
