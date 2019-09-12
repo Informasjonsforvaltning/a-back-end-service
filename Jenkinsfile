@@ -1,4 +1,27 @@
 #!groovy
+/*
+Build pipeline for Felles Datakatalog template service
+This pipeline does not include deploy steps
+ */
+
+
+/*
+Helper methods
+*/
+
+//get list of Git commit users in branch being built
+def getChangeAuthors() {
+    return currentBuild.changeSets.collect { set ->
+        set.collect { entry -> entry.author.fullName }
+    }.unique().flatten()
+}
+
+
+//colors for Slack messages
+def SLACK_COLOR_MAP = ['SUCCESS': 'good', 'FAILURE': 'danger', 'UNSTABLE': 'danger', 'ABORTED': 'danger']
+
+
+
 pipeline {
     //Agent running steps if not specified in individual stage
     agent {
@@ -24,11 +47,13 @@ pipeline {
                 }
             }
             post {
+                //Post message to Slack if build fails
                 failure {
                     script {
+                        changeAuthors = getChangeAuthors()
                         slackSend   channel: '#jenkins',
                                 color: 'danger',
-                                message: " (${DOCKER_IMAGE_NAME}) Build: ${currentBuild.fullDisplayName} by <TODO user> has test failures. <${currentBuild.absoluteUrl}|Link>"
+                                message: " (${DOCKER_IMAGE_NAME}) Build: ${currentBuild.fullDisplayName} by ${changeAuthors} has test failures. <${currentBuild.absoluteUrl}|Link>"
                     }
                 }
             }
@@ -44,8 +69,15 @@ pipeline {
                     withCredentials([file(credentialsId: 'fdk-infra-file', variable: 'SA')]) {
                         sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
                     }
-                    sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} eu.gcr.io/fdk-infra/${DOCKER_IMAGE_NAME}:build_${env.BUILD_NUMBER}"
-                    sh "docker push eu.gcr.io/fdk-infra/${DOCKER_IMAGE_NAME}:build_${env.BUILD_NUMBER}"
+                    script {
+                        gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+                        gitBranchName = env.BRANCH_NAME
+                        dockerBranchNameTag = gitBranchName.replaceAll('/', '_')
+                    }
+                    sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} eu.gcr.io/fdk-infra/${DOCKER_IMAGE_NAME}:git_${gitCommit}"
+                    sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} eu.gcr.io/fdk-infra/${DOCKER_IMAGE_NAME}:branch_${dockerBranchNameTag}_build_${env.BUILD_NUMBER}"
+                    sh "docker push eu.gcr.io/fdk-infra/${DOCKER_IMAGE_NAME}:git_${gitCommit}"
+                    sh "docker push eu.gcr.io/fdk-infra/${DOCKER_IMAGE_NAME}:branch_${dockerBranchNameTag}_build_${env.BUILD_NUMBER}"
                 }
             }
         } //end stage push to docker registry
@@ -55,10 +87,11 @@ pipeline {
     post {
         always {
             script {
-                def COLOR_MAP = ['SUCCESS': 'good', 'FAILURE': 'danger', 'UNSTABLE': 'danger', 'ABORTED': 'danger']
+                changeAuthors = getChangeAuthors()
+                gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
                 slackSend   channel: '#jenkins',
-                        color: COLOR_MAP[currentBuild.currentResult],
-                        message: " (${DOCKER_IMAGE_NAME}) Build: ${currentBuild.fullDisplayName} by <TODO user> finished with status ${currentBuild.result}. <${currentBuild.absoluteUrl}|Link>"
+                        color: SLACK_COLOR_MAP[currentBuild.currentResult],
+                        message: " (${DOCKER_IMAGE_NAME}) Build: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} finished with status ${currentBuild.result}. <${currentBuild.absoluteUrl}|Link>"
             }
         }
     }
