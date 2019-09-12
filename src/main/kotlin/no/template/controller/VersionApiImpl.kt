@@ -11,22 +11,20 @@ import java.util.*
 @Controller
 open class VersionApiImpl : no.template.generated.api.VersionApi {
 
-    private var properties : Properties? = null
+    private var properties : Properties = Properties()
 
 
     override fun getVersion(httpServletRequest: HttpServletRequest?): ResponseEntity<Version> {
-        if (properties == null) {
-            properties = Properties()
-            properties!!.load(this::class.java.getResourceAsStream("/git.properties"))
+        if (properties.isEmpty) {
+            properties.load(this::class.java.getResourceAsStream("/git.properties"))
         }
 
-        val version = Version()
-        version.branchName = properties!!.getProperty("git.branch")
-        version.buildTime = properties!!.getProperty("git.build.time")
-        version.sha = properties!!.getProperty("git.commit.id")
-        version.versionId = properties!!.getProperty("git.build.version")
-
-        return version.let { response -> ResponseEntity(response, HttpStatus.OK) }
+        return Version().apply {
+            branchName = properties.getProperty("git.branch")
+            buildTime = properties.getProperty("git.build.time")
+            sha = properties.getProperty("git.commit.id")
+            versionId = properties.getProperty("git.build.version")
+        }.let { response -> ResponseEntity(response, HttpStatus.OK) }
     }
 
 }
