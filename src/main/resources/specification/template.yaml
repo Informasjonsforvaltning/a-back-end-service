@@ -24,7 +24,7 @@ paths:
     get:
       tags:
         - version
-      summary: Get version inforamtion about this service.
+      summary: Get version information about this service.
       description: Returns a version object with SHA, branch name and date
       operationId: getVersion
       responses:
