@@ -4,6 +4,11 @@ Build pipeline for Felles Datakatalog template service
 This pipeline does not include deploy steps
  */
 
+//colors for Slack messages
+def SLACK_COLOR_MAP = ['SUCCESS': 'good', 'FAILURE': 'danger', 'UNSTABLE': 'danger', 'ABORTED': 'danger']
+
+
+
 
 /*
 Helper methods
@@ -17,8 +22,7 @@ def getChangeAuthors() {
 }
 
 
-//colors for Slack messages
-def SLACK_COLOR_MAP = ['SUCCESS': 'good', 'FAILURE': 'danger', 'UNSTABLE': 'danger', 'ABORTED': 'danger']
+
 
 
 
@@ -29,8 +33,31 @@ pipeline {
     }
 
     environment {
+        HELM_REPOSITORY_NAME = 'fdk'
+        HELM_REPOSITORY_URL = 'https://informasjonsforvaltning.github.io/helm-chart/'
+        DOCKER_REGISTRY_URL = 'eu.gcr.io/fdk-infra/'
+        HELM_WORKING_DIR = 'helm'
+        PROD_DEPLOY_APPROVERS = 'bjorn_grova,ssa'
+
+        SLACK_BUILD_NOTIFICATION_CHANNEL = '#jenkins'
+        SLACK_DEPLOY_NOTIFICATION_CHANNEL = '#jenkins'
+        SLACK_APPROVAL_NOTIFICATION_CHANNEL = '#jenkins-godkjenning'
+
+        STAGING_GCP_ZONE = 'europe-north1-a'
+        STAGING_GCP_PROJECT = 'fdk-dev'
+        STAGING_K8S_CLUSTER = 'fdk-dev'
+        STAGING_K8S_NAMESPACE = 'ut1'
+
+        PRODUCTION_GCP_ZONE = 'europe-north1-a'
+        PRODUCTION_GCP_PROJECT = 'fdk-prod'
+        PRODUCTION_K8S_CLUSTER = 'fdk-prod'
+        PRODUCTION_K8S_NAMESPACE = 'prod'
+
+        //these need to be changed for each application
+        HELM_TEMPLATE_NAME = 'a-back-end-service'
         DOCKER_IMAGE_NAME = 'brreg/template-image-name'
         DOCKER_IMAGE_TAG = 'latest'
+        HELM_ENVIRONMENT_VALUE_FILE = 'tmp_values.yaml' //todo: finne ut hvordan dette skal håndteres
     }
 
     stages {
@@ -47,13 +74,13 @@ pipeline {
                 }
             }
             post {
-                //Post message to Slack if build fails
-                failure {
+                always {
                     script {
                         changeAuthors = getChangeAuthors()
-                        slackSend   channel: '#jenkins',
-                                color: 'danger',
-                                message: " (${DOCKER_IMAGE_NAME}) Build: ${currentBuild.fullDisplayName} by ${changeAuthors} has test failures. <${currentBuild.absoluteUrl}|Link>"
+                        gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+                        slackSend   channel: "${SLACK_BUILD_NOTIFICATION_CHANNEL}",
+                                color: SLACK_COLOR_MAP[currentBuild.currentResult],
+                                message: " (${DOCKER_IMAGE_NAME}) Build: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} built with status ${currentBuild.result}. <${currentBuild.absoluteUrl}|Link>"
                     }
                 }
             }
@@ -74,25 +101,110 @@ pipeline {
                         gitBranchName = env.BRANCH_NAME
                         dockerBranchNameTag = gitBranchName.replaceAll('/', '_')
                     }
-                    sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} eu.gcr.io/fdk-infra/${DOCKER_IMAGE_NAME}:git_${gitCommit}"
-                    sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} eu.gcr.io/fdk-infra/${DOCKER_IMAGE_NAME}:branch_${dockerBranchNameTag}_build_${env.BUILD_NUMBER}"
-                    sh "docker push eu.gcr.io/fdk-infra/${DOCKER_IMAGE_NAME}:git_${gitCommit}"
-                    sh "docker push eu.gcr.io/fdk-infra/${DOCKER_IMAGE_NAME}:branch_${dockerBranchNameTag}_build_${env.BUILD_NUMBER}"
+                    sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:git_${gitCommit}"
+                    sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:branch_${dockerBranchNameTag}_build_${env.BUILD_NUMBER}"
+                    sh "docker push ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:git_${gitCommit}"
+                    sh "docker push ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:branch_${dockerBranchNameTag}_build_${env.BUILD_NUMBER}"
                 }
             }
         } //end stage push to docker registry
-    }
 
 
-    post {
-        always {
-            script {
-                changeAuthors = getChangeAuthors()
-                gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-                slackSend   channel: '#jenkins',
+        stage('Deploy to staging') {
+            agent {
+                label 'helm-kubectl'
+            }
+            //todo step med git tag etter vellykket deploy
+            //todo: finne ut av verifyDeployments - det funket ikke ut av boksen...
+            steps {
+                container('helm-gcloud-kubectl') {
+
+                    //Apply Helm template. Fetch from Helm template repository - currently not using Tiller
+                    sh "helm repo add ${HELM_REPOSITORY_NAME} ${HELM_REPOSITORY_URL}"
+                    sh "helm fetch --untar --untardir ./helm '${HELM_REPOSITORY_NAME}/${HELM_TEMPLATE_NAME}'"
+                    sh 'ls -l'
+                    sh "helm template --set DOCKER_IMAGE_NAME=${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:git_${gitCommit} " +
+                            "-f ${HELM_ENVIRONMENT_VALUE_FILE} ${HELM_WORKING_DIR}/${HELM_TEMPLATE_NAME}/ " +
+                            "> kubectlapply.yaml"
+
+                    sh 'cat kubectlapply.yaml'
+                    sh 'chmod o+w kubectlapply.yaml'
+                    step([$class: 'KubernetesEngineBuilder',
+                          projectId: "${STAGING_GCP_PROJECT}",
+                          clusterName: "${STAGING_K8S_CLUSTER}",
+                          zone: "${STAGING_GCP_ZONE}",
+                          manifestPattern: 'kubectlapply.yaml',
+                          credentialsId: "${STAGING_GCP_PROJECT}",
+                          verifyDeployments: false])
+                }
+            }
+            post {
+                success {
+                    script {
+                        //git tag hvis suksessfult. Vis git tag i slack melding
+                        //docker tag deployed også
+                        changeAuthors = getChangeAuthors()
+                        gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+
+                        slackSend channel: "${SLACK_DEPLOY_NOTIFICATION_CHANNEL}",
+                                color: SLACK_COLOR_MAP[currentBuild.currentResult],
+                                message: " (${DOCKER_IMAGE_NAME}) Deploy: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} deployed to UT1"
+                    }
+                }
+            }
+        } //end stage deploy to UT1
+
+
+        stage('Wait for Approval') {
+            steps{
+                slackSend channel: "${SLACK_APPROVAL_NOTIFICATION_CHANNEL}",
                         color: SLACK_COLOR_MAP[currentBuild.currentResult],
-                        message: " (${DOCKER_IMAGE_NAME}) Build: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} finished with status ${currentBuild.result}. <${currentBuild.absoluteUrl}|Link>"
+                        message: " (${DOCKER_IMAGE_NAME}) Build: ${currentBuild.fullDisplayName} ready for approval for deploy to production. <${currentBuild.absoluteUrl}|Link>"
+                timeout(time:12, unit:'HOURS') {
+                    input message:'Approve deployment to PROD?', submitter: "${PROD_DEPLOY_APPROVERS}"
+                }
             }
         }
+
+
+        stage('Deploy to Production') {
+            steps{
+                container('helm-gcloud-kubectl') {
+
+                    //Apply Helm template. Fetch from Helm template repository - currently not using Tiller
+                    //TODO: fikse value-filer eller selector for ulike miljø - se på helm best practice
+                    sh "helm repo add ${HELM_REPOSITORY_NAME} ${HELM_REPOSITORY_URL}"
+                    sh "helm fetch --untar --untardir ./helm '${HELM_REPOSITORY_NAME}/${HELM_TEMPLATE_NAME}'"
+                    sh 'ls -l'
+                    sh "helm template --set DOCKER_IMAGE_NAME=${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:git_${gitCommit} " +
+                            "-f ${HELM_ENVIRONMENT_VALUE_FILE} ${HELM_WORKING_DIR}/${HELM_TEMPLATE_NAME}/ " +
+                            "> kubectlapply.yaml"
+
+                    sh 'cat kubectlapply.yaml'
+                    sh 'chmod o+w kubectlapply.yaml'
+                    step([$class: 'KubernetesEngineBuilder',
+                          projectId: "${PRODUCTION_GCP_PROJECT}",
+                          clusterName: "${PRODUCTION_K8S_CLUSTER}",
+                          zone: "${PRODUCTION_GCP_ZONE}",
+                          manifestPattern: 'kubectlapply.yaml',
+                          credentialsId: "${PRODUCTION_GCP_PROJECT}",
+                          verifyDeployments: false])
+                }
+            }
+            post {
+                success {
+                    script {
+                        //git tag hvis suksessfult. Vis git tag i slack melding
+                        //docker tag deployed også
+                        changeAuthors = getChangeAuthors()
+                        gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+
+                        slackSend channel: "${SLACK_DEPLOY_NOTIFICATION_CHANNEL}",
+                                color: SLACK_COLOR_MAP[currentBuild.currentResult],
+                                message: " (${DOCKER_IMAGE_NAME}) Deploy: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} deployed to PROD"
+                    }
+                }
+            }
+        } //end stage deploy to prod
     }
 }
