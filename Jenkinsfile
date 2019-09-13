@@ -47,13 +47,13 @@ pipeline {
                 }
             }
             post {
-                //Post message to Slack if build fails
-                failure {
+                always {
                     script {
                         changeAuthors = getChangeAuthors()
+                        gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
                         slackSend   channel: '#jenkins',
-                                color: 'danger',
-                                message: " (${DOCKER_IMAGE_NAME}) Build: ${currentBuild.fullDisplayName} by ${changeAuthors} has test failures. <${currentBuild.absoluteUrl}|Link>"
+                                color: SLACK_COLOR_MAP[currentBuild.currentResult],
+                                message: " (${DOCKER_IMAGE_NAME}) Build: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} built with status ${currentBuild.result}. <${currentBuild.absoluteUrl}|Link>"
                     }
                 }
             }
@@ -81,18 +81,47 @@ pipeline {
                 }
             }
         } //end stage push to docker registry
-    }
 
 
-    post {
-        always {
-            script {
-                changeAuthors = getChangeAuthors()
-                gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-                slackSend   channel: '#jenkins',
-                        color: SLACK_COLOR_MAP[currentBuild.currentResult],
-                        message: " (${DOCKER_IMAGE_NAME}) Build: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} finished with status ${currentBuild.result}. <${currentBuild.absoluteUrl}|Link>"
+        stage('Deploy to UT1') {
+            agent {
+                label 'helm-kubectl'
             }
-        }
+            //todo step med git tag etter vellykket deploy
+            //finn bruk docker tag fra git commit hash. Finn den og putt den i en fil,
+            //deretter apply den med helm. Konstruer navnet med å bruke miljøvariablene
+            //todo: finne ut av verifyDeployments - det funket ikke ut av boksen...
+            steps {
+                container('helm-gcloud-kubectl') {
+                    //temporary: create a mongodb instance to test the deployment.
+                    //remove when jenkinsfile is working correctly
+                    sh 'helm template -f tmp_values.yaml -f tmp_mongo_values.yaml helm/ > kubectlapply.yaml'
+                    sh 'cat kubectlapply.yaml'
+                    sh 'chmod o+w kubectlapply.yaml'
+                    step([$class: 'KubernetesEngineBuilder',
+                          projectId: "fdk-dev",
+                          clusterName: "fdk-dev",
+                          zone: "europe-north1-a",
+                          manifestPattern: 'kubectlapply.yaml',
+                          credentialsId: "fdk-dev",
+                          verifyDeployments: false])
+                }
+            }
+            post {
+                success {
+                    script {
+                        //git tag hvis suksessfult. Vis git tag i slack melding
+                        //docker tag deployed også
+                        changeAuthors = getChangeAuthors()
+                        gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+                        slackSend   channel: '#jenkins',
+                                color: SLACK_COLOR_MAP[currentBuild.currentResult],
+                                message: " (${DOCKER_IMAGE_NAME}) Build: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} deployed to UT1"
+                    }
+                }
+            }
+        } //end stage deploy to UT1
+
+        //TODO: legg til stages for verifisering og prod-setting her
     }
 }

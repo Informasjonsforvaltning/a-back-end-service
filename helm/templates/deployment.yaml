@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    fdk.service: a-back-end-service
+  name: a-back-end-service
+  namespace: {{ required "Missing value NAMESPACE" .Values.NAMESPACE }}
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        fdk.service: a-back-end-service
+    spec:
+      containers:
+      - env:
+        - name: TEMPLATE_MONGO_USERNAME
+          value: {{ required "Missing value TEMPLATE_MONGO_USERNAME" .Values.TEMPLATE_MONGO_USERNAME }}
+        - name: TEMPLATE_MONGO_PASSWORD
+          value: {{ required "Missing value TEMPLATE_MONGO_PASSWORD" .Values.TEMPLATE_MONGO_PASSWORD }}
+        - name: TEMPLATE_MONGO_HOST
+          value: {{ required "Missing value TEMPLATE_MONGO_HOST" .Values.TEMPLATE_MONGO_HOST }}
+        name: a-back-end-service
+        image: {{ required "Missing value DOCKER_IMAGE_NAME" .Values.DOCKER_IMAGE_NAME }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: {{ required "Missing value TEMPLATE_SERVICE_MEMORY" .Values.TEMPLATE_SERVICE_MEMORY | quote }}
+      restartPolicy: Always
+status: {}

@@ -1,0 +1,32 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  creationTimestamp: null
+  labels:
+    fdk.service: tmp-mongodb-claim0
+  name: tmp-mongodb-claim0
+  namespace: {{ required "Missing value NAMESPACE" .Values.NAMESPACE }}
+spec:
+  storageClassName: ""
+  volumeName: {{ required "Missing value MONGODB_VOLUMENAME_DB" .Values.MONGODB_VOLUMENAME_DB }}
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ required "Missing value MONGODB_STORAGESIZE_DB" .Values.MONGODB_STORAGESIZE_DB }}
+status: {}
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: {{ required "Missing value MONGODB_VOLUMENAME_DB" .Values.MONGODB_VOLUMENAME_DB }}
+  namespace: {{ required "Missing value NAMESPACE" .Values.NAMESPACE }}
+spec:
+  storageClassName: ""
+  capacity:
+    storage: {{ required "Missing value MONGODB_STORAGESIZE_DB" .Values.MONGODB_STORAGESIZE_DB }}
+  accessModes:
+    - ReadWriteOnce
+  gcePersistentDisk:
+    pdName: {{ required "Missing value MONGODB_VOLUMENAME_DB" .Values.MONGODB_VOLUMENAME_DB }}
+    fsType: ext4

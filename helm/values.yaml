@@ -1,0 +1,7 @@
+# Default values for template service.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+# These values will be the same in all deployment environments
+
+##a-template-service (api)
+TEMPLATE_SERVICE_MEMORY: "1000Mi"

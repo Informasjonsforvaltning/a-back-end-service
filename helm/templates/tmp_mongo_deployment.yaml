@@ -1,0 +1,40 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    fdk.service: tmp-mongodb
+  name: tmp-mongodb
+  namespace: {{ required "Missing value NAMESPACE" .Values.NAMESPACE }}
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        fdk.service: tmp-mongodb
+    spec:
+      containers:
+      - env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: {{ required "Missing value MONGO_USERNAME" .Values.MONGO_USERNAME }}
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          value: {{ required "Missing value MONGO_PASSWORD" .Values.MONGO_PASSWORD }}
+        image: {{ required "Missing value MONGODB_IMAGE" .Values.MONGODB_IMAGE }}
+        imagePullPolicy: Always
+        name: tmp-mongodb
+        ports:
+        - containerPort: 27017
+        resources:
+          requests:
+            memory: {{ required "Missing value MONGODB_MEMORY" .Values.MONGODB_MEMORY | quote }}
+        volumeMounts:
+        - mountPath: /data/db/
+          name: tmp-mongodb-claim0
+      restartPolicy: Always
+      volumes:
+      - name: tmp-mongodb-claim0
+        persistentVolumeClaim:
+          claimName: tmp-mongodb-claim0
+status: {}
