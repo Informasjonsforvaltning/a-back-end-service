@@ -1,6 +1,6 @@
 openapi: 3.0.2
 info:
-  title: National Data Directory Template API
+  title: A backend service API
   description: A generic example of an API
   version: '1.0'
   termsOfService: 'https://fellesdatakatalog.brreg.no/about'
@@ -13,10 +13,10 @@ info:
     url: 'http://data.norge.no/nlod/no/2.0'
 externalDocs:
   description: Dokumentasjon på Informasjonsforvaltning GitHub
-  url: https://informasjonsforvaltning.github.io/felles-datakatalog/datasett-katalog/api/
+  url: https://informasjonsforvaltning.github.io/
 tags:
   - name: version
-    description: Version service
+    description: Version service gives information on commits, branches etc.
 servers:
   - url: 'https://fellesdatakatalog.brreg.no'
 paths:
