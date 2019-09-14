@@ -12,11 +12,13 @@ info:
     name: License of API
     url: 'http://data.norge.no/nlod/no/2.0'
 externalDocs:
-  description: Dokumentasjon på Informasjonsforvaltning GitHub
+  description: Documentation
   url: https://informasjonsforvaltning.github.io/
 tags:
   - name: version
-    description: Version service gives information on commits, branches etc.
+    description: Gives information on commits, branches etc for this service.
+  - name: serviceEndpoints
+    description: Store and gives a list of service endpoints it has verion information on
 servers:
   - url: 'https://fellesdatakatalog.brreg.no'
 paths:
@@ -25,7 +27,7 @@ paths:
       tags:
         - version
       summary: Get version information about this service.
-      description: Returns a version object with SHA, branch name and date
+      description: Returns a version object with SHA, branch name and build date.
       operationId: getVersion
       responses:
         '200':
@@ -34,6 +36,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Version'
+  /serviceendpoints:
+    get:
+      tags:
+        - serviceEndpoints
+      summary: Get a list of service endpoints that this service monitors.
+      description: Returns a list of endpoints (server urls)
+      operationId: getServiceEndpoints
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceEndpointCollection'
 components:
   schemas:
     Version:
@@ -55,3 +71,24 @@ components:
         versionId:
           type: string
           description: The POM version the service was built from
+    ServiceEndpointCollection:
+      type: object
+      description: A list of service endpoints
+      properties:
+        total:
+          type: integer
+          description: the number of elements in the collection
+        serviceEndpoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceEndpoint'
+    ServiceEndpoint:
+      type: object
+      properties:
+        name:
+          type: string
+          description: the name of the service (repository name)
+        url:
+          type: string
+          format: uri
+          description: the url to a service endpoint that is monitored
