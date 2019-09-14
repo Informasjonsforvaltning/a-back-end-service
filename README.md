@@ -11,7 +11,7 @@
 Set environment variables
 
 ```
-export SONAR_LOGIN=<obtain-key-from-sonar> 
+export SONAR_LOGIN=<obtain-key-from-sonar>
 export TEMPLATE_MONGO_USERNAME=<anything>
 export TEMPLATE_MONGO_PASSWORD=<anything>
 ```
@@ -26,4 +26,4 @@ Build and run
 
 ## The API
 
-A nice way to understand what this API does, check the [specification](./src/main/resources/specification/template.yaml)
+A nice way to understand what this API does, check the [specification](./src/main/resources/specification/a-backend-service.yaml)
