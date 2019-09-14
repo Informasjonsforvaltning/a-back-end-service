@@ -20,11 +20,16 @@ open class VersionApiImpl : no.template.generated.api.VersionApi {
         }
 
         return Version().apply {
+            repositoryName = getRepositoryName(properties.getProperty("git.remote.origin.url"))
             branchName = properties.getProperty("git.branch")
             buildTime = properties.getProperty("git.build.time")
             sha = properties.getProperty("git.commit.id")
             versionId = properties.getProperty("git.build.version")
         }.let { response -> ResponseEntity(response, HttpStatus.OK) }
+    }
+
+    private fun getRepositoryName(remoteOriginUrl: String): String {
+      return remoteOriginUrl.split("/").last().split(".").first()
     }
 
 }

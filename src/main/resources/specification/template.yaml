@@ -40,6 +40,9 @@ components:
       type: object
       description: A version object
       properties:
+        repositoryName:
+          type: string
+          description: The name of the remote repository
         branchName:
           type: string
           description: The name of the branch the service was built from
