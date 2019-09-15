@@ -37,6 +37,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/Version'
   /serviceendpoints:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - serviceEndpoints
+      summary: Create a service endpoint and add it to the list
+      description: Returns a location header to the new service endpoint
+      operationId: createServiceEndpoint
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+              description: url to the new service endpoint
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceEndpoint'
     get:
       tags:
         - serviceEndpoints
@@ -85,10 +108,18 @@ components:
     ServiceEndpoint:
       type: object
       properties:
+        id:
+          type: string
+          description: system-generated id (GUID)
         name:
           type: string
           description: the name of the service (repository name)
-        url:
+        uri:
           type: string
           format: uri
-          description: the url to a service endpoint that is monitored
+          description: the uri to a service endpoint that is monitored
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    # optional, arbitrary value for documentation purposes
