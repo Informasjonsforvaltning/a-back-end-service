@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import static no.template.TestDataKt.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @Testcontainers
 @SpringBootTest
@@ -61,7 +62,7 @@ class ServiceEndpointsApiServiceTest {
    }
 
    @Test
-    void getServiceEndpoints() {
+    void getServiceEndpointsShouldReturnAnEmptyArrayOfServiceEndpoints() {
         Mockito
             .when(httpServletRequestMock.getHeader("Accept"))
             .thenReturn("application/json");
@@ -70,5 +71,7 @@ class ServiceEndpointsApiServiceTest {
             .getServiceEndpoints(httpServletRequestMock);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(Integer.valueOf(0), response.getBody().getTotal());
+        assertTrue(response.getBody().getServiceEndpoints().isEmpty());
     }
 }
