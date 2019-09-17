@@ -14,12 +14,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import javax.validation.ConstraintViolationException
 import java.util.*
 
-private val LOGGER = LoggerFactory.getLogger(ServiceEndpointsApiImpl::class.java)
+private val LOGGER = LoggerFactory.getLogger(ServiceEndpointApiImpl::class.java)
 
 @Controller
-open class ServiceEndpointsApiImpl (
+open class ServiceEndpointApiImpl (
   private val serviceEndpointService: ServiceEndpointService
-  ) : no.template.generated.api.ServiceEndpointsApi {
+  ) : no.template.generated.api.ServiceEndpointApi {
 
   private var properties : Properties = Properties()
 
