@@ -17,7 +17,7 @@ externalDocs:
 tags:
   - name: version
     description: Gives information on commits, branches etc for this service.
-  - name: serviceEndpoints
+  - name: serviceEndpoint
     description: Store and gives a list of service endpoints it has verion information on
 servers:
   - url: 'https://fellesdatakatalog.brreg.no'
@@ -41,7 +41,7 @@ paths:
       security:
         - bearerAuth: []
       tags:
-        - serviceEndpoints
+        - serviceEndpoint
       summary: Create a service endpoint and add it to the list
       description: Returns a location header to the new service endpoint
       operationId: createServiceEndpoint
@@ -62,7 +62,7 @@ paths:
               $ref: '#/components/schemas/ServiceEndpoint'
     get:
       tags:
-        - serviceEndpoints
+        - serviceEndpoint
       summary: Get a list of service endpoints that this service monitors.
       description: Returns a list of endpoints (server urls)
       operationId: getServiceEndpoints

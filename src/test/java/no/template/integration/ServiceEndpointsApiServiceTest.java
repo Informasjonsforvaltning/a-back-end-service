@@ -1,6 +1,6 @@
 package no.template.integration;
 
-import no.template.generated.api.ServiceEndpointsApi;
+import no.template.generated.api.ServiceEndpointApi;
 import no.template.generated.model.ServiceEndpointCollection;
 import no.template.generated.model.ServiceEndpoint;
 import java.net.URI;
@@ -34,17 +34,17 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @Testcontainers
 @SpringBootTest
-@ContextConfiguration(initializers = {ServiceEndpointsApiServiceTest.Initializer.class})
+@ContextConfiguration(initializers = {ServiceEndpointApiServiceTest.Initializer.class})
 @Tag("service")
-class ServiceEndpointsApiServiceTest {
-  private final static Logger logger = LoggerFactory.getLogger(ServiceEndpointsApi.class);
+class ServiceEndpointApiServiceTest {
+  private final static Logger logger = LoggerFactory.getLogger(ServiceEndpointApiServiceTest.class);
   private static Slf4jLogConsumer mongoLog = new Slf4jLogConsumer(logger).withPrefix("mongo-container");
 
   @Mock
   private static HttpServletRequest httpServletRequestMock;
 
   @Autowired
-  private ServiceEndpointsApi serviceEndpointsApi;
+  private ServiceEndpointApi serviceEndpointsApi;
 
   @Container
   private static final GenericContainer mongoContainer = new GenericContainer("mongo:latest")
