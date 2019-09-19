@@ -48,5 +48,5 @@ open class ServiceEndpointApiImpl (
             else -> ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
           }
         }
-      } else ResponseEntity(HttpStatus.UNAUTHORIZED)
+      } else ResponseEntity(HttpStatus.FORBIDDEN)
 }
