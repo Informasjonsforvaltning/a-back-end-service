@@ -95,6 +95,8 @@ pipeline {
                 container('helm-gcloud-kubectl') {
                     //temporary: create a mongodb instance to test the deployment.
                     //remove when jenkinsfile is working correctly
+                    sh 'helm repo add informasjonsforvaltningrepo https://informasjonsforvaltning.github.io/helm-chart/'
+                    sh 'helm repo list'
                     sh 'helm template -f tmp_values.yaml -f tmp_mongo_values.yaml helm/ > kubectlapply.yaml'
                     sh 'cat kubectlapply.yaml'
                     sh 'chmod o+w kubectlapply.yaml'
