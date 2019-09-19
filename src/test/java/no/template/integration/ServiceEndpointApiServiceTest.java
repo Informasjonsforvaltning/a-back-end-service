@@ -4,6 +4,7 @@ import no.template.generated.api.ServiceEndpointApi;
 import no.template.generated.model.ServiceEndpointCollection;
 import no.template.generated.model.ServiceEndpoint;
 import java.net.URI;
+
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -17,6 +18,7 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
@@ -47,29 +49,30 @@ class ServiceEndpointApiServiceTest {
 
   @Container
   private static final GenericContainer mongoContainer = new GenericContainer("mongo:latest")
-  .withEnv(getMONGO_ENV_VALUES())
-  .withLogConsumer(mongoLog)
-  .withExposedPorts(MONGO_PORT)
-  .waitingFor(Wait.forListeningPort());
+    .withEnv(getMONGO_ENV_VALUES())
+    .withLogConsumer(mongoLog)
+    .withExposedPorts(MONGO_PORT)
+    .waitingFor(Wait.forListeningPort());
 
   static class Initializer
   implements ApplicationContextInitializer<ConfigurableApplicationContext> {
     public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
       TestPropertyValues.of(
-      "spring.data.mongodb.database=" + DATABASE_NAME,
-      "spring.data.mongodb.uri=" + buildMongoURI(mongoContainer.getContainerIpAddress(), mongoContainer.getMappedPort(MONGO_PORT), false)
+        "spring.data.mongodb.database=" + DATABASE_NAME,
+        "spring.data.mongodb.uri=" + buildMongoURI(mongoContainer.getContainerIpAddress(), mongoContainer.getMappedPort(MONGO_PORT), false)
       ).applyTo(configurableApplicationContext.getEnvironment());
     }
   }
 
   @Test
+  @WithMockUser()
   void getServiceEndpointsShouldReturnAnEmptyArrayOfServiceEndpoints() {
     Mockito
-    .when(httpServletRequestMock.getHeader("Accept"))
-    .thenReturn("application/json");
+      .when(httpServletRequestMock.getHeader("Accept"))
+      .thenReturn("application/json");
 
     ResponseEntity<ServiceEndpointCollection> response = serviceEndpointsApi
-    .getServiceEndpoints(httpServletRequestMock);
+      .getServiceEndpoints(httpServletRequestMock);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(Integer.valueOf(0), response.getBody().getTotal());
@@ -78,56 +81,60 @@ class ServiceEndpointApiServiceTest {
 
 
   @Test
-  void createServiceEndpointShouldReturnUnauthorizedWhitNoAuthentication() {
+  @WithMockUser()
+  void createServiceEndpointShouldReturnUnauthorizedWithNoAuthentication() {
     Mockito
-    .when(httpServletRequestMock.getHeader("Accept"))
-    .thenReturn("application/json");
+      .when(httpServletRequestMock.getHeader("Accept"))
+      .thenReturn("application/json");
 
     ResponseEntity<Void> response = serviceEndpointsApi
-    .createServiceEndpoint(httpServletRequestMock, new ServiceEndpoint());
+      .createServiceEndpoint(httpServletRequestMock, new ServiceEndpoint());
 
     assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
   }
 
 
   @Test
+  @WithMockUser(authorities = {"admin"})
   void createServiceEndpointShouldReturnBadRequestOnEmptyPost() {
     Mockito
-    .when(httpServletRequestMock.getHeader("Accept"))
-    .thenReturn("application/json");
+      .when(httpServletRequestMock.getHeader("Accept"))
+      .thenReturn("application/json");
 
     ServiceEndpoint serviceEndpoint = new ServiceEndpoint();
 
     ResponseEntity<Void> response = serviceEndpointsApi
-    .createServiceEndpoint(httpServletRequestMock, serviceEndpoint);
+      .createServiceEndpoint(httpServletRequestMock, serviceEndpoint);
 
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
   }
 
   @Test
+  @WithMockUser(authorities = {"admin"})
   void createServiceEndpointShouldReturnCreatedAndLocationHeader() {
     Mockito
-    .when(httpServletRequestMock.getHeader("Accept"))
-    .thenReturn("application/json");
+      .when(httpServletRequestMock.getHeader("Accept"))
+      .thenReturn("application/json");
 
     ServiceEndpoint serviceEndpoint = new ServiceEndpoint();
     serviceEndpoint.setName("a-service");
     serviceEndpoint.setUri(URI.create("http://www.example.com"));
 
     ResponseEntity<Void> response = serviceEndpointsApi
-    .createServiceEndpoint(httpServletRequestMock, serviceEndpoint);
+     .createServiceEndpoint(httpServletRequestMock, serviceEndpoint);
 
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
   }
 
   @Test
+  @WithMockUser()
   void getServiceEndpointsShouldReturnNonEmptyArrayOfServiceEndpoints() {
     Mockito
-    .when(httpServletRequestMock.getHeader("Accept"))
-    .thenReturn("application/json");
+      .when(httpServletRequestMock.getHeader("Accept"))
+      .thenReturn("application/json");
 
     ResponseEntity<ServiceEndpointCollection> response = serviceEndpointsApi
-    .getServiceEndpoints(httpServletRequestMock);
+      .getServiceEndpoints(httpServletRequestMock);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertTrue(response.getBody().getTotal() > Integer.valueOf(0));
