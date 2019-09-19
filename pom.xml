@@ -91,6 +91,11 @@
             <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.nhaarman.mockitokotlin2</groupId>
+            <artifactId>mockito-kotlin</artifactId>
+            <version>2.1.0</version>
+        </dependency>
 
         <!-- TEST JUnit5 -->
         <dependency>
@@ -319,7 +324,6 @@
                             <sourceDirs>
                                 <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
                                 <sourceDir>${project.basedir}/src/test/java</sourceDir>
-                                <sourceDir>${project.basedir}/target/generated-sources/openapi/src/main/java/gen</sourceDir>
                             </sourceDirs>
                         </configuration>
                     </execution>
@@ -374,6 +378,7 @@
                     <excludedGroups>service</excludedGroups>
                     <includes>
                         <include>**/*.java</include>
+                        <include>**/*.kt</include>
                     </includes>
                 </configuration>
             </plugin>
@@ -388,6 +393,7 @@
                     <excludedGroups>unit</excludedGroups>
                     <includes>
                         <include>**/*.java</include>
+                        <include>**/*.kt</include>
                     </includes>
                 </configuration>
             </plugin>

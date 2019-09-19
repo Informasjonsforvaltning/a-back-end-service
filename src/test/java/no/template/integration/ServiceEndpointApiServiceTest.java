@@ -4,7 +4,6 @@ import no.template.generated.api.ServiceEndpointApi;
 import no.template.generated.model.ServiceEndpointCollection;
 import no.template.generated.model.ServiceEndpoint;
 import java.net.URI;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
