@@ -125,7 +125,7 @@ pipeline {
             }
             post {
                 success {
-                    container('cloud-sdk') {
+                    container('helm-gcloud-kubectl') {
                         script {
                             //git tag hvis suksessfult. Vis git tag i slack melding
                             //docker tag deployed også
