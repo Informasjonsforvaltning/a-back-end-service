@@ -124,8 +124,11 @@ pipeline {
                 }
             }
             post {
+                agent {
+                    label 'jenkins-maven'
+                }
                 success {
-                    container('helm-gcloud-kubectl') {
+                    container('cloud-sdk') {
                         script {
                             //git tag hvis suksessfult. Vis git tag i slack melding
                             //docker tag deployed også
