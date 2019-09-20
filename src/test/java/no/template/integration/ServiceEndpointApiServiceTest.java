@@ -30,8 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import static no.template.TestDataKt.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @Testcontainers
 @SpringBootTest
@@ -65,8 +63,7 @@ class ServiceEndpointApiServiceTest {
   }
 
   @Test
-  @WithMockUser()
-  void getServiceEndpointsShouldReturnAnEmptyArrayOfServiceEndpoints() {
+  void getServiceEndpointsOkResponse() {
     Mockito
       .when(httpServletRequestMock.getHeader("Accept"))
       .thenReturn("application/json");
@@ -75,14 +72,12 @@ class ServiceEndpointApiServiceTest {
       .getServiceEndpoints(httpServletRequestMock);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertEquals(Integer.valueOf(0), response.getBody().getTotal());
-    assertTrue(response.getBody().getServiceEndpoints().isEmpty());
   }
 
 
   @Test
   @WithMockUser()
-  void createServiceEndpointShouldReturnUnauthorizedWithNoAuthentication() {
+  void createServiceEndpointShouldReturnForbiddenWhenNotAdmin() {
     Mockito
       .when(httpServletRequestMock.getHeader("Accept"))
       .thenReturn("application/json");
@@ -90,7 +85,7 @@ class ServiceEndpointApiServiceTest {
     ResponseEntity<Void> response = serviceEndpointsApi
       .createServiceEndpoint(httpServletRequestMock, new ServiceEndpoint());
 
-    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+    assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
   }
 
 
@@ -124,20 +119,5 @@ class ServiceEndpointApiServiceTest {
      .createServiceEndpoint(httpServletRequestMock, serviceEndpoint);
 
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
-  }
-
-  @Test
-  @WithMockUser()
-  void getServiceEndpointsShouldReturnNonEmptyArrayOfServiceEndpoints() {
-    Mockito
-      .when(httpServletRequestMock.getHeader("Accept"))
-      .thenReturn("application/json");
-
-    ResponseEntity<ServiceEndpointCollection> response = serviceEndpointsApi
-      .getServiceEndpoints(httpServletRequestMock);
-
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertTrue(response.getBody().getTotal() > Integer.valueOf(0));
-    assertFalse(response.getBody().getServiceEndpoints().isEmpty());
   }
 }

@@ -18,14 +18,12 @@ private val LOGGER = LoggerFactory.getLogger(ServiceEndpointApiImpl::class.java)
 
 @Controller
 open class ServiceEndpointApiImpl (
-  private val serviceEndpointService: ServiceEndpointService,
+  private val endpointService: ServiceEndpointService,
   private val endpointPermissions: EndpointPermissions
 ) : no.template.generated.api.ServiceEndpointApi {
 
   override fun getServiceEndpoints(httpServletRequest: HttpServletRequest): ResponseEntity<ServiceEndpointCollection> =
-      ServiceEndpointCollection()
-        .apply { total = 0 }
-	    .let { response -> ResponseEntity(response, HttpStatus.OK) }
+      ResponseEntity(endpointService.getServiceEndpoints(), HttpStatus.OK)
 
   override fun createServiceEndpoint(httpServletRequest: HttpServletRequest, serviceEndpoint: ServiceEndpoint): ResponseEntity<Void> =
       if (endpointPermissions.hasAdminPermission()) {
@@ -36,7 +34,7 @@ open class ServiceEndpointApiImpl (
                     .fromCurrentServletMapping()
                     .path("/serviceendpoint/{id}")
                     .build()
-                    .expand(serviceEndpointService.createServiceEndpoint(serviceEndpoint).id)
+                    .expand(endpointService.createServiceEndpoint(serviceEndpoint).id)
                     .toUri()
               }
               .let { ResponseEntity<Void>(it, HttpStatus.CREATED) }
