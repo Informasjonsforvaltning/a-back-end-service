@@ -98,13 +98,12 @@ pipeline {
 
                     //fetch from Helm template repository - currently not using Tiller
                     sh 'helm repo add fdk https://informasjonsforvaltning.github.io/helm-chart/'
-                    sh "helm fetch --untar --untardir . 'fdk/a-back-end-service'"
+                    sh "helm fetch --untar --untardir ./helm 'fdk/a-back-end-service'"
                     sh 'ls -l'
-                    sh 'helm template -f tmp_values.yaml a-back-end-service/ > kubectlapply.yaml'
+                    sh 'helm template -f tmp_values.yaml helm/a-back-end-service/ > kubectlapply.yaml'
                     //todo: prøve helm instsall
 
                     //sh 'helm template -f tmp_values.yaml -f tmp_mongo_values.yaml helm/ > kubectlapply.yaml'
-                    sh 'helm te'
                     sh 'cat kubectlapply.yaml'
                     sh 'chmod o+w kubectlapply.yaml'
                     step([$class: 'KubernetesEngineBuilder',
