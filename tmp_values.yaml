@@ -1,5 +1,5 @@
 #Disse skal ut herfra etter hvert
-DOCKER_IMAGE_NAME: eu.gcr.io/fdk-infra/brreg/template-image-name:branch_feature_bjg_helm-template_build_50
+#DOCKER_IMAGE_NAME: eu.gcr.io/fdk-infra/brreg/template-image-name:branch_feature_bjg_helm-template_build_50
 NAMESPACE: ut1
 
 #variabler som skal være her
