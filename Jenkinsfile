@@ -4,6 +4,11 @@ Build pipeline for Felles Datakatalog template service
 This pipeline does not include deploy steps
  */
 
+//colors for Slack messages
+def SLACK_COLOR_MAP = ['SUCCESS': 'good', 'FAILURE': 'danger', 'UNSTABLE': 'danger', 'ABORTED': 'danger']
+
+
+
 
 /*
 Helper methods
@@ -17,8 +22,7 @@ def getChangeAuthors() {
 }
 
 
-//colors for Slack messages
-def SLACK_COLOR_MAP = ['SUCCESS': 'good', 'FAILURE': 'danger', 'UNSTABLE': 'danger', 'ABORTED': 'danger']
+
 
 
 
@@ -29,8 +33,15 @@ pipeline {
     }
 
     environment {
+        HELM_REPOSITORY_NAME = 'fdk'
+        HELM_REPOSITORY_URL = 'https://informasjonsforvaltning.github.io/helm-chart/'
+        HELM_WORKING_DIR = 'helm'
+
+        //these need to be changed for each application
+        HELM_TEMPLATE_NAME = 'a-back-end-service'
         DOCKER_IMAGE_NAME = 'brreg/template-image-name'
         DOCKER_IMAGE_TAG = 'latest'
+        HELM_ENVIRONMENT_VALUE_FILE = 'tmp_values.yaml' //todo: finne ut hvordan dette skal håndteres
     }
 
     stages {
@@ -97,12 +108,10 @@ pipeline {
                     //remove when jenkinsfile is working correctly
 
                     //fetch from Helm template repository - currently not using Tiller
-                    sh 'helm repo add fdk https://informasjonsforvaltning.github.io/helm-chart/'
-                    //sh "helm fetch --untar --untardir ./helm 'fdk/a-back-end-service'"
-                    sh 'helm install fdk/a-back-end-service'
+                    sh "helm repo add ${HELM_REPOSITORY_NAME} ${HELM_REPOSITORY_URL}"
+                    sh "helm fetch --untar --untardir ./helm '${HELM_REPOSITORY_NAME}/${HELM_TEMPLATE_NAME}'"
                     sh 'ls -l'
-                    sh 'helm template -f tmp_values.yaml helm/a-back-end-service/ > kubectlapply.yaml'
-                    //todo: prøve helm instsall
+                    sh "helm template -f ${HELM_ENVIRONMENT_VALUE_FILE} ${HELM_WORKING_DIR}/${HELM_TEMPLATE_NAME}/ > kubectlapply.yaml"
 
                     //sh 'helm template -f tmp_values.yaml -f tmp_mongo_values.yaml helm/ > kubectlapply.yaml'
                     sh 'cat kubectlapply.yaml'
