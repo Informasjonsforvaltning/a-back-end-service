@@ -379,7 +379,6 @@
                     <excludedGroups>service</excludedGroups>
                     <includes>
                         <include>**/*.java</include>
-                        <include>**/*.kt</include>
                     </includes>
                 </configuration>
             </plugin>
@@ -394,7 +393,6 @@
                     <excludedGroups>unit</excludedGroups>
                     <includes>
                         <include>**/*.java</include>
-                        <include>**/*.kt</include>
                     </includes>
                 </configuration>
             </plugin>
