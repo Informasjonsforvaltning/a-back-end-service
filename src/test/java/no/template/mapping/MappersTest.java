@@ -1,1 +1,0 @@
-/* Evt kan disse implementeres i kotlin. */

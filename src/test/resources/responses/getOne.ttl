@@ -1,8 +1,0 @@
-@prefix dct:   <http://purl.org/dc/terms/> .
-@prefix rov:   <http://www.w3.org/ns/regorg#> .
-
-<http://data.brreg.no/enhetsregisteret/enhet/974760673>
-        a               <http://xmlns.com/foaf/0.1/Organization> ;
-        dct:identifier  "5d5531e55c404500068481da" ;
-        dct:isPartOf    <http://data.brreg.no/enhetsregisteret/enhet/974760673> ;
-        rov:legalName   "REGISTERENHETEN I BRØNNØYSUND" .

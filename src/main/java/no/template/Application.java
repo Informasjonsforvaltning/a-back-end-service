@@ -1,7 +1,6 @@
 package no.template;
 
 import no.template.spring.CachableDispatcherServlet;
-import org.apache.jena.riot.RIOT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -14,8 +13,6 @@ import org.springframework.web.servlet.DispatcherServlet;
 
 @SpringBootApplication
 public class Application {
-
-    //force build ghkjlgjkghjgjhgjh fghklasfdøgha 896uio896 ghasadjkgh sdfmlgsdfjkghjk<
 
     private static Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
@@ -35,7 +32,6 @@ public class Application {
     }
 
     public static void main(String[] args) {
-        RIOT.init();
         SpringApplication.run(Application.class, args);
     }
 }
