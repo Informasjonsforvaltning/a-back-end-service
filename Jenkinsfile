@@ -101,6 +101,7 @@ pipeline {
                     sh "helm fetch --untar --untardir . 'fdk/a-back-end-service'"
                     sh 'ls -l'
                     sh 'helm template -f tmp_values.yaml a-back-end-service/ > kubectlapply.yaml'
+                    //todo: prøve helm instsall
 
                     //sh 'helm template -f tmp_values.yaml -f tmp_mongo_values.yaml helm/ > kubectlapply.yaml'
                     sh 'helm te'
