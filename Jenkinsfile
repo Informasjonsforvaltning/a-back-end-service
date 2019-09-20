@@ -100,15 +100,11 @@ pipeline {
                 label 'helm-kubectl'
             }
             //todo step med git tag etter vellykket deploy
-            //finn bruk docker tag fra git commit hash. Finn den og putt den i en fil,
-            //deretter apply den med helm. Konstruer navnet med å bruke miljøvariablene
             //todo: finne ut av verifyDeployments - det funket ikke ut av boksen...
             steps {
                 container('helm-gcloud-kubectl') {
-                    //temporary: create a mongodb instance to test the deployment.
-                    //remove when jenkinsfile is working correctly
 
-                    //fetch from Helm template repository - currently not using Tiller
+                    //Apply Helm template. Fetch from Helm template repository - currently not using Tiller
                     sh "helm repo add ${HELM_REPOSITORY_NAME} ${HELM_REPOSITORY_URL}"
                     sh "helm fetch --untar --untardir ./helm '${HELM_REPOSITORY_NAME}/${HELM_TEMPLATE_NAME}'"
                     sh 'ls -l'
@@ -116,7 +112,6 @@ pipeline {
                             "-f ${HELM_ENVIRONMENT_VALUE_FILE} ${HELM_WORKING_DIR}/${HELM_TEMPLATE_NAME}/ " +
                             "> kubectlapply.yaml"
 
-                    //sh 'helm template -f tmp_values.yaml -f tmp_mongo_values.yaml helm/ > kubectlapply.yaml'
                     sh 'cat kubectlapply.yaml'
                     sh 'chmod o+w kubectlapply.yaml'
                     step([$class: 'KubernetesEngineBuilder',
@@ -135,6 +130,12 @@ pipeline {
                         //docker tag deployed også
                         changeAuthors = getChangeAuthors()
                         gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+                        timestamp = (new Date()).format( 'yyyy-MM-dd-HHmm' )
+
+                        //tag docker image and git commit if deploy successful
+                        sh "docker tag ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:git_${gitCommit} ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deployed_ut1_current"
+                        sh "docker tag ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:git_${gitCommit} ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deployed_ut1_${timestamp}"
+
                         slackSend   channel: '#jenkins',
                                 color: SLACK_COLOR_MAP[currentBuild.currentResult],
                                 message: " (${DOCKER_IMAGE_NAME}) Deploy: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} deployed to UT1"
