@@ -34,3 +34,10 @@ fun createServiceEndpoint(hexStringId: String?) =
         name = "Endpoint name"
         uri = URI("https://endpoint.uri.no/version")
     }
+
+val EMPTY_DB_LIST = emptyList<ServiceEndpointDB>()
+val ENDPOINTS_DB_LIST = listOf(createServiceEndpointDB(GENERATED_ID_0))
+
+val EMPTY_ENDPOINTS_LIST = emptyList<ServiceEndpoint>()
+val ENDPOINTS_LIST = listOf(createServiceEndpoint(GENERATED_ID_0.toHexString()))
+
