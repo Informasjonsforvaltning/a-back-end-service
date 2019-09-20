@@ -57,7 +57,7 @@ class ServiceEndpointApiServiceTest {
     public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
       TestPropertyValues.of(
         "spring.data.mongodb.database=" + DATABASE_NAME,
-        "spring.data.mongodb.uri=" + buildMongoURI(mongoContainer.getContainerIpAddress(), mongoContainer.getMappedPort(MONGO_PORT), false)
+        "spring.data.mongodb.uri=" + buildMongoURI(mongoContainer.getContainerIpAddress(), mongoContainer.getMappedPort(MONGO_PORT))
       ).applyTo(configurableApplicationContext.getEnvironment());
     }
   }
