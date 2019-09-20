@@ -35,6 +35,7 @@ pipeline {
     environment {
         HELM_REPOSITORY_NAME = 'fdk'
         HELM_REPOSITORY_URL = 'https://informasjonsforvaltning.github.io/helm-chart/'
+        DOCKER_REGISTRY_URL = 'eu.gcr.io/fdk-infra/'
         HELM_WORKING_DIR = 'helm'
 
         //these need to be changed for each application
@@ -85,10 +86,10 @@ pipeline {
                         gitBranchName = env.BRANCH_NAME
                         dockerBranchNameTag = gitBranchName.replaceAll('/', '_')
                     }
-                    sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} eu.gcr.io/fdk-infra/${DOCKER_IMAGE_NAME}:git_${gitCommit}"
-                    sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} eu.gcr.io/fdk-infra/${DOCKER_IMAGE_NAME}:branch_${dockerBranchNameTag}_build_${env.BUILD_NUMBER}"
-                    sh "docker push eu.gcr.io/fdk-infra/${DOCKER_IMAGE_NAME}:git_${gitCommit}"
-                    sh "docker push eu.gcr.io/fdk-infra/${DOCKER_IMAGE_NAME}:branch_${dockerBranchNameTag}_build_${env.BUILD_NUMBER}"
+                    sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:git_${gitCommit}"
+                    sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:branch_${dockerBranchNameTag}_build_${env.BUILD_NUMBER}"
+                    sh "docker push ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:git_${gitCommit}"
+                    sh "docker push ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:branch_${dockerBranchNameTag}_build_${env.BUILD_NUMBER}"
                 }
             }
         } //end stage push to docker registry
@@ -111,7 +112,9 @@ pipeline {
                     sh "helm repo add ${HELM_REPOSITORY_NAME} ${HELM_REPOSITORY_URL}"
                     sh "helm fetch --untar --untardir ./helm '${HELM_REPOSITORY_NAME}/${HELM_TEMPLATE_NAME}'"
                     sh 'ls -l'
-                    sh "helm template --set DOCKER_IMAGE_NAME=xyz  -f ${HELM_ENVIRONMENT_VALUE_FILE} ${HELM_WORKING_DIR}/${HELM_TEMPLATE_NAME}/ > kubectlapply.yaml"
+                    sh "helm template --set DOCKER_IMAGE_NAME=${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:git_${gitCommit} " +
+                            "-f ${HELM_ENVIRONMENT_VALUE_FILE} ${HELM_WORKING_DIR}/${HELM_TEMPLATE_NAME}/ " +
+                            "> kubectlapply.yaml"
 
                     //sh 'helm template -f tmp_values.yaml -f tmp_mongo_values.yaml helm/ > kubectlapply.yaml'
                     sh 'cat kubectlapply.yaml'
