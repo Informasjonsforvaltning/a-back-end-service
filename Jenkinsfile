@@ -111,7 +111,7 @@ pipeline {
                     sh "helm repo add ${HELM_REPOSITORY_NAME} ${HELM_REPOSITORY_URL}"
                     sh "helm fetch --untar --untardir ./helm '${HELM_REPOSITORY_NAME}/${HELM_TEMPLATE_NAME}'"
                     sh 'ls -l'
-                    sh "helm template -set DOCKER_IMAGE_NAME=xyz  -f ${HELM_ENVIRONMENT_VALUE_FILE} ${HELM_WORKING_DIR}/${HELM_TEMPLATE_NAME}/ > kubectlapply.yaml"
+                    sh "helm template --set DOCKER_IMAGE_NAME=xyz  -f ${HELM_ENVIRONMENT_VALUE_FILE} ${HELM_WORKING_DIR}/${HELM_TEMPLATE_NAME}/ > kubectlapply.yaml"
 
                     //sh 'helm template -f tmp_values.yaml -f tmp_mongo_values.yaml helm/ > kubectlapply.yaml'
                     sh 'cat kubectlapply.yaml'
