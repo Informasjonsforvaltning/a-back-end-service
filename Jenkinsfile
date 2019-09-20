@@ -134,7 +134,7 @@ pipeline {
 
                         //tag docker image and git commit if deploy successful
                         sh "docker tag ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:git_${gitCommit} ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deployed_ut1_current"
-                        sh "docker tag ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:git_${gitCommit} ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deployed_ut1_${timestamp}"
+                        sh "docker tag ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:git_${gitCommit} ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deployed_ut1_xyz"
 
                         slackSend   channel: '#jenkins',
                                 color: SLACK_COLOR_MAP[currentBuild.currentResult],
