@@ -30,5 +30,5 @@ open class VersionApiImpl : no.template.generated.api.VersionApi {
 }
 
 private fun getRepositoryName(remoteOriginUrl: String): String? =
-    Regex("""(?<=/).*?(?=.git)""")
+    Regex("""(?:[^/](?!/))+(?=.git$)""")
         .find(remoteOriginUrl)?.value
