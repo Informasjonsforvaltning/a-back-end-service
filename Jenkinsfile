@@ -95,10 +95,15 @@ pipeline {
                 container('helm-gcloud-kubectl') {
                     //temporary: create a mongodb instance to test the deployment.
                     //remove when jenkinsfile is working correctly
+
+                    //fetch from Helm template repository - currently not using Tiller
                     sh 'helm repo add fdk https://informasjonsforvaltning.github.io/helm-chart/'
-                    sh 'helm repo list'
-                    sh 'helm search a-back-end-service'
-                    sh 'helm template -f tmp_values.yaml -f tmp_mongo_values.yaml helm/ > kubectlapply.yaml'
+                    sh "helm fetch --untar --untardir . 'fdk/a-back-end-service'"
+                    sh 'ls -l'
+                    sh 'helm template -f tmp_values.yaml a-back-end-service/ > kubectlapply.yaml'
+
+                    //sh 'helm template -f tmp_values.yaml -f tmp_mongo_values.yaml helm/ > kubectlapply.yaml'
+                    sh 'helm te'
                     sh 'cat kubectlapply.yaml'
                     sh 'chmod o+w kubectlapply.yaml'
                     step([$class: 'KubernetesEngineBuilder',
@@ -119,7 +124,7 @@ pipeline {
                         gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
                         slackSend   channel: '#jenkins',
                                 color: SLACK_COLOR_MAP[currentBuild.currentResult],
-                                message: " (${DOCKER_IMAGE_NAME}) Build: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} deployed to UT1"
+                                message: " (${DOCKER_IMAGE_NAME}) Deploy: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} deployed to UT1"
                     }
                 }
             }
