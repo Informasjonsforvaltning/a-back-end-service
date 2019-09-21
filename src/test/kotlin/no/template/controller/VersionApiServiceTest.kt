@@ -24,7 +24,7 @@ class VersionApiServiceTest {
 
         assertEquals(HttpStatus.OK, response.statusCode)
 
-        assertFalse(response.body?.repositoryName.isNullOrBlank())
+        assertFalse(response.body?.repositoryUrl.toString().isNullOrBlank())
         assertFalse(response.body?.branchName.isNullOrBlank())
         assertFalse(response.body?.buildTime.isNullOrBlank())
         assertFalse(response.body?.sha.isNullOrBlank())
