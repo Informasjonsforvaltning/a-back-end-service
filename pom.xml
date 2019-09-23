@@ -333,7 +333,6 @@
                                 <allowUnicodeIdentifiers>true</allowUnicodeIdentifiers>
                                 <sourceFolder>src/main/java/gen</sourceFolder>
                                 <hideGenerationTimestamp>true</hideGenerationTimestamp>
-                                <java8>true</java8>
                                 <dateLibrary>java8</dateLibrary>
                                 <library>spring-boot</library>
                                 <delegatePattern>false</delegatePattern>
