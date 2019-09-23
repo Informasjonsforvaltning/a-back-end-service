@@ -7,11 +7,9 @@ import no.template.service.ServiceEndpointService
 import org.slf4j.LoggerFactory
 import javax.servlet.http.HttpServletRequest
 import org.springframework.dao.DuplicateKeyException
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import javax.validation.ConstraintViolationException
 
 private val LOGGER = LoggerFactory.getLogger(ServiceEndpointApiImpl::class.java)
@@ -28,16 +26,8 @@ open class ServiceEndpointApiImpl (
   override fun createServiceEndpoint(httpServletRequest: HttpServletRequest, serviceEndpoint: ServiceEndpoint): ResponseEntity<Void> =
       if (endpointPermissions.hasAdminPermission()) {
         try {
-          HttpHeaders()
-              .apply {
-                location = ServletUriComponentsBuilder
-                    .fromCurrentServletMapping()
-                    .path("/serviceendpoint/{id}")
-                    .build()
-                    .expand(endpointService.createServiceEndpoint(serviceEndpoint).id)
-                    .toUri()
-              }
-              .let { ResponseEntity<Void>(it, HttpStatus.CREATED) }
+            endpointService.createServiceEndpoint(serviceEndpoint)
+            ResponseEntity<Void>(HttpStatus.CREATED)
         } catch (exception: Exception) {
           LOGGER.error("createServiceEndpoint failed:", exception)
           when (exception) {
