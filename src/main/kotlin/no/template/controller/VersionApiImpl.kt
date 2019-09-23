@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import java.util.*
-import java.net.URI;
 
 private val properties : Properties = Properties()
 
@@ -20,7 +19,7 @@ open class VersionApiImpl : no.template.generated.api.VersionApi {
 
         return Version()
             .apply {
-                repositoryUrl = URI.create(properties.getProperty("git.remote.origin.url"))
+                repositoryUrl = properties.getProperty("git.remote.origin.url")
                 branchName = properties.getProperty("git.branch")
                 buildTime = properties.getProperty("git.build.time")
                 sha = properties.getProperty("git.commit.id")

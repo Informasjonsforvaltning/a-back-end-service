@@ -81,7 +81,6 @@ components:
       properties:
         repositoryUrl:
           type: string
-          format: uri
           description: The url of the remote repository
         branchName:
           type: string
