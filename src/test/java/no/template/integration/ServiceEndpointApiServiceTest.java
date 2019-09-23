@@ -82,8 +82,12 @@ class ServiceEndpointApiServiceTest {
       .when(httpServletRequestMock.getHeader("Accept"))
       .thenReturn("application/json");
 
+    ServiceEndpoint serviceEndpoint = new ServiceEndpoint();
+    serviceEndpoint.setName("a-service");
+    serviceEndpoint.setUri(URI.create("http://www.example.com"));
+
     ResponseEntity<Void> response = serviceEndpointsApi
-      .createServiceEndpoint(httpServletRequestMock, new ServiceEndpoint());
+      .createServiceEndpoint(httpServletRequestMock, serviceEndpoint);
 
     assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
   }
