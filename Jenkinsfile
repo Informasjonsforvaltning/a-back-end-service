@@ -51,12 +51,14 @@ pipeline {
                 label 'jenkins-maven'
             }
             steps {
-                container('jnlp') {
+                /*
+                container('cloud-sdk') {
                     withMaven(maven: 'M3') {
                         echo "Build"
                         sh "mvn clean install -B -T 2C"
                     }
-                }
+                } */
+                sh "mvn clean install -B -T 2C"
             }
             post {
                 always {
