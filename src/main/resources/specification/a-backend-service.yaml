@@ -16,7 +16,7 @@ externalDocs:
   url: https://informasjonsforvaltning.github.io/
 tags:
   - name: version
-    description: Gives information on commits, branches etc for this service.
+    description: Gives information on the commitid, branch etc for this service.
   - name: serviceEndpoint
     description: Store and gives a list of service endpoints it has verion information on
 servers:
@@ -107,6 +107,9 @@ components:
             $ref: '#/components/schemas/ServiceEndpoint'
     ServiceEndpoint:
       type: object
+      required:
+        - name
+        - uri
       properties:
         id:
           type: string
@@ -118,6 +121,8 @@ components:
           type: string
           format: uri
           description: the uri to a service endpoint that is monitored
+        version:
+          $ref: '#/components/schemas/Version'
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme
       type: http

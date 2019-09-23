@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class ServiceEndpointDB {
     @Id private ObjectId id;
     @Indexed(unique = true) @NotBlank private String name;
-    @NotNull private URI uri;
+    @Indexed(unique = true) @NotNull private URI uri;
 
     public ObjectId getId() {
         return id;

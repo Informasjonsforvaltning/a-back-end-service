@@ -16,7 +16,16 @@ export TEMPLATE_MONGO_USERNAME=<anything>
 export TEMPLATE_MONGO_PASSWORD=<anything>
 ```
 
-Build and run
+Or you can put the variables in a .env file in the root directory of your project.
+
+```
+$ cat .env
+export SONAR_LOGIN=<obrain-key-from-sonar>
+TEMPLATE_MONGO_USERNAME=anything
+TEMPLATE_MONGO_PASSWORD=anything
+```
+
+## Build and run
 
 ```
   mvn clean install
