@@ -37,6 +37,7 @@ pipeline {
         HELM_REPOSITORY_URL = 'https://informasjonsforvaltning.github.io/helm-chart/'
         DOCKER_REGISTRY_URL = 'eu.gcr.io/fdk-infra/'
         HELM_WORKING_DIR = 'helm'
+        PROD_DEPLOY_APPROVERS = 'bjorn_grova'
 
         //these need to be changed for each application
         HELM_TEMPLATE_NAME = 'a-back-end-service'
@@ -139,6 +140,54 @@ pipeline {
             }
         } //end stage deploy to UT1
 
-        //TODO: legg til stages for verifisering og prod-setting her
+
+        stage('Wait for Approval') {
+            steps{
+                timeout(time:12, unit:'HOURS') {
+                    input message:'Approve deployment to PROD?', submitter: "${PROD_DEPLOY_APPROVERS}"
+                }
+            }
+        }
+
+
+        stage('Deploy to Production') {
+            steps{
+                container('helm-gcloud-kubectl') {
+
+                    //Apply Helm template. Fetch from Helm template repository - currently not using Tiller
+                    //TODO: fikse value-filer eller selector for ulike miljø - se på helm best practice
+                    sh "helm repo add ${HELM_REPOSITORY_NAME} ${HELM_REPOSITORY_URL}"
+                    sh "helm fetch --untar --untardir ./helm '${HELM_REPOSITORY_NAME}/${HELM_TEMPLATE_NAME}'"
+                    sh 'ls -l'
+                    sh "helm template --set DOCKER_IMAGE_NAME=${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:git_${gitCommit} " +
+                            "-f ${HELM_ENVIRONMENT_VALUE_FILE} ${HELM_WORKING_DIR}/${HELM_TEMPLATE_NAME}/ " +
+                            "> kubectlapply.yaml"
+
+                    sh 'cat kubectlapply.yaml'
+                    sh 'chmod o+w kubectlapply.yaml'
+                    step([$class: 'KubernetesEngineBuilder',
+                          projectId: "fdk-prod",
+                          clusterName: "fdk-prod",
+                          zone: "europe-north1-a",
+                          manifestPattern: 'kubectlapply.yaml',
+                          credentialsId: "fdk-prod",
+                          verifyDeployments: false])
+                }
+            }
+            post {
+                success {
+                    script {
+                        //git tag hvis suksessfult. Vis git tag i slack melding
+                        //docker tag deployed også
+                        changeAuthors = getChangeAuthors()
+                        gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+
+                        slackSend channel: '#jenkins',
+                                color: SLACK_COLOR_MAP[currentBuild.currentResult],
+                                message: " (${DOCKER_IMAGE_NAME}) Deploy: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} deployed to PROD"
+                    }
+                }
+            }
+        } //end stage deploy to prod
     }
 }
