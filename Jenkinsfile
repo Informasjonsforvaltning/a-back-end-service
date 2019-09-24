@@ -39,6 +39,20 @@ pipeline {
         HELM_WORKING_DIR = 'helm'
         PROD_DEPLOY_APPROVERS = 'bjorn_grova,ssa'
 
+        SLACK_BUILD_NOTIFICATION_CHANNEL = '#jenkins'
+        SLACK_DEPLOY_NOTIFICATION_CHANNEL = '#jenkins'
+        SLACK_APPROVAL_NOTIFICATION_CHANNEL = '#jenkins-godkjenning'
+
+        STAGING_GCP_ZONE = 'europe-north1-a'
+        STAGING_GCP_PROJECT = 'fdk-dev'
+        STAGING_K8S_CLUSTER = 'fdk-dev'
+        STAGING_K8S_NAMESPACE = 'ut1'
+
+        PRODUCTION_GCP_ZONE = 'europe-north1-a'
+        PRODUCTION_GCP_PROJECT = 'fdk-prod'
+        PRODUCTION_K8S_CLUSTER = 'fdk-prod'
+        PRODUCTION_K8S_NAMESPACE = 'prod'
+
         //these need to be changed for each application
         HELM_TEMPLATE_NAME = 'a-back-end-service'
         DOCKER_IMAGE_NAME = 'brreg/template-image-name'
@@ -64,7 +78,7 @@ pipeline {
                     script {
                         changeAuthors = getChangeAuthors()
                         gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-                        slackSend   channel: '#jenkins',
+                        slackSend   channel: "${SLACK_BUILD_NOTIFICATION_CHANNEL}",
                                 color: SLACK_COLOR_MAP[currentBuild.currentResult],
                                 message: " (${DOCKER_IMAGE_NAME}) Build: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} built with status ${currentBuild.result}. <${currentBuild.absoluteUrl}|Link>"
                     }
@@ -96,7 +110,7 @@ pipeline {
         } //end stage push to docker registry
 
 
-        stage('Deploy to UT1') {
+        stage('Deploy to staging') {
             agent {
                 label 'helm-kubectl'
             }
@@ -116,11 +130,11 @@ pipeline {
                     sh 'cat kubectlapply.yaml'
                     sh 'chmod o+w kubectlapply.yaml'
                     step([$class: 'KubernetesEngineBuilder',
-                          projectId: "fdk-dev",
-                          clusterName: "fdk-dev",
-                          zone: "europe-north1-a",
+                          projectId: "${STAGING_GCP_PROJECT}",
+                          clusterName: "${STAGING_K8S_CLUSTER}",
+                          zone: "${STAGING_GCP_ZONE}",
                           manifestPattern: 'kubectlapply.yaml',
-                          credentialsId: "fdk-dev",
+                          credentialsId: "${STAGING_GCP_PROJECT}",
                           verifyDeployments: false])
                 }
             }
@@ -132,7 +146,7 @@ pipeline {
                         changeAuthors = getChangeAuthors()
                         gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
 
-                        slackSend channel: '#jenkins',
+                        slackSend channel: "${SLACK_DEPLOY_NOTIFICATION_CHANNEL}",
                                 color: SLACK_COLOR_MAP[currentBuild.currentResult],
                                 message: " (${DOCKER_IMAGE_NAME}) Deploy: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} deployed to UT1"
                     }
@@ -143,6 +157,9 @@ pipeline {
 
         stage('Wait for Approval') {
             steps{
+                slackSend channel: "${SLACK_APPROVAL_NOTIFICATION_CHANNEL}",
+                        color: SLACK_COLOR_MAP[currentBuild.currentResult],
+                        message: " (${DOCKER_IMAGE_NAME}) Build: ${currentBuild.fullDisplayName} ready for approval for deploy to production. <${currentBuild.absoluteUrl}|Link>"
                 timeout(time:12, unit:'HOURS') {
                     input message:'Approve deployment to PROD?', submitter: "${PROD_DEPLOY_APPROVERS}"
                 }
@@ -166,11 +183,11 @@ pipeline {
                     sh 'cat kubectlapply.yaml'
                     sh 'chmod o+w kubectlapply.yaml'
                     step([$class: 'KubernetesEngineBuilder',
-                          projectId: "fdk-prod",
-                          clusterName: "fdk-prod",
-                          zone: "europe-north1-a",
+                          projectId: "${PRODUCTION_GCP_PROJECT}",
+                          clusterName: "${PRODUCTION_K8S_CLUSTER}",
+                          zone: "${PRODUCTION_GCP_ZONE}",
                           manifestPattern: 'kubectlapply.yaml',
-                          credentialsId: "fdk-prod",
+                          credentialsId: "${PRODUCTION_GCP_PROJECT}",
                           verifyDeployments: false])
                 }
             }
@@ -182,7 +199,7 @@ pipeline {
                         changeAuthors = getChangeAuthors()
                         gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
 
-                        slackSend channel: '#jenkins',
+                        slackSend channel: "${SLACK_DEPLOY_NOTIFICATION_CHANNEL}",
                                 color: SLACK_COLOR_MAP[currentBuild.currentResult],
                                 message: " (${DOCKER_IMAGE_NAME}) Deploy: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} deployed to PROD"
                     }
