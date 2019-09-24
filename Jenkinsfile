@@ -51,14 +51,12 @@ pipeline {
                 label 'jenkins-maven'
             }
             steps {
-                /*
                 container('cloud-sdk') {
                     withMaven(maven: 'M3') {
                         echo "Build"
                         sh "mvn clean install -B -T 2C"
                     }
-                } */
-                sh "mvn clean install -B -T 2C"
+                }
             }
             post {
                 always {
@@ -133,13 +131,6 @@ pipeline {
                             //docker tag deployed også
                             changeAuthors = getChangeAuthors()
                             gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-                            timestamp = (new Date()).format('yyyy-MM-dd-HHmm')
-
-                            //tag docker image and git commit if deploy successful
-                            sh "docker tag ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:git_${gitCommit} ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deployed_ut1_current"
-                            sh "docker tag ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:git_${gitCommit} ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deployed_ut1_${timestamp}"
-                            sh "docker push ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deployed_ut1_current"
-                            sh "docker push ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deployed_ut1_${timestamp}"
 
                             slackSend channel: '#jenkins',
                                     color: SLACK_COLOR_MAP[currentBuild.currentResult],
