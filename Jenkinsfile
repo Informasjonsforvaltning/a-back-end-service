@@ -37,7 +37,7 @@ pipeline {
         HELM_REPOSITORY_URL = 'https://informasjonsforvaltning.github.io/helm-chart/'
         DOCKER_REGISTRY_URL = 'eu.gcr.io/fdk-infra/'
         HELM_WORKING_DIR = 'helm'
-        PROD_DEPLOY_APPROVERS = 'bjorn_grova'
+        PROD_DEPLOY_APPROVERS = 'bjorn_grova,ssa'
 
         //these need to be changed for each application
         HELM_TEMPLATE_NAME = 'a-back-end-service'
