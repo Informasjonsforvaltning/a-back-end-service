@@ -125,17 +125,15 @@ pipeline {
             }
             post {
                 success {
-                    container('cloud-sdk') {
-                        script {
-                            //git tag hvis suksessfult. Vis git tag i slack melding
-                            //docker tag deployed også
-                            changeAuthors = getChangeAuthors()
-                            gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+                    script {
+                        //git tag hvis suksessfult. Vis git tag i slack melding
+                        //docker tag deployed også
+                        changeAuthors = getChangeAuthors()
+                        gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
 
-                            slackSend channel: '#jenkins',
-                                    color: SLACK_COLOR_MAP[currentBuild.currentResult],
-                                    message: " (${DOCKER_IMAGE_NAME}) Deploy: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} deployed to UT1"
-                        }
+                        slackSend channel: '#jenkins',
+                                color: SLACK_COLOR_MAP[currentBuild.currentResult],
+                                message: " (${DOCKER_IMAGE_NAME}) Deploy: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} deployed to UT1"
                     }
                 }
             }
