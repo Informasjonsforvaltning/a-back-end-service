@@ -1,7 +1,9 @@
 package no.template.service;
 
+import no.template.adapter.VersionAdapter;
 import no.template.generated.model.ServiceEndpoint;
 import no.template.generated.model.ServiceEndpointCollection;
+import no.template.generated.model.Version;
 import no.template.model.ServiceEndpointDB;
 import no.template.repository.ServiceEndpointRepository;
 import org.bson.types.ObjectId;
@@ -26,6 +28,9 @@ class ServiceEndpointServiceTest {
     @Mock
     ServiceEndpointRepository repositoryMock;
 
+    @Mock
+    VersionAdapter adapterMock;
+
     @InjectMocks
     ServiceEndpointService serviceEndpointService;
 
@@ -44,6 +49,9 @@ class ServiceEndpointServiceTest {
     void mappingToCollectionIsCorrect() {
         Mockito.when(repositoryMock.findAll())
             .thenReturn(getENDPOINTS_DB_LIST());
+
+        Mockito.when(adapterMock.getVersionData(Mockito.any()))
+            .thenReturn(getVERSION_DATA());
 
         ServiceEndpointCollection result = serviceEndpointService.getServiceEndpoints();
 
