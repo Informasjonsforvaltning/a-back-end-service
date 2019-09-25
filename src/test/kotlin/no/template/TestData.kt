@@ -28,21 +28,21 @@ fun createServiceEndpointDB(objectId: ObjectId?) =
     ServiceEndpointDB().apply {
         id = objectId
         name = "Endpoint name"
-        uri = URI("http://www.endpoint.no/version")
+        uri = URI("http://localhost:$API_PORT/version")
     }
 
 fun createServiceEndpoint(hexStringId: String?) =
     ServiceEndpoint().apply {
         id = hexStringId
         name = "Endpoint name"
-        uri = URI("http://www.endpoint.no/version")
+        uri = URI("http://localhost:$API_PORT/version")
     }
 
 private fun createServiceEndpointWithVersionData(hexStringId: String?) =
     ServiceEndpoint().apply {
         id = hexStringId
         name = "Endpoint name"
-        uri = URI("http://www.endpoint.no/version")
+        uri = URI("http://localhost:$API_PORT/version")
         version = Version().apply{
             repositoryUrl = "repositoryUrl"
             branchName = "branchName"
