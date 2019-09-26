@@ -57,7 +57,6 @@ pipeline {
         HELM_TEMPLATE_NAME = 'a-back-end-service'
         DOCKER_IMAGE_NAME = 'brreg/template-image-name'
         DOCKER_IMAGE_TAG = 'latest'
-        HELM_ENVIRONMENT_VALUE_FILE = 'tmp_values.yaml' //todo: finne ut hvordan dette skal håndteres
     }
 
     stages {
@@ -124,7 +123,8 @@ pipeline {
                     sh "helm fetch --untar --untardir ./helm '${HELM_REPOSITORY_NAME}/${HELM_TEMPLATE_NAME}'"
                     sh 'ls -l'
                     sh "helm template --set DOCKER_IMAGE_NAME=${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:git_${gitCommit} " +
-                            "-f ${HELM_ENVIRONMENT_VALUE_FILE} ${HELM_WORKING_DIR}/${HELM_TEMPLATE_NAME}/ " +
+                            " --set NAMESPACE=${STAGING_K8S_NAMESPACE} " +
+                            "-f ${HELM_WORKING_DIR}/${HELM_TEMPLATE_NAME}/values/staging.yaml ${HELM_WORKING_DIR}/${HELM_TEMPLATE_NAME}/ " +
                             "> kubectlapply.yaml"
 
                     sh 'cat kubectlapply.yaml'
@@ -177,7 +177,8 @@ pipeline {
                     sh "helm fetch --untar --untardir ./helm '${HELM_REPOSITORY_NAME}/${HELM_TEMPLATE_NAME}'"
                     sh 'ls -l'
                     sh "helm template --set DOCKER_IMAGE_NAME=${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:git_${gitCommit} " +
-                            "-f ${HELM_ENVIRONMENT_VALUE_FILE} ${HELM_WORKING_DIR}/${HELM_TEMPLATE_NAME}/ " +
+                            " --set NAMESPACE=${PRODUCTION_K8S_NAMESPACE} " +
+                            "-f ${HELM_WORKING_DIR}/${HELM_TEMPLATE_NAME}/values/production.yaml ${HELM_WORKING_DIR}/${HELM_TEMPLATE_NAME}/ " +
                             "> kubectlapply.yaml"
 
                     sh 'cat kubectlapply.yaml'
