@@ -1,8 +1,0 @@
-#Disse skal ut herfra etter hvert
-#DOCKER_IMAGE_NAME: eu.gcr.io/fdk-infra/brreg/template-image-name:branch_feature_bjg_helm-template_build_50
-NAMESPACE: ut1
-
-#variabler som skal være her
-TEMPLATE_MONGO_USERNAME: mongouser
-TEMPLATE_MONGO_PASSWORD: mon3321pass4448wd
-TEMPLATE_MONGO_HOST: tmp-mongodb:27017
