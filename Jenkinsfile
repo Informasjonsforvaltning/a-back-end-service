@@ -87,6 +87,14 @@ pipeline {
 
 
         stage("Push to Docker registry") {
+            when {
+                beforeAgent true
+                //only push docker images for builds that are actually deployed
+                anyOf {
+                    changeRequest()
+                    branch 'master'
+                }
+            }
             agent {
                 label 'jenkins-maven'
             }
@@ -111,6 +119,7 @@ pipeline {
 
         stage('Deploy to staging') {
             when {
+                beforeAgent true
                 //TODO: Nå kjører den for alle Pull requests. Ønsker kun å kjøre når pull request er approved.
                 changeRequest()
             }
@@ -161,6 +170,10 @@ pipeline {
 
 
         stage('Wait for Approval') {
+            when {
+                branch 'master'
+                //todo: kanskje dette blir overflødig.
+            }
             steps{
                 slackSend channel: "${SLACK_APPROVAL_NOTIFICATION_CHANNEL}",
                         color: SLACK_COLOR_MAP[currentBuild.currentResult],
