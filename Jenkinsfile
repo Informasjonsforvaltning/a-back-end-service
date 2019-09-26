@@ -110,6 +110,11 @@ pipeline {
 
 
         stage('Deploy to staging') {
+            when {
+                //TODO: Nå kjører den for alle Pull requests. Ønsker kun å kjøre når pull request er approved.
+                changeRequest()
+            }
+
             agent {
                 label 'helm-kubectl'
             }
@@ -148,7 +153,7 @@ pipeline {
 
                         slackSend channel: "${SLACK_DEPLOY_NOTIFICATION_CHANNEL}",
                                 color: SLACK_COLOR_MAP[currentBuild.currentResult],
-                                message: " (${DOCKER_IMAGE_NAME}) Deploy: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} deployed to UT1"
+                                message: " (${DOCKER_IMAGE_NAME}) Deploy: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} deployed to Staging"
                     }
                 }
             }
@@ -168,11 +173,17 @@ pipeline {
 
 
         stage('Deploy to Production') {
+            when {
+                branch 'master'
+                //todo: den skal egentlig kjøre før merge. Først deploy til prod, så merge til master.
+            }
+
+            //TODO: tag
+
             steps{
                 container('helm-gcloud-kubectl') {
 
                     //Apply Helm template. Fetch from Helm template repository - currently not using Tiller
-                    //TODO: fikse value-filer eller selector for ulike miljø - se på helm best practice
                     sh "helm repo add ${HELM_REPOSITORY_NAME} ${HELM_REPOSITORY_URL}"
                     sh "helm fetch --untar --untardir ./helm '${HELM_REPOSITORY_NAME}/${HELM_TEMPLATE_NAME}'"
                     sh 'ls -l'
@@ -202,7 +213,7 @@ pipeline {
 
                         slackSend channel: "${SLACK_DEPLOY_NOTIFICATION_CHANNEL}",
                                 color: SLACK_COLOR_MAP[currentBuild.currentResult],
-                                message: " (${DOCKER_IMAGE_NAME}) Deploy: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} deployed to PROD"
+                                message: " (${DOCKER_IMAGE_NAME}) Deploy: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} deployed to production"
                     }
                 }
             }
