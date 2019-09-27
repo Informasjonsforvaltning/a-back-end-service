@@ -131,14 +131,6 @@ pipeline {
             //todo: finne ut av verifyDeployments - det funket ikke ut av boksen...
             steps {
                 container('helm-gcloud-kubectl') {
-                    withCredentials([usernamePassword(credentialsId: 'systemjenkins', passwordVariable: 'PW', usernameVariable: 'UN')]) {
-                        echo "Brukernavn: ${UN}"
-                        echo "Passord: ${PW}"
-                    }
-
-                    //sh("git config user.name ${}" )
-                    //sh("git tag -a -m'Deploy to staging' deploy_staging_${env.BUILD_TAG}")
-                    //sh("git push --tags")
 
                     //Apply Helm template. Fetch from Helm template repository - currently not using Tiller
                     sh "helm repo add ${HELM_REPOSITORY_NAME} ${HELM_REPOSITORY_URL}"
@@ -158,6 +150,13 @@ pipeline {
                           manifestPattern: 'kubectlapply.yaml',
                           credentialsId: "${STAGING_GCP_PROJECT}",
                           verifyDeployments: false])
+
+                    withCredentials([usernamePassword(credentialsId: 'systemjenkins', passwordVariable: 'githubPassowrd', usernameVariable: 'githubUsername')]) {
+                        sh("git config user.name 'Jenkins system user'" )
+                        sh("git config user.email'systemjenkins@fellesdatakatalog.brreg.no'")
+                        sh("git tag -a -m'Deploy to staging' deploy_staging_${env.BUILD_TAG}")
+                        sh("git push --tags")
+                    }
                 }
             }
             post {
