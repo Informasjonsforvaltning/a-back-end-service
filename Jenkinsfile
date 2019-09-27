@@ -4,6 +4,8 @@ Build pipeline for Felles Datakatalog template service
 This pipeline does not include deploy steps
  */
 
+import java.text.SimpleDateFormat
+
 //colors for Slack messages
 def SLACK_COLOR_MAP = ['SUCCESS': 'good', 'FAILURE': 'danger', 'UNSTABLE': 'danger', 'ABORTED': 'danger']
 
