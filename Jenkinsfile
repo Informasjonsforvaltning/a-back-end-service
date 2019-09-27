@@ -170,7 +170,7 @@ pipeline {
                         sh("git config user.email '${GITHUB_USER_EMAIL}'")
                         sh("git tag -a -m'Deployed to staging at: ${getTimestamp()}' deploy_staging_${env.BUILD_TAG}")
                         sh("git tag -f -a -m'Deployed to staging at: ${getTimestamp()}' deploy_staging_latest")
-                        sh("git push https://${githubUsername}:${githubPassword}@github.com/${GITHUB_ORGANIZATION}/${GITHUB_REPOSITORY}.git --tags")
+                        sh("git push -f https://${githubUsername}:${githubPassword}@github.com/${GITHUB_ORGANIZATION}/${GITHUB_REPOSITORY}.git --tags")
                     }
                 }
             }
