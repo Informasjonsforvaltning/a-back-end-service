@@ -169,7 +169,7 @@ pipeline {
                         sh("git config user.name '${GITHUB_USER_NAME}'" )
                         sh("git config user.email '${GITHUB_USER_EMAIL}'")
                         sh("git tag -a -m'Deployed to staging at: ${getTimestamp()}' deploy_staging_${env.BUILD_TAG}")
-                        sh("git tag -f -a -m'Deploy to staging' deploy_staging_latest")
+                        sh("git tag -f -a -m'Deployed to staging at: ${getTimestamp()}' deploy_staging_latest")
                         sh("git push https://${githubUsername}:${githubPassword}@github.com/${GITHUB_ORGANIZATION}/${GITHUB_REPOSITORY}.git --tags")
                     }
                 }
@@ -237,6 +237,14 @@ pipeline {
                           manifestPattern: 'kubectlapply.yaml',
                           credentialsId: "${PRODUCTION_GCP_PROJECT}",
                           verifyDeployments: false])
+
+                    withCredentials([usernamePassword(credentialsId: 'systemjenkins', passwordVariable: 'githubPassword', usernameVariable: 'githubUsername')]) {
+                        sh("git config user.name '${GITHUB_USER_NAME}'" )
+                        sh("git config user.email '${GITHUB_USER_EMAIL}'")
+                        sh("git tag -a -m'Deployed to production at: ${getTimestamp()}' deploy_production_${env.BUILD_TAG}")
+                        sh("git tag -f -a -m'Deployed to production at: ${getTimestamp()}' deploy_production_latest")
+                        sh("git push https://${githubUsername}:${githubPassword}@github.com/${GITHUB_ORGANIZATION}/${GITHUB_REPOSITORY}.git --tags")
+                    }
                 }
             }
             post {
