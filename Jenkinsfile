@@ -21,7 +21,12 @@ def getChangeAuthors() {
     }.unique().flatten()
 }
 
-
+//get formatted timestamp
+def getTimestamp() {
+    dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+    date = new Date()
+    return dateFormat.format(date)
+}
 
 
 
@@ -57,6 +62,13 @@ pipeline {
         HELM_TEMPLATE_NAME = 'a-back-end-service'
         DOCKER_IMAGE_NAME = 'brreg/template-image-name'
         DOCKER_IMAGE_TAG = 'latest'
+
+        //identity of user Jenkins uses to push tags to git repository
+        //TODO: sjekk om disse kan erstattes av scm variabelen
+        GITHUB_ORGANIZATION = 'Informasjonsforvaltning'
+        GITHUB_REPOSITORY = 'a-backend-service'
+        GITHUB_USER_NAME = 'Jenkins system user'
+        GITHUB_USER_EMAIL = 'systemjenkins@fellesdatakatalog.brreg.no'
     }
 
     stages {
@@ -152,10 +164,11 @@ pipeline {
                           verifyDeployments: false])
 
                     withCredentials([usernamePassword(credentialsId: 'systemjenkins', passwordVariable: 'githubPassword', usernameVariable: 'githubUsername')]) {
-                        sh("git config user.name 'Jenkins system user'" )
-                        sh("git config user.email 'systemjenkins@fellesdatakatalog.brreg.no'")
-                        sh("git tag -a -m'Deploy to staging' deploy_staging_${env.BUILD_TAG}")
-                        sh("git push https://${githubUsername}:${githubPassword}@github.com/Informasjonsforvaltning/a-backend-service.git --tags")
+                        sh("git config user.name '${GITHUB_USER_NAME}'" )
+                        sh("git config user.email '${GITHUB_USER_EMAIL}'")
+                        sh("git tag -a -m'Deployed to staging at: ${getTimestamp()}' deploy_staging_${env.BUILD_TAG}")
+                        sh("git tag -f -a -m'Deploy to staging' deploy_staging_latest")
+                        sh("git push https://${githubUsername}:${githubPassword}@github.com/${GITHUB_ORGANIZATION}/${GITHUB_REPOSITORY}.git --tags")
                     }
                 }
             }
