@@ -18,8 +18,8 @@ import static no.template.TestDataKt.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Ignore
 @Tag("service")
+@Ignore
 class ServiceEndpointApiServiceTest {
   private static File testComposeFile = TestUtilsKt.createTmpComposeFile();
   private final static Logger logger = LoggerFactory.getLogger(ServiceEndpointApiServiceTest.class);
