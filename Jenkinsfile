@@ -132,6 +132,11 @@ pipeline {
             steps {
                 container('helm-gcloud-kubectl') {
 
+                    sh('echo before tagging')
+                    sh("git tag -a -m'Deploy to staging' deploy_staging_${env.BUILD_TAG}")
+                    sh("git push --tags")
+                    sh('echo after tagging')
+
                     //Apply Helm template. Fetch from Helm template repository - currently not using Tiller
                     sh "helm repo add ${HELM_REPOSITORY_NAME} ${HELM_REPOSITORY_URL}"
                     sh "helm fetch --untar --untardir ./helm '${HELM_REPOSITORY_NAME}/${HELM_TEMPLATE_NAME}'"
@@ -195,10 +200,7 @@ pipeline {
 
             steps{
                 container('helm-gcloud-kubectl') {
-                    sh('echo before tagging')
-                    sh("git tag -a -m'Deploy to staging' deploy_staging_${env.BUILD_TAG}")
-                    sh("git push --tags")
-                    sh('echo after tagging')
+
 
                     //Apply Helm template. Fetch from Helm template repository - currently not using Tiller
                     sh "helm repo add ${HELM_REPOSITORY_NAME} ${HELM_REPOSITORY_URL}"
