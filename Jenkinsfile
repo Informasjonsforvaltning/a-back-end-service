@@ -155,7 +155,7 @@ pipeline {
                         sh("git config user.name 'Jenkins system user'" )
                         sh("git config user.email 'systemjenkins@fellesdatakatalog.brreg.no'")
                         sh("git tag -a -m'Deploy to staging' deploy_staging_${env.BUILD_TAG}")
-                        sh("git push --tags")
+                        sh("git push ${githubUsername}:${githubPassword}@https://github.com/Informasjonsforvaltning/a-backend-service.git --tags")
                     }
                 }
             }
