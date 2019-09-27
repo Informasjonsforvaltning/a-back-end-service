@@ -131,11 +131,14 @@ pipeline {
             //todo: finne ut av verifyDeployments - det funket ikke ut av boksen...
             steps {
                 container('helm-gcloud-kubectl') {
+                    withCredentials([usernamePassword(credentialsId: 'systemjenkins', passwordVariable: 'PW', usernameVariable: 'UN')]) {
+                        echo "Brukernavn: ${UN}"
+                        echo "Passord: ${PW}"
+                    }
 
-                    sh('echo before tagging')
-                    sh("git tag -a -m'Deploy to staging' deploy_staging_${env.BUILD_TAG}")
-                    sh("git push --tags")
-                    sh('echo after tagging')
+                    //sh("git config user.name ${}" )
+                    //sh("git tag -a -m'Deploy to staging' deploy_staging_${env.BUILD_TAG}")
+                    //sh("git push --tags")
 
                     //Apply Helm template. Fetch from Helm template repository - currently not using Tiller
                     sh "helm repo add ${HELM_REPOSITORY_NAME} ${HELM_REPOSITORY_URL}"
