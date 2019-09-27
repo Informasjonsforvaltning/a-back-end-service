@@ -14,6 +14,8 @@ import org.springframework.web.servlet.DispatcherServlet;
 @SpringBootApplication
 public class Application {
 
+    //fore build 1212123
+
     private static Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
     @Bean(name = DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_BEAN_NAME)
