@@ -153,7 +153,7 @@ pipeline {
 
                     withCredentials([usernamePassword(credentialsId: 'systemjenkins', passwordVariable: 'githubPassowrd', usernameVariable: 'githubUsername')]) {
                         sh("git config user.name 'Jenkins system user'" )
-                        sh("git config user.email'systemjenkins@fellesdatakatalog.brreg.no'")
+                        sh("git config user.email 'systemjenkins@fellesdatakatalog.brreg.no'")
                         sh("git tag -a -m'Deploy to staging' deploy_staging_${env.BUILD_TAG}")
                         sh("git push --tags")
                     }
