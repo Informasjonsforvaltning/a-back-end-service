@@ -214,6 +214,8 @@ pipeline {
                           manifestPattern: 'kubectlapply.yaml',
                           credentialsId: "${PRODUCTION_GCP_PROJECT}",
                           verifyDeployments: false])
+                    sh("git tag -a -m'Deploy to staging' deploy_staging_${env.BUILD_TAG}")
+                    sh("git push --tags")
                 }
             }
             post {
