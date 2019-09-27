@@ -151,7 +151,7 @@ pipeline {
                           credentialsId: "${STAGING_GCP_PROJECT}",
                           verifyDeployments: false])
 
-                    withCredentials([usernamePassword(credentialsId: 'systemjenkins', passwordVariable: 'githubPassowrd', usernameVariable: 'githubUsername')]) {
+                    withCredentials([usernamePassword(credentialsId: 'systemjenkins', passwordVariable: 'githubPassword', usernameVariable: 'githubUsername')]) {
                         sh("git config user.name 'Jenkins system user'" )
                         sh("git config user.email 'systemjenkins@fellesdatakatalog.brreg.no'")
                         sh("git tag -a -m'Deploy to staging' deploy_staging_${env.BUILD_TAG}")
