@@ -5,6 +5,7 @@ import no.template.generated.model.Version
 import no.template.model.ServiceEndpointDB
 import org.bson.types.ObjectId
 import java.net.URI
+import java.net.URL
 
 const val API_SERVICE_NAME = "template"
 const val API_PORT = 8080
@@ -28,7 +29,7 @@ fun createServiceEndpointDB(objectId: ObjectId?) =
     ServiceEndpointDB().apply {
         id = objectId
         name = "Endpoint name"
-        uri = URI("http://localhost:$API_PORT/version")
+        uri = URL("http://localhost:$API_PORT/version")
     }
 
 fun createServiceEndpoint(hexStringId: String?) =
