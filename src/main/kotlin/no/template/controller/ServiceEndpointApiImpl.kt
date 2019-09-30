@@ -10,6 +10,7 @@ import org.springframework.dao.DuplicateKeyException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
+import java.net.MalformedURLException
 import javax.validation.ConstraintViolationException
 
 private val LOGGER = LoggerFactory.getLogger(ServiceEndpointApiImpl::class.java)
@@ -30,7 +31,8 @@ open class ServiceEndpointApiImpl (
             ResponseEntity<Void>(HttpStatus.CREATED)
         } catch (exception: Exception) {
           LOGGER.error("createServiceEndpoint failed:", exception)
-          when (exception) {
+          when (exception){
+            is MalformedURLException -> ResponseEntity<Void>(HttpStatus.BAD_REQUEST)
             is ConstraintViolationException -> ResponseEntity<Void>(HttpStatus.BAD_REQUEST)
             is DuplicateKeyException -> ResponseEntity(HttpStatus.CONFLICT)
             else -> ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
