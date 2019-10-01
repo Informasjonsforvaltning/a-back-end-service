@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("service")
-@Disabled
 class ServiceEndpointApiServiceTest {
   private static File testComposeFile = TestUtilsKt.createTmpComposeFile();
   private final static Logger logger = LoggerFactory.getLogger(ServiceEndpointApiServiceTest.class);
@@ -71,6 +70,8 @@ class ServiceEndpointApiServiceTest {
     assertTrue(response.contains("versionId"));
   }
 
+
+  
   @Test
   void createServiceEndpointShouldReturnForbiddenWhenNotAdmin() {
     String response = TestUtilsKt.simpleGet(
@@ -80,7 +81,6 @@ class ServiceEndpointApiServiceTest {
 
     assertEquals("{\"total\":0,\"serviceEndpoints\":[]}", response);
   }
-
 /*
   @Test
   @WithMockUser(authorities = {"admin"})

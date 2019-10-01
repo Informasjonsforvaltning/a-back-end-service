@@ -11,15 +11,16 @@ fun createTmpComposeFile(): File {
     tmpFile.writeText("version: \"3.2\"\n" +
         "\n" +
         "services:\n" +
-        "  template:\n" +
+        "  $API_SERVICE_NAME:\n" +
         "    image: brreg/template-image-name:latest\n" +
         "    environment:\n" +
         "      - TEMPLATE_MONGO_USERNAME=$MONGO_USER\n" +
         "      - TEMPLATE_MONGO_PASSWORD=$MONGO_PASSWORD\n" +
+        "      - TEMPLATE_MONGO_HOST=$MONGO_SERVICE_NAME:$MONGO_PORT\n" +
         "    depends_on:\n" +
-        "      - mongodb\n" +
+        "      - $MONGO_SERVICE_NAME\n" +
         "\n" +
-        "  mongodb:\n" +
+        "  $MONGO_SERVICE_NAME:\n" +
         "    image: mongo:latest\n" +
         "    environment:\n" +
         "      - MONGO_INITDB_ROOT_USERNAME=$MONGO_USER\n" +
