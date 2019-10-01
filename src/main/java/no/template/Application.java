@@ -14,7 +14,6 @@ import org.springframework.web.servlet.DispatcherServlet;
 @SpringBootApplication
 public class Application {
 
-    //fore build 1212123 543545454 49857234895458
 
     private static Logger LOGGER = LoggerFactory.getLogger(Application.class);
 

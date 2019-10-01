@@ -172,6 +172,11 @@ pipeline {
                         sh("git tag -f -a -m'Deployed to staging at: ${getTimestamp()}' deploy_staging_latest")
                         sh("git push -f https://${githubUsername}:${githubPassword}@github.com/${GITHUB_ORGANIZATION}/${GITHUB_REPOSITORY}.git --tags")
                     }
+
+                    sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_staging_${env.BUILD_TAG}"
+                    sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_staging_latest"
+                    sh "docker push ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_staging_${env.BUILD_TAG}"
+                    sh "docker push ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_staging_latest"
                 }
             }
             post {
