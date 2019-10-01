@@ -54,6 +54,12 @@ paths:
                 type: string
                 format: uri
               description: url to the new service endpoint
+        '400':
+          description: Bad request. Required arguments name and url is missing or invalid.
+        '403':
+          description: Forbidden. User does not have access to edit resource
+        '409':
+          description: Conflict. Attempt to add existing service endpoint was denied.
       requestBody:
         required: true
         content:
