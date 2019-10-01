@@ -14,6 +14,7 @@ Set environment variables
 export SONAR_LOGIN=<obtain-key-from-sonar>
 export TEMPLATE_MONGO_USERNAME=<anything>
 export TEMPLATE_MONGO_PASSWORD=<anything>
+export TEMPLATE_MONGO_HOST=mongodb:27017
 ```
 
 Or you can put the variables in a .env file in the root directory of your project.
