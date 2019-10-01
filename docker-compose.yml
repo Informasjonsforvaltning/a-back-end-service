@@ -9,6 +9,7 @@ services:
     environment:
       - TEMPLATE_MONGO_USERNAME
       - TEMPLATE_MONGO_PASSWORD
+      - TEMPLATE_MONGO_HOST
     ports:
       - 8080:8080
 
