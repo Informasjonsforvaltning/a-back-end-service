@@ -82,6 +82,7 @@ pipeline {
                 script {
                     scmVars = checkout(scm)
                     echo "scmVars: ${scmVars}"
+                    echo "git reposiory without https:// -> ${scmVars.GIT_URL.drop(8)}"
                 }
                 container('cloud-sdk') {
                     withMaven(maven: 'M3') {
@@ -198,7 +199,7 @@ pipeline {
                                 color: SLACK_COLOR_MAP[currentBuild.currentResult],
                                 message: " (${DOCKER_IMAGE_NAME}) Deploy: ${currentBuild.fullDisplayName}, " +
                                         "with Git commit hash: ${gitCommit} " +
-                                        "and tag ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_staging_${env.BUILD_TAG}" +
+                                        "and tag ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_staging_${env.BUILD_TAG} " +
                                         "by ${changeAuthors} deployed to Staging"
                     }
                 }
@@ -282,7 +283,7 @@ pipeline {
                                 color: SLACK_COLOR_MAP[currentBuild.currentResult],
                                 message: " (${DOCKER_IMAGE_NAME}) Deploy: ${currentBuild.fullDisplayName}, " +
                                         "with Git commit hash: ${gitCommit} " +
-                                        "and tag ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_production_${env.BUILD_TAG}" +
+                                        "and tag ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_production_${env.BUILD_TAG} " +
                                         "by ${changeAuthors} deployed to Production"
                     }
                 }
