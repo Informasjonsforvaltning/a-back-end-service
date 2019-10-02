@@ -191,14 +191,15 @@ pipeline {
             post {
                 success {
                     script {
-                        //git tag hvis suksessfult. Vis git tag i slack melding
-                        //docker tag deployed også
                         changeAuthors = getChangeAuthors()
                         gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
 
                         slackSend channel: "${SLACK_DEPLOY_NOTIFICATION_CHANNEL}",
                                 color: SLACK_COLOR_MAP[currentBuild.currentResult],
-                                message: " (${DOCKER_IMAGE_NAME}) Deploy: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} deployed to Staging"
+                                message: " (${DOCKER_IMAGE_NAME}) Deploy: ${currentBuild.fullDisplayName}, " +
+                                        "with Git commit hash: ${gitCommit} " +
+                                        "and tag ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_staging_${env.BUILD_TAG}" +
+                                        "by ${changeAuthors} deployed to Staging"
                     }
                 }
             }
@@ -258,20 +259,31 @@ pipeline {
                         sh("git tag -a -m'Deployed to production at: ${getTimestamp()}' deploy_production_${env.BUILD_TAG}")
                         sh("git tag -f -a -m'Deployed to production at: ${getTimestamp()}' deploy_production_latest")
                         sh("git push -f https://${githubUsername}:${githubPassword}@github.com/${GITHUB_ORGANIZATION}/${GITHUB_REPOSITORY}.git --tags")
+                    }
                 }
+                container('cloud-sdk') {
+                    withCredentials([file(credentialsId: 'fdk-infra-file', variable: 'SA')]) {
+                        sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
+                    }
+
+                    sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_production_${env.BUILD_TAG}"
+                    sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_production_latest"
+                    sh "docker push ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_production_${env.BUILD_TAG}"
+                    sh "docker push ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_production_latest"
                 }
             }
             post {
                 success {
                     script {
-                        //git tag hvis suksessfult. Vis git tag i slack melding
-                        //docker tag deployed også
                         changeAuthors = getChangeAuthors()
                         gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
 
                         slackSend channel: "${SLACK_DEPLOY_NOTIFICATION_CHANNEL}",
                                 color: SLACK_COLOR_MAP[currentBuild.currentResult],
-                                message: " (${DOCKER_IMAGE_NAME}) Deploy: ${currentBuild.fullDisplayName}, with Git commit hash: ${gitCommit} by ${changeAuthors} deployed to production"
+                                message: " (${DOCKER_IMAGE_NAME}) Deploy: ${currentBuild.fullDisplayName}, " +
+                                        "with Git commit hash: ${gitCommit} " +
+                                        "and tag ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_production_${env.BUILD_TAG}" +
+                                        "by ${changeAuthors} deployed to Production"
                     }
                 }
             }
