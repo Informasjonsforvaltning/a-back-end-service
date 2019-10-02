@@ -191,7 +191,7 @@ pipeline {
                         sh("git config user.email '${GITHUB_USER_EMAIL}'")
                         sh("git tag -a -m'Deployed to staging at: ${getTimestamp()}' deploy_staging_${env.BUILD_TAG}")
                         sh("git tag -f -a -m'Deployed to staging at: ${getTimestamp()}' deploy_staging_latest")
-                        sh("git push -f https://${githubUsername}:${githubPassword}@${scmVars.GIT_URL.drop(8) --tags")
+                        sh("git push -f https://${githubUsername}:${githubPassword}@${scmVars.GIT_URL.drop(8)} --tags")
                     }
                 }
                 container('cloud-sdk') {
@@ -273,7 +273,7 @@ pipeline {
                         sh("git config user.email '${GITHUB_USER_EMAIL}'")
                         sh("git tag -a -m'Deployed to production at: ${getTimestamp()}' deploy_production_${env.BUILD_TAG}")
                         sh("git tag -f -a -m'Deployed to production at: ${getTimestamp()}' deploy_production_latest")
-                        sh("git push -f https://${githubUsername}:${githubPassword}@${scmVars.GIT_URL.drop(8) --tags")
+                        sh("git push -f https://${githubUsername}:${githubPassword}@${scmVars.GIT_URL.drop(8)} --tags")
                     }
                 }
                 container('cloud-sdk') {
