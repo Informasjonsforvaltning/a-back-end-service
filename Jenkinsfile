@@ -1,7 +1,15 @@
 #!groovy
 /*
 Build pipeline for Felles Datakatalog template service
-This pipeline does not include deploy steps
+
+The pipeline is designed to build with Maven,
+and uses Docker and Helm templates to deploy
+to a Kubernetes cluster on Google Cloud
+
+The pipeline deploys to two environments: staging and production
+
+Some variables in the environment section needs to be configured
+for each individual repository
  */
 
 import java.text.SimpleDateFormat
@@ -39,22 +47,38 @@ pipeline {
         label 'helm-kubectl'
     }
 
+    //customise this as necessary
     environment {
+    }
+        //jenkins credentials used by git to access github repository
+        GIT_CREDENTIALS_ID = 'systemjenkins'
+
+        //Jenkins credentials used to access Googlec Cloud platform Docker registry
+        GCP_DOCKER_REGISTRY_CREADENTIALS_ID = 'fdk-infra-file'
+
         HELM_REPOSITORY_NAME = 'fdk'
         HELM_REPOSITORY_URL = 'https://informasjonsforvaltning.github.io/helm-chart/'
         DOCKER_REGISTRY_URL = 'eu.gcr.io/fdk-infra/'
         HELM_WORKING_DIR = 'helm'
+
+        //Jenkins users allowed to approve deploy to production. Comma-separated list.
         PROD_DEPLOY_APPROVERS = 'bjorn_grova,ssa'
 
         SLACK_BUILD_NOTIFICATION_CHANNEL = '#jenkins'
         SLACK_DEPLOY_NOTIFICATION_CHANNEL = '#jenkins'
         SLACK_APPROVAL_NOTIFICATION_CHANNEL = '#jenkins-godkjenning'
 
+        //identity of user Jenkins uses to push tags to git repository
+        GITHUB_USER_NAME = 'Jenkins system user'
+        GITHUB_USER_EMAIL = 'systemjenkins@fellesdatakatalog.brreg.no'
+
+        //configuration of staging environment on Google Kubernetes Engine
         STAGING_GCP_ZONE = 'europe-north1-a'
         STAGING_GCP_PROJECT = 'fdk-dev'
         STAGING_K8S_CLUSTER = 'fdk-dev'
         STAGING_K8S_NAMESPACE = 'ut1'
 
+        //configuration of production environment on Google Kubernetes Engine
         PRODUCTION_GCP_ZONE = 'europe-north1-a'
         PRODUCTION_GCP_PROJECT = 'fdk-prod'
         PRODUCTION_K8S_CLUSTER = 'fdk-prod'
@@ -64,13 +88,6 @@ pipeline {
         HELM_TEMPLATE_NAME = 'a-back-end-service'
         DOCKER_IMAGE_NAME = 'brreg/template-image-name'
         DOCKER_IMAGE_TAG = 'latest'
-
-        //identity of user Jenkins uses to push tags to git repository
-        //TODO: sjekk om disse kan erstattes av scm variabelen
-        GITHUB_ORGANIZATION = 'Informasjonsforvaltning'
-        GITHUB_REPOSITORY = 'a-backend-service'
-        GITHUB_USER_NAME = 'Jenkins system user'
-        GITHUB_USER_EMAIL = 'systemjenkins@fellesdatakatalog.brreg.no'
     }
 
     stages {
@@ -80,9 +97,8 @@ pipeline {
             }
             steps {
                 script {
+                    //get information about Git repo for later use
                     scmVars = checkout(scm)
-                    echo "scmVars: ${scmVars}"
-                    echo "git reposiory without https:// -> ${scmVars.GIT_URL.drop(8)}"
                 }
                 container('cloud-sdk') {
                     withMaven(maven: 'M3') {
@@ -108,7 +124,8 @@ pipeline {
         stage("Push to Docker registry") {
             when {
                 beforeAgent true
-                //only push docker images for builds that are actually deployed
+                //only push docker images for builds that are actually deployed:
+                //builds of pull requests and on master
                 anyOf {
                     changeRequest()
                     branch 'master'
@@ -146,7 +163,6 @@ pipeline {
             agent {
                 label 'helm-kubectl'
             }
-            //todo step med git tag etter vellykket deploy
             //todo: finne ut av verifyDeployments - det funket ikke ut av boksen...
             steps {
                 container('helm-gcloud-kubectl') {
@@ -170,16 +186,16 @@ pipeline {
                           credentialsId: "${STAGING_GCP_PROJECT}",
                           verifyDeployments: false])
 
-                    withCredentials([usernamePassword(credentialsId: 'systemjenkins', passwordVariable: 'githubPassword', usernameVariable: 'githubUsername')]) {
+                    withCredentials([usernamePassword(credentialsId: "${GIT_CREDENTIALS_ID}", passwordVariable: 'githubPassword', usernameVariable: 'githubUsername')]) {
                         sh("git config user.name '${GITHUB_USER_NAME}'" )
                         sh("git config user.email '${GITHUB_USER_EMAIL}'")
                         sh("git tag -a -m'Deployed to staging at: ${getTimestamp()}' deploy_staging_${env.BUILD_TAG}")
                         sh("git tag -f -a -m'Deployed to staging at: ${getTimestamp()}' deploy_staging_latest")
-                        sh("git push -f https://${githubUsername}:${githubPassword}@github.com/${GITHUB_ORGANIZATION}/${GITHUB_REPOSITORY}.git --tags")
+                        sh("git push -f https://${githubUsername}:${githubPassword}@${scmVars.GIT_URL.drop(8) --tags")
                     }
                 }
                 container('cloud-sdk') {
-                    withCredentials([file(credentialsId: 'fdk-infra-file', variable: 'SA')]) {
+                    withCredentials([file(credentialsId: "${GCP_DOCKER_REGISTRY_CREADENTIALS_ID}", variable: 'SA')]) {
                         sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
                     }
 
@@ -229,8 +245,6 @@ pipeline {
                 //todo: den skal egentlig kjøre før merge. Først deploy til prod, så merge til master.
             }
 
-            //TODO: tag
-
             steps{
                 container('helm-gcloud-kubectl') {
 
@@ -254,16 +268,16 @@ pipeline {
                           credentialsId: "${PRODUCTION_GCP_PROJECT}",
                           verifyDeployments: false])
 
-                    withCredentials([usernamePassword(credentialsId: 'systemjenkins', passwordVariable: 'githubPassword', usernameVariable: 'githubUsername')]) {
+                    withCredentials([usernamePassword(credentialsId: "${GIT_CREDENTIALS_ID}", passwordVariable: 'githubPassword', usernameVariable: 'githubUsername')]) {
                         sh("git config user.name '${GITHUB_USER_NAME}'" )
                         sh("git config user.email '${GITHUB_USER_EMAIL}'")
                         sh("git tag -a -m'Deployed to production at: ${getTimestamp()}' deploy_production_${env.BUILD_TAG}")
                         sh("git tag -f -a -m'Deployed to production at: ${getTimestamp()}' deploy_production_latest")
-                        sh("git push -f https://${githubUsername}:${githubPassword}@github.com/${GITHUB_ORGANIZATION}/${GITHUB_REPOSITORY}.git --tags")
+                        sh("git push -f https://${githubUsername}:${githubPassword}@${scmVars.GIT_URL.drop(8) --tags")
                     }
                 }
                 container('cloud-sdk') {
-                    withCredentials([file(credentialsId: 'fdk-infra-file', variable: 'SA')]) {
+                    withCredentials([file(credentialsId: "${GCP_DOCKER_REGISTRY_CREADENTIALS_ID}", variable: 'SA')]) {
                         sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
                     }
 
