@@ -79,8 +79,10 @@ pipeline {
                 label 'jenkins-maven'
             }
             steps {
-                scmVars = checkout(scm)
-                echo "scmVars: ${scmVars}"
+                script {
+                    scmVars = checkout(scm)
+                    echo "scmVars: ${scmVars}"
+                }
                 container('cloud-sdk') {
                     withMaven(maven: 'M3') {
                         echo "Build"
