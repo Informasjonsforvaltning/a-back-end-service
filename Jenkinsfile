@@ -49,7 +49,6 @@ pipeline {
 
     //customise this as necessary
     environment {
-    }
         //jenkins credentials used by git to access github repository
         GIT_CREDENTIALS_ID = 'systemjenkins'
 
