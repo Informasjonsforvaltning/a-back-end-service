@@ -3,64 +3,27 @@ package no.template.integration;
 import java.io.File;
 
 import no.template.TestUtilsKt;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Disabled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
-import org.testcontainers.containers.wait.strategy.Wait;
 
 import static no.template.TestDataKt.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("service")
-class ServiceEndpointApiServiceTest {
-  private static File testComposeFile = TestUtilsKt.createTmpComposeFile();
+class ServiceEndpointApiServiceTest extends AbstractDockerTestContainer{
   private final static Logger logger = LoggerFactory.getLogger(ServiceEndpointApiServiceTest.class);
   private static Slf4jLogConsumer mongoLog = new Slf4jLogConsumer(logger).withPrefix("mongo-container");
   private static Slf4jLogConsumer apiLog = new Slf4jLogConsumer(logger).withPrefix("api-container");
-  private static DockerComposeContainer api;
-
-  @BeforeAll
-  static void setup() {
-    if (testComposeFile != null && testComposeFile.exists()) {
-      api = new DockerComposeContainer<>(testComposeFile)
-          .withExposedService(MONGO_SERVICE_NAME, MONGO_PORT, Wait.forListeningPort())
-          .withExposedService(API_SERVICE_NAME, API_PORT, Wait.forHttp("/version").forStatusCode(200))
-          .withTailChildContainers(true)
-          .withPull(false)
-          .withLocalCompose(true)
-          .withLogConsumer(MONGO_SERVICE_NAME, mongoLog)
-          .withLogConsumer(API_SERVICE_NAME, apiLog);
-
-      api.start();
-    } else {
-      logger.debug("Unable to start containers, missing test-compose.yml");
-    }
-
-  }
-
-  @AfterAll
-  static void teardown() {
-    if (testComposeFile != null && testComposeFile.exists()) {
-      api.stop();
-
-      logger.debug("Delete temporary test-compose.yml: " + testComposeFile.delete());
-    } else {
-      logger.debug("Teardown skipped, missing test-compose.yml");
-    }
-  }
 
   @Test
   void version() {
     String response = TestUtilsKt.simpleGet(
-        api.getServiceHost(API_SERVICE_NAME, API_PORT),
-        api.getServicePort(API_SERVICE_NAME, API_PORT),
+        TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
+        TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
         "/version");
     
     assertTrue(response.contains("repositoryUrl"));
@@ -71,12 +34,12 @@ class ServiceEndpointApiServiceTest {
   }
 
 
-  
+
   @Test
   void createServiceEndpointShouldReturnForbiddenWhenNotAdmin() {
     String response = TestUtilsKt.simpleGet(
-        api.getServiceHost(API_SERVICE_NAME, API_PORT),
-        api.getServicePort(API_SERVICE_NAME, API_PORT),
+        TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
+        TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
         "/serviceendpoints");
 
     assertEquals("{\"total\":0,\"serviceEndpoints\":[]}", response);
