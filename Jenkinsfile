@@ -79,6 +79,8 @@ pipeline {
                 label 'jenkins-maven'
             }
             steps {
+                final scmVars = checkout(scm)
+                echo "scmVars: ${scmVars}"
                 container('cloud-sdk') {
                     withMaven(maven: 'M3') {
                         echo "Build"
@@ -173,10 +175,17 @@ pipeline {
                         sh("git push -f https://${githubUsername}:${githubPassword}@github.com/${GITHUB_ORGANIZATION}/${GITHUB_REPOSITORY}.git --tags")
                     }
 
-                    sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_staging_${env.BUILD_TAG}"
-                    sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_staging_latest"
-                    sh "docker push ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_staging_${env.BUILD_TAG}"
-                    sh "docker push ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_staging_latest"
+                    container('cloud-sdk') {
+                        withCredentials([file(credentialsId: 'fdk-infra-file', variable: 'SA')]) {
+                            sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
+                        }
+
+                        sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_staging_${env.BUILD_TAG}"
+                        sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_staging_latest"
+                        sh "docker push ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_staging_${env.BUILD_TAG}"
+                        sh "docker push ${DOCKER_REGISTRY_URL}${DOCKER_IMAGE_NAME}:deploy_staging_latest"
+                    }
+
                 }
             }
             post {
