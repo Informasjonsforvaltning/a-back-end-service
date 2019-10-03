@@ -2,6 +2,7 @@ package no.template
 
 import java.io.BufferedReader
 import java.io.File
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -47,14 +48,28 @@ fun getContent(host: String, port: Int, address: String): Map<String,String> {
     return response
 }
 
-fun simplePost(host: String, port: Int, address: String): String {
-    val connection = URL("http", host, port, address).openConnection() as HttpURLConnection
 
+fun simplePost(host: String, port: Int, address: String,body: String?): Map<String, String> {
+    val connection = URL("http", host, port, address).openConnection() as HttpURLConnection
     connection.requestMethod = "POST"
     connection.setRequestProperty("Content-type", "application/json")
     connection.setRequestProperty("Accept", "application/json")
+    connection.doOutput = true
 
-    return connection.inputStream
-        .bufferedReader()
-        .use(BufferedReader::readText)
+    try {
+        connection.outputStream.bufferedWriter().write(body)
+        connection.outputStream.flush()
+        connection.outputStream.close()
+
+        val response = mapOf<String,String>(
+                "body" to connection.getInputStream().bufferedReader().use (BufferedReader :: readText),
+                "header" to connection.getHeaderFields().toString(),
+                "status" to connection.getHeaderField(0).split(" ")[1]
+        )
+        return response
+
+    } catch (e: Exception){
+        val status = e.message?:"unknown"
+        return mapOf("status" to status)
+    }
 }

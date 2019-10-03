@@ -56,6 +56,8 @@ paths:
               description: url to the new service endpoint
         '400':
           description: Bad request. Required arguments name and url is missing or invalid.
+        '401':
+          description: Unauthorized
         '403':
           description: Forbidden. User does not have access to edit resource
         '409':

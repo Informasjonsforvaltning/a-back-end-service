@@ -1,8 +1,9 @@
+package no.template
+
 /**
- * Expect style wrapper for jupier assertions
+ * Expect assertion style wrapper for jupiter assertions
  */
 
-package no.template
 
 import org.junit.jupiter.api.Assertions
 

@@ -6,6 +6,7 @@ import no.template.model.ServiceEndpointDB
 import org.bson.types.ObjectId
 import java.net.URI
 import java.net.URL
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
 const val API_SERVICE_NAME = "template"
 const val API_PORT = 8080
@@ -38,6 +39,14 @@ fun createServiceEndpoint(hexStringId: String?) =
         name = "Endpoint name"
         uri = URI("http://localhost:$API_PORT/version")
     }
+
+fun jsonServiceEndpointObject (name: String): String? {
+    val map = mapOf<String,String>(
+            "name" to name,
+            "uri" to "http://nothing.org/${name}"
+    )
+    return jacksonObjectMapper().writeValueAsString(map)
+}
 
 private fun createServiceEndpointWithVersionData(hexStringId: String?) =
     ServiceEndpoint().apply {
