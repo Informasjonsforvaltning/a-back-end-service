@@ -36,6 +36,17 @@ fun simpleGet(host: String, port: Int, address: String): String =
         .bufferedReader()
         .use(BufferedReader::readText)
 
+fun getContent(host: String, port: Int, address: String): Map<String,String> {
+    val connection = URL("http", host, port, address)
+            .openConnection()
+    val response = mapOf<String,String>(
+            "body" to connection.getInputStream().bufferedReader().use (BufferedReader :: readText),
+            "header" to connection.getHeaderFields().toString(),
+            "status" to connection.getHeaderField(0)
+    )
+    return response
+}
+
 fun simplePost(host: String, port: Int, address: String): String {
     val connection = URL("http", host, port, address).openConnection() as HttpURLConnection
 
