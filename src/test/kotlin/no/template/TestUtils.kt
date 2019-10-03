@@ -42,7 +42,7 @@ fun getContent(host: String, port: Int, address: String): Map<String,String> {
     val response = mapOf<String,String>(
             "body" to connection.getInputStream().bufferedReader().use (BufferedReader :: readText),
             "header" to connection.getHeaderFields().toString(),
-            "status" to connection.getHeaderField(0)
+            "status" to connection.getHeaderField(0).split(" ")[1]
     )
     return response
 }

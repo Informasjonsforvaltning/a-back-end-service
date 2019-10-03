@@ -3,6 +3,7 @@ package no.template.integration;
 import java.io.File;
 
 import no.template.TestUtilsKt;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("service")
+@Disabled
 class ServiceEndpointApiServiceTest extends AbstractDockerTestContainer{
   private final static Logger logger = LoggerFactory.getLogger(ServiceEndpointApiServiceTest.class);
 
