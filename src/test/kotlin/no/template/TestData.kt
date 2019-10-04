@@ -23,6 +23,11 @@ const val DATABASE_NAME = "templateAPI"
 const val MONGO_COLLECTION = "template"
 private const val MONGO_AUTH = "?authSource=admin&authMechanism=SCRAM-SHA-1"
 
+const val ADMIN_TOKEN_TMP ="dfghjklasfijkf5fgahfskjl"
+const val NON_ADMIN_TOKEN_TMP ="dfghjklasfijkf5fgahfskjl"
+
+const val SERVICE_ENDPOINT = "/serviceendpoints"
+
 fun mongoUri(host: String, port: Int): String =
     "mongodb://$MONGO_USER:$MONGO_PASSWORD@$host:$port/$DATABASE_NAME$MONGO_AUTH"
 
@@ -40,10 +45,10 @@ fun createServiceEndpoint(hexStringId: String?) =
         uri = URI("http://localhost:$API_PORT/version")
     }
 
-fun jsonServiceEndpointObject (name: String): String? {
-    val map = mapOf<String,String>(
-            "name" to name,
-            "uri" to "http://nothing.org/${name}"
+fun jsonServiceEndpointObject (name: String, addName: Boolean = true, addUri: Boolean = true ): String? {
+    val map = mapOf<String,String?>(
+            "name" to if(addName) name else null ,
+            "uri" to if(addUri) "http://nothing.org/${name}" else null
     )
     return jacksonObjectMapper().writeValueAsString(map)
 }

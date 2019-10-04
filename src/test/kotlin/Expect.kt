@@ -6,6 +6,7 @@ package no.template
 
 
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assumptions
 
 
 class Expect (_result: String){
@@ -17,6 +18,10 @@ class Expect (_result: String){
 
     fun to_contain(expected: String) {
         Assertions.assertTrue(result.contains(expected))
+    }
+
+    fun assume_success(expected: String){
+        Assumptions.assumeTrue(result.equals(expected))
     }
 
 }

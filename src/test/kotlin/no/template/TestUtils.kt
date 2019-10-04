@@ -49,23 +49,28 @@ fun getContent(host: String, port: Int, address: String): Map<String,String> {
 }
 
 
-fun simplePost(host: String, port: Int, address: String,body: String?): Map<String, String> {
+fun simplePost(host: String, port: Int, address: String,body: String? = null, token: String? = null): Map<String, String> {
     val connection = URL("http", host, port, address).openConnection() as HttpURLConnection
     connection.requestMethod = "POST"
     connection.setRequestProperty("Content-type", "application/json")
     connection.setRequestProperty("Accept", "application/json")
-    connection.doOutput = true
+    if(token!= null) connection.setRequestProperty("Authorization", "Bearer {$token}")
 
     try {
+
+    if (body!=null) {
+        connection.doOutput = true
+
         connection.outputStream.bufferedWriter().write(body)
         connection.outputStream.flush()
         connection.outputStream.close()
-
+    }
         val response = mapOf<String,String>(
                 "body" to connection.getInputStream().bufferedReader().use (BufferedReader :: readText),
                 "header" to connection.getHeaderFields().toString(),
                 "status" to connection.getHeaderField(0).split(" ")[1]
         )
+
         return response
 
     } catch (e: Exception){
