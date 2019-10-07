@@ -25,7 +25,9 @@ fun createTmpComposeFile(): File {
         "    image: mongo:latest\n" +
         "    environment:\n" +
         "      - MONGO_INITDB_ROOT_USERNAME=$MONGO_USER\n" +
-        "      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD\n")
+        "      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD\n" +
+        "      - JAVA_OPTS=-javaagent:/jacoco-agent/org.jacoco.agent-runtime.jar=destfile=/jacoco-report/mvn clean installjacoco-it.exec"
+    )
 
     return tmpFile
 }

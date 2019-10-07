@@ -40,9 +40,25 @@
         <start-class>no.template.Application</start-class>
         <docker.image.name>brreg/template-image-name</docker.image.name>
         <docker.image.tag>latest</docker.image.tag>
+
+        <jacoco.version>0.8.4</jacoco.version>
     </properties>
 
     <dependencies>
+        <!-- jacoco in container-->
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>3.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>org.jacoco.agent</artifactId>
+            <version>${jacoco.version}</version>
+            <classifier>runtime</classifier>
+            <scope>test</scope>
+        </dependency>
+        <!-- /jacoco in container-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -243,6 +259,26 @@
         </resources>
 
         <plugins>
+            <!-- /copy jacoco agent to container-->
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-jacoco</id>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <includeArtifactIds>org.jacoco.agent</includeArtifactIds>
+                            <includeClassifiers>runtime</includeClassifiers>
+                            <outputDirectory>${project.build.directory}/jacoco-agent</outputDirectory>
+                            <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- /copy jacococ-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -460,15 +496,25 @@
                         </goals>
                     </execution>
                     <execution>
+                        <id>jacoco-it-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent-integration</goal>
+                        </goals>
+                    </execution>
+                    <execution>
                         <id>jacoco-report</id>
-                        <phase>verify</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>jacoco-it-report</id>
+                        <goals>
+                            <goal>report-integration</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 </project>

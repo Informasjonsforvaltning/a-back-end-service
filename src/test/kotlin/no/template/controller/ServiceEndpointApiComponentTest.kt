@@ -107,7 +107,7 @@ class ServiceEndpointApiComponentTest : ApiContainer(){
             expect(status).to_equal("409")
         }
     }
-
+/*
     @Nested
     inner class getServiceEndpoints {
         @Test
@@ -120,7 +120,7 @@ class ServiceEndpointApiComponentTest : ApiContainer(){
             expect(body).to_contain("total")
             expect(body).to_contain("serviceEndpoints")
         }
-    }
+    }*/
 
     @Nested
     inner class getVersionForServiceEndpoints {

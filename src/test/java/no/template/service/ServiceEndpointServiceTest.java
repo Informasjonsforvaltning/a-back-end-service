@@ -7,6 +7,7 @@ import no.template.generated.model.Version;
 import no.template.model.ServiceEndpointDB;
 import no.template.repository.ServiceEndpointRepository;
 import org.bson.types.ObjectId;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 @RunWith(JUnitPlatform.class)
 @Tag("unit")
+@Disabled
 class ServiceEndpointServiceTest {
 /*
     @Mock
