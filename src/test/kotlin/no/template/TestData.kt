@@ -58,13 +58,6 @@ private fun createServiceEndpointWithVersionData(hexStringId: String?) =
         id = hexStringId
         name = "Endpoint name"
         uri = URI("http://localhost:$API_PORT/version")
-        version = Version().apply{
-            repositoryUrl = "repositoryUrl"
-            branchName = "branchName"
-            buildTime = "buildTime"
-            sha = "sha"
-            versionId = "versionId"
-        }
     }
 
 val EMPTY_DB_LIST = emptyList<ServiceEndpointDB>()

@@ -38,14 +38,20 @@ fun simpleGet(host: String, port: Int, address: String): String =
         .use(BufferedReader::readText)
 
 fun getContent(host: String, port: Int, address: String): Map<String,String> {
+    try {
     val connection = URL("http", host, port, address)
             .openConnection()
     val response = mapOf<String,String>(
             "body" to connection.getInputStream().bufferedReader().use (BufferedReader :: readText),
             "header" to connection.getHeaderFields().toString(),
-            "status" to connection.getHeaderField(0).split(" ")[1]
-    )
-    return response
+            "status" to connection.getHeaderField(0).split(" ")[1])
+
+        return response
+
+    } catch (e: Exception){
+        val status = e.message?:"unknown"
+        return mapOf("status" to status)
+    }
 }
 
 
