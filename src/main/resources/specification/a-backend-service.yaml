@@ -81,6 +81,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServiceEndpointCollection'
+  /serviceendpoints/{id}/version:
+    get:
+      tags:
+        - serviceEndpoint
+      summary: Get the version object for a given service endpoint.
+      description: Returns a version object.
+      operationId: getVersionForServiceEndpoint
+      parameters:
+      - name: id
+        in: path
+        description: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Version'
 components:
   schemas:
     Version:
@@ -129,8 +150,6 @@ components:
           type: string
           format: uri
           description: the uri to a service endpoint that is monitored
-        version:
-          $ref: '#/components/schemas/Version'
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme
       type: http
