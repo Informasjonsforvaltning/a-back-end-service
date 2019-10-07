@@ -161,7 +161,7 @@ class ServiceEndpointApiComponentTest : ApiContainer(){
             )
 
             val status = result.getValue("status")
-            expect(status).to_contain("404")
+            expect(status).to_equal("404")
         }
     }
 

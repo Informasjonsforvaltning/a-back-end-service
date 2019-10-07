@@ -46,13 +46,12 @@ fun getContent(host: String, port: Int, address: String): Map<String,String> {
     val response = mapOf<String,String>(
             "body" to connection.getInputStream().bufferedReader().use (BufferedReader :: readText),
             "header" to connection.getHeaderFields().toString(),
-            "status" to connection.getHeaderField(0).split(" ")[1])
+            "status" to getStatus(connection.getHeaderField(0)))
 
         return response
 
     } catch (e: Exception){
-        val status = e.message?:"unknown"
-        return mapOf("status" to status)
+        return mapOf("status" to getStatus(e.message?:"uknown"))
     }
 }
 
@@ -76,13 +75,18 @@ fun simplePost(host: String, port: Int, address: String,body: String? = null, to
         val response = mapOf<String,String>(
                 "body" to connection.getInputStream().bufferedReader().use (BufferedReader :: readText),
                 "header" to connection.getHeaderFields().toString(),
-                "status" to connection.getHeaderField(0).split(" ")[1]
+                "status" to getStatus(connection.getHeaderField(0))
         )
 
         return response
 
     } catch (e: Exception){
-        val status = e.message?:"unknown"
-        return mapOf("status" to status)
+        return mapOf("status" to getStatus(e.message?:"uknown"))
     }
 }
+
+fun getStatus(response: String): String =
+    Regex("\\d{3}")
+            .find(response)
+            ?.value
+            ?: "unkown"

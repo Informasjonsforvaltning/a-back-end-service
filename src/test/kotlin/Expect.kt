@@ -13,7 +13,7 @@ class Expect (_result: String){
     val result = _result
 
     fun to_equal(expected: String) {
-        Assertions.assertTrue(result.equals(expected))
+        Assertions.assertEquals(expected,result)
     }
 
     fun to_contain(expected: String) {
