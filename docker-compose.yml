@@ -1,21 +1,14 @@
 version: "3.5"
 
 services:
-  template:
-    image: brreg/template-image-name:latest
+  a-backend-service:
+    image: brreg/a-backend-service:latest
     depends_on:
       - mongodb
     restart: always
     environment:
-      - TEMPLATE_MONGO_USERNAME
-      - TEMPLATE_MONGO_PASSWORD
+      - MONGO_USERNAME=user
+      - MONGO_PASSWORD=pwd
+      - MONGO_HOST=mongodb:27017
     ports:
       - 8080:8080
-
-  mongodb:
-    image: mongo:latest
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=$TEMPLATE_MONGO_USERNAME
-      - MONGO_INITDB_ROOT_PASSWORD=$TEMPLATE_MONGO_PASSWORD
-    ports:
-      - 27017:27017

@@ -1,6 +1,6 @@
 #!groovy
 /*
-Build pipeline for Felles Datakatalog template service
+Build pipeline for Felles Datakatalog a backend service
 
 The pipeline is designed to build with Maven,
 and uses Docker and Helm templates to deploy
@@ -85,7 +85,7 @@ pipeline {
 
         //these need to be changed for each application
         HELM_TEMPLATE_NAME = 'a-back-end-service'
-        DOCKER_IMAGE_NAME = 'brreg/template-image-name'
+        DOCKER_IMAGE_NAME = 'brreg/a-backend-service'
         DOCKER_IMAGE_TAG = 'latest'
     }
 

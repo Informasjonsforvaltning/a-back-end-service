@@ -2,8 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>no.template</groupId>
-    <artifactId>template-api</artifactId>
+    <groupId>no.brreg.abackendservice</groupId>
+    <artifactId>a-backend-service</artifactId>
     <name>A back end service</name>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -37,8 +37,8 @@
         <testcontainers.version>1.12.0</testcontainers.version>
         <jena.version>3.12.0</jena.version>
 
-        <start-class>no.template.Application</start-class>
-        <docker.image.name>brreg/template-image-name</docker.image.name>
+        <start-class>no.brreg.abackendservice.Application</start-class>
+        <docker.image.name>brreg/a-backend-service</docker.image.name>
         <docker.image.tag>latest</docker.image.tag>
     </properties>
 
@@ -298,9 +298,9 @@
                             <generatorName>spring</generatorName>
                             <templateDirectory>${project.basedir}/src/main/resources/openAPI/openapi-generator-maven-plugin/templates/JavaSpring</templateDirectory>
                             <output>${project.build.directory}/generated-sources/openapi</output>
-                            <invokerPackage>no.template.generated</invokerPackage>
-                            <apiPackage>no.template.generated.api</apiPackage>
-                            <modelPackage>no.template.generated.model</modelPackage>
+                            <invokerPackage>no.brreg.abackendservice.generated</invokerPackage>
+                            <apiPackage>no.brreg.abackendservice.generated.api</apiPackage>
+                            <modelPackage>no.brreg.abackendservice.generated.model</modelPackage>
                             <configOptions>
                                 <allowUnicodeIdentifiers>true</allowUnicodeIdentifiers>
                                 <sourceFolder>src/main/java/gen</sourceFolder>
