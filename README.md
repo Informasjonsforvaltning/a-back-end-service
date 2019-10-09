@@ -36,3 +36,6 @@ TEMPLATE_MONGO_PASSWORD=anything
 ## The API
 
 A nice way to understand what this API does, check the [specification](./src/main/resources/specification/a-backend-service.yaml)
+
+dbup: "docker-compose -f docker-compose-mongodb.yml up -d mongodb ",
+dbdown: "docker-compose -f docker-compose-mongodb.yml stop mongodb ",
