@@ -1,6 +1,8 @@
 package no.template.no.template.controller
 
 import no.template.*
+import no.template.mapping.mapForCreation
+import org.junit.AfterClass
 import no.template.integration.AbstractDockerTestContainer as ApiContainer
 import org.junit.jupiter.api.*
 import no.template.jsonServiceEndpointObject as jsonObject
@@ -10,6 +12,10 @@ import no.template.Expect as expect
 @Tag("service")
 class ServiceEndpointApiComponentTest : ApiContainer(){
 
+    @AfterClass
+    fun writeToHost(){
+
+    }
 
     @Nested
     inner class postServiceEndpoint {
@@ -153,6 +159,8 @@ class ServiceEndpointApiComponentTest : ApiContainer(){
             expect(body).to_contain("versionId")
 
         }
+
+
         @Test
         fun `expect get to return 404 for non-existing id`() {
             val result = getContent(ApiContainer.TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),

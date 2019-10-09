@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Nested
 import no.template.integration.AbstractDockerTestContainer as ApiContainer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Timeout
+import java.util.concurrent.TimeUnit
 
 
 @Tag("service")
@@ -17,6 +19,7 @@ class VersionApiComponentTest : ApiContainer() {
     @Nested
     inner class ` GetVersion ` {
         @Test
+        @Timeout(value=1, unit = TimeUnit.HOURS)
         fun `expect a version object`() {
             val result = getContent(ApiContainer.TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
                     ApiContainer.TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
@@ -33,7 +36,5 @@ class VersionApiComponentTest : ApiContainer() {
             expect(body).to_contain("versionId")
         }
     }
-
-
 
 }

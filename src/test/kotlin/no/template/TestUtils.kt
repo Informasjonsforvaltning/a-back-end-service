@@ -8,13 +8,16 @@ import java.net.URL
 
 fun createTmpComposeFile(): File {
     val tmpFile = File.createTempFile("test-compose", ".yml")
-
+    val rootDir = " ${System.getProperty("user.dir")}/target".trim()
     tmpFile.writeText("version: \"3.2\"\n" +
         "\n" +
         "services:\n" +
         "  $API_SERVICE_NAME:\n" +
         "    image: brreg/template-image-name:latest\n" +
+        "    volumes:\n"+
+        "       - $rootDir:$rootDir\n"+
         "    environment:\n" +
+        "      - JAVA_OPTS=-javaagent:$rootDir/org.jacoco.agent-runtime.jar=destfile=$rootDir/jacoco-it.exec\n"+
         "      - TEMPLATE_MONGO_USERNAME=$MONGO_USER\n" +
         "      - TEMPLATE_MONGO_PASSWORD=$MONGO_PASSWORD\n" +
         "      - TEMPLATE_MONGO_HOST=$MONGO_SERVICE_NAME:$MONGO_PORT\n" +
@@ -25,9 +28,7 @@ fun createTmpComposeFile(): File {
         "    image: mongo:latest\n" +
         "    environment:\n" +
         "      - MONGO_INITDB_ROOT_USERNAME=$MONGO_USER\n" +
-        "      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD\n" +
-        "      - JAVA_OPTS=-javaagent:/jacoco-agent/org.jacoco.agent-runtime.jar=destfile=/jacoco-report/mvn clean installjacoco-it.exec"
-    )
+        "      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD\n" )
 
     return tmpFile
 }

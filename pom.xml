@@ -58,7 +58,6 @@
             <classifier>runtime</classifier>
             <scope>test</scope>
         </dependency>
-        <!-- /jacoco in container-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -259,10 +258,10 @@
         </resources>
 
         <plugins>
-            <!-- /copy jacoco agent to container-->
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
+                    <!-- /copy jacoco agent to container-->
                     <execution>
                         <id>copy-jacoco</id>
                         <goals>
@@ -272,13 +271,12 @@
                         <configuration>
                             <includeArtifactIds>org.jacoco.agent</includeArtifactIds>
                             <includeClassifiers>runtime</includeClassifiers>
-                            <outputDirectory>${project.build.directory}/jacoco-agent</outputDirectory>
+                            <outputDirectory>${project.basedir}/target</outputDirectory>
                             <stripVersion>true</stripVersion>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-            <!-- /copy jacococ-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -435,6 +433,7 @@
                     <includes>
                         <include>**/*.java</include>
                     </includes>
+                    <testFailureIgnore>true</testFailureIgnore>
                 </configuration>
             </plugin>
 
@@ -449,6 +448,7 @@
                     <includes>
                         <include>**/*.java</include>
                     </includes>
+                    <testFailureIgnore>true</testFailureIgnore>
                 </configuration>
             </plugin>
 
@@ -512,6 +512,9 @@
                         <goals>
                             <goal>report-integration</goal>
                         </goals>
+                        <configuration>
+                            <dataFile>${project.basedir}/target/jacoco-it.exec</dataFile>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

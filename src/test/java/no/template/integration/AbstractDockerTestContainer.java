@@ -30,6 +30,7 @@ public abstract class AbstractDockerTestContainer {
                     .withLogConsumer(API_SERVICE_NAME, apiLog);
 
             TEST_API.start();
+
         } else {
             logger.debug("Unable to start containers, missing test-compose.yml");
         }
