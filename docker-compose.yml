@@ -2,13 +2,13 @@ version: "3"
 
 services:
   a-backend-service:
-    image: brreg/template-image-name:latest
+    image: brreg/a-backend-service:latest
     depends_on:
       - mongodb
     restart: always
     environment:
-      - TEMPLATE_MONGO_USERNAME
-      - TEMPLATE_MONGO_PASSWORD
-      - TEMPLATE_MONGO_HOST
+      - MONGO_USERNAME
+      - MONGO_PASSWORD
+      - MONGO_HOST
     ports:
       - 8138:8080

@@ -1,4 +1,4 @@
 ==============================================================================================
-Template-API @project.version@
+A Backend Service @project.version@
 Spring Boot @parent.version@, Spring @spring.version@
 ==============================================================================================
