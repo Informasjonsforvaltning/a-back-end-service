@@ -2,8 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>no.template</groupId>
-    <artifactId>template-api</artifactId>
+    <groupId>no.brreg.informasjonsforvaltning</groupId>
+    <artifactId>a-backend-service</artifactId>
     <name>A back end service</name>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -37,26 +37,17 @@
         <testcontainers.version>1.12.0</testcontainers.version>
         <jena.version>3.12.0</jena.version>
 
-        <start-class>no.template.Application</start-class>
-        <docker.image.name>brreg/template-image-name</docker.image.name>
+        <start-class>no.brreg.informasjonsforvaltning.abackendservice.Application</start-class>
+        <docker.image.name>brreg/a-backend-service</docker.image.name>
         <docker.image.tag>latest</docker.image.tag>
-
         <jacoco.version>0.8.4</jacoco.version>
     </properties>
 
     <dependencies>
-        <!-- jacoco in container-->
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-dependency-plugin</artifactId>
             <version>3.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jacoco</groupId>
-            <artifactId>org.jacoco.agent</artifactId>
-            <version>${jacoco.version}</version>
-            <classifier>runtime</classifier>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -256,27 +247,7 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
-
         <plugins>
-            <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <!-- /copy jacoco agent to container-->
-                    <execution>
-                        <id>copy-jacoco</id>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <phase>compile</phase>
-                        <configuration>
-                            <includeArtifactIds>org.jacoco.agent</includeArtifactIds>
-                            <includeClassifiers>runtime</includeClassifiers>
-                            <outputDirectory>${project.basedir}/target</outputDirectory>
-                            <stripVersion>true</stripVersion>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -336,9 +307,9 @@
                             <generatorName>spring</generatorName>
                             <templateDirectory>${project.basedir}/src/main/resources/openAPI/openapi-generator-maven-plugin/templates/JavaSpring</templateDirectory>
                             <output>${project.build.directory}/generated-sources/openapi</output>
-                            <invokerPackage>no.template.generated</invokerPackage>
-                            <apiPackage>no.template.generated.api</apiPackage>
-                            <modelPackage>no.template.generated.model</modelPackage>
+                            <invokerPackage>no.brreg.informasjonsforvaltning.abackendservice.generated</invokerPackage>
+                            <apiPackage>no.brreg.informasjonsforvaltning.abackendservice.generated.api</apiPackage>
+                            <modelPackage>no.brreg.informasjonsforvaltning.abackendservice.generated.model</modelPackage>
                             <configOptions>
                                 <allowUnicodeIdentifiers>true</allowUnicodeIdentifiers>
                                 <sourceFolder>src/main/java/gen</sourceFolder>
@@ -496,25 +467,10 @@
                         </goals>
                     </execution>
                     <execution>
-                        <id>jacoco-it-prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent-integration</goal>
-                        </goals>
-                    </execution>
-                    <execution>
                         <id>jacoco-report</id>
                         <goals>
                             <goal>report</goal>
                         </goals>
-                    </execution>
-                    <execution>
-                        <id>jacoco-it-report</id>
-                        <goals>
-                            <goal>report-integration</goal>
-                        </goals>
-                        <configuration>
-                            <dataFile>${project.basedir}/target/jacoco-it.exec</dataFile>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

@@ -2,7 +2,7 @@
 
 i=0
 
-maven_apps="template-api"
+maven_apps="a-backend-service"
 
 for maven_app in $maven_apps; do
     i=$((i+1))

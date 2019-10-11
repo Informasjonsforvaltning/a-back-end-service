@@ -12,9 +12,8 @@ Set environment variables
 
 ```
 export SONAR_LOGIN=<obtain-key-from-sonar>
-export TEMPLATE_MONGO_USERNAME=<anything>
-export TEMPLATE_MONGO_PASSWORD=<anything>
-export TEMPLATE_MONGO_HOST=mongodb:27017
+export MONGO_USERNAME=<anything>
+export MONGO_PASSWORD=<anything>
 ```
 
 Or you can put the variables in a .env file in the root directory of your project.
@@ -22,8 +21,8 @@ Or you can put the variables in a .env file in the root directory of your projec
 ```
 $ cat .env
 export SONAR_LOGIN=<obrain-key-from-sonar>
-TEMPLATE_MONGO_USERNAME=anything
-TEMPLATE_MONGO_PASSWORD=anything
+MONGO_USERNAME=anything
+MONGO_PASSWORD=anything
 ```
 
 ## Build and run
@@ -31,9 +30,12 @@ TEMPLATE_MONGO_PASSWORD=anything
 ```
   mvn clean install
   docker-compose up
-  curl -H "Accept: application/json" http://localhost:8080/template
+  curl -H "Accept: application/json" http://localhost:8080/version
 ```
 
 ## The API
 
 A nice way to understand what this API does, check the [specification](./src/main/resources/specification/a-backend-service.yaml)
+
+dbup: "docker-compose -f docker-compose-mongodb.yml up -d mongodb ",
+dbdown: "docker-compose -f docker-compose-mongodb.yml stop mongodb ",
