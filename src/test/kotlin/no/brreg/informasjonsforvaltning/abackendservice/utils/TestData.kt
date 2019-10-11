@@ -1,4 +1,4 @@
-package no.brreg.informasjonsforvaltning.abackendservice
+package no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils
 
 import no.brreg.informasjonsforvaltning.abackendservice.generated.model.ServiceEndpoint
 import no.brreg.informasjonsforvaltning.abackendservice.generated.model.Version

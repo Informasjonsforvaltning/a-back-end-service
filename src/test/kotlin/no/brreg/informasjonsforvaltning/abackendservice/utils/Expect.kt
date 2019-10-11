@@ -1,4 +1,4 @@
-package no.brreg.informasjonsforvaltning.abackendservice
+package no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils
 
 /**
  * Expect assertion style wrapper for jupiter assertions

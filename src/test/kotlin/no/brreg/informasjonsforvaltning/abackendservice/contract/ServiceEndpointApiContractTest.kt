@@ -1,9 +1,9 @@
 package no.template.no.template.controller
 
-import no.brreg.informasjonsforvaltning.abackendservice.*
-import no.brreg.informasjonsforvaltning.abackendservice.integration.AbstractDockerTestContainer as ApiContainer
-import no.brreg.informasjonsforvaltning.abackendservice.jsonServiceEndpointObject as mapServiceToJson
-import no.brreg.informasjonsforvaltning.abackendservice.Expect as expect
+import no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.*
+import no.brreg.informasjonsforvaltning.abackendservice.utils.AbstractDockerTestContainer as ApiContainer
+import no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.jsonServiceEndpointObject as mapServiceToJson
+import no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.Expect as expect
 
 import org.junit.AfterClass
 import org.junit.jupiter.api.*
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Tag("service")
-class ServiceEndpointApiComponentTest : ApiContainer(){
+class ServiceEndpointApiContractTest : ApiContainer(){
 
     @AfterClass
     fun writeToHost(){
@@ -24,7 +24,7 @@ class ServiceEndpointApiComponentTest : ApiContainer(){
         fun `expect post to return 401 for unauthenticated users`() {
             val result = simplePost(TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
                                     TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
-                                    SERVICE_ENDPOINT,
+                    SERVICE_ENDPOINT,
                                     mapServiceToJson("uniqeservice"))
 
             val status = result.getValue("status")
@@ -36,9 +36,9 @@ class ServiceEndpointApiComponentTest : ApiContainer(){
         fun `expect post to return 403 for non-admin users`() {
             val result = simplePost(TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
                                     TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
-                                    SERVICE_ENDPOINT,
+                    SERVICE_ENDPOINT,
                                     mapServiceToJson("nonadmin"),
-                                    NON_ADMIN_TOKEN_TMP)
+                    NON_ADMIN_TOKEN_TMP)
 
             val status = result.getValue("status")
             expect(status).to_equal("403")
@@ -62,7 +62,7 @@ class ServiceEndpointApiComponentTest : ApiContainer(){
         fun `expect post to return 400 for request with empty body`() {
             val result = simplePost(TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
                                     TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
-                                    SERVICE_ENDPOINT,
+                    SERVICE_ENDPOINT,
                                     token = ADMIN_TOKEN_TMP)
 
             val status = result.getValue("status")

@@ -1,5 +1,8 @@
-package no.brreg.informasjonsforvaltning.abackendservice
+package no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils
 
+import no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.MONGO_PASSWORD
+import no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.MONGO_SERVICE_NAME
+import no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.MONGO_USER
 import java.io.BufferedReader
 import java.io.File
 import java.net.HttpURLConnection

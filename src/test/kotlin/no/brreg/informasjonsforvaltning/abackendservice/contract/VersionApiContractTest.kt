@@ -1,10 +1,10 @@
-package no.brreg.informasjonsforvaltning.abackendservice.controller
+package no.brreg.informasjonsforvaltning.abackendservice.contract
 
-import no.brreg.informasjonsforvaltning.abackendservice.API_PORT
-import no.brreg.informasjonsforvaltning.abackendservice.API_SERVICE_NAME
+import no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.API_PORT
+import no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.API_SERVICE_NAME
 import no.brreg.informasjonsforvaltning.abackendservice.getContent
-import no.brreg.informasjonsforvaltning.abackendservice.integration.AbstractDockerTestContainer as ApiContainer
-import no.brreg.informasjonsforvaltning.abackendservice.Expect as expect
+import no.brreg.informasjonsforvaltning.abackendservice.utils.AbstractDockerTestContainer as ApiContainer
+import no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.Expect as expect
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Tag
@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
 
 
 @Tag("service")
-class VersionApiComponentTest : ApiContainer() {
+class VersionApiContractTest : ApiContainer() {
 
     @Nested
     inner class ` GetVersion ` {
