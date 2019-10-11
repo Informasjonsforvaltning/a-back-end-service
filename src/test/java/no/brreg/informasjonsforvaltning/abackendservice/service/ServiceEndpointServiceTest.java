@@ -17,13 +17,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static no.brreg.informasjonsforvaltning.abackendservice.TestDataKt.*;
+import static  no.brreg.informasjonsforvaltning.abackendservice.utils.TestDataKt.*;
 
 @ExtendWith(MockitoExtension.class)
 @RunWith(JUnitPlatform.class)
 @Tag("unit")
 class ServiceEndpointServiceTest {
-/*
     @Mock
     ServiceEndpointRepository repositoryMock;
 
@@ -67,6 +66,6 @@ class ServiceEndpointServiceTest {
         ServiceEndpoint result = serviceEndpointService.createServiceEndpoint(createServiceEndpoint(null));
 
         ServiceEndpoint expected = createServiceEndpoint(saved.getId().toHexString());
-    }*/
+    }
 
 }

@@ -1,12 +1,12 @@
-package no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils
+package no.brreg.informasjonsforvaltning.abackendservice.utils
 
-import no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.MONGO_PASSWORD
-import no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.MONGO_SERVICE_NAME
-import no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.MONGO_USER
 import java.io.BufferedReader
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+
 
 fun createTmpComposeFile(): File {
     val tmpFile = File.createTempFile("test-compose", ".yml")
@@ -39,12 +39,13 @@ fun simpleGet(host: String, port: Int, address: String): String =
         .bufferedReader()
         .use(BufferedReader::readText)
 
-fun getContent(host: String, port: Int, address: String): Map<String,String> {
+fun getContent(host: String, port: Int, address: String): Map<String,Any> {
     try {
     val connection = URL("http", host, port, address)
             .openConnection()
-    val response = mapOf<String,String>(
-            "body" to connection.getInputStream().bufferedReader().use (BufferedReader :: readText),
+    val responseBody = connection.getInputStream().bufferedReader().use (BufferedReader :: readText)
+    val response = mapOf<String,Any>(
+            "body" to jacksonObjectMapper().readValue(responseBody),
             "header" to connection.getHeaderFields().toString(),
             "status" to getStatus(connection.getHeaderField(0)))
 
@@ -90,3 +91,5 @@ fun getStatus(response: String): String =
             .find(response)
             ?.value
             ?: "unkown"
+
+

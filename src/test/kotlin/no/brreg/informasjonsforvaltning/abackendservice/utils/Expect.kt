@@ -1,4 +1,4 @@
-package no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils
+package no.brreg.informasjonsforvaltning.abackendservice.utils
 
 /**
  * Expect assertion style wrapper for jupiter assertions
@@ -9,7 +9,8 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assumptions
 
 
-class Expect (_result: String){
+class Expect(_result: Any?){
+
     val result = _result
 
     fun to_equal(expected: String) {
@@ -17,11 +18,18 @@ class Expect (_result: String){
     }
 
     fun to_contain(expected: String) {
-        Assertions.assertTrue(result.contains(expected))
+        when(result) {
+           is String -> Assertions.assertTrue(result.contains(expected))
+           is LinkedHashMap<*, *> -> Assertions.assertTrue(result.contains(expected))
+           else -> throw AssertionError("Unexpected datatype in result");
+        }
     }
+}
 
-    fun assume_success(expected: String){
-        Assumptions.assumeTrue(result.equals(expected))
-    }
+fun assume_authenticated(status: String) {
+    Assumptions.assumeFalse(status.equals("401"))
+}
 
+fun assume_success(status: String) {
+    Assumptions.assumeTrue(status.equals("201"))
 }

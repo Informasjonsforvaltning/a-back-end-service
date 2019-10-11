@@ -1,22 +1,16 @@
-package no.template.no.template.controller
+package no.brreg.informasjonsforvaltning.abackendservice.contract
 
-import no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.*
+import no.brreg.informasjonsforvaltning.abackendservice.utils.*
+import no.brreg.informasjonsforvaltning.abackendservice.utils.simplePost
 import no.brreg.informasjonsforvaltning.abackendservice.utils.AbstractDockerTestContainer as ApiContainer
-import no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.jsonServiceEndpointObject as mapServiceToJson
-import no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.Expect as expect
-
-import org.junit.AfterClass
+import no.brreg.informasjonsforvaltning.abackendservice.utils.jsonServiceEndpointObject as mapServiceToJson
+import no.brreg.informasjonsforvaltning.abackendservice.utils.Expect as expect
 import org.junit.jupiter.api.*
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Tag("service")
 class ServiceEndpointApiContractTest : ApiContainer(){
-
-    @AfterClass
-    fun writeToHost(){
-
-    }
 
     @Nested
     inner class postServiceEndpoint {
@@ -34,6 +28,7 @@ class ServiceEndpointApiContractTest : ApiContainer(){
         /** TODO get non-admin token**/
         @Test
         fun `expect post to return 403 for non-admin users`() {
+
             val result = simplePost(TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
                                     TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
                     SERVICE_ENDPOINT,
@@ -41,20 +36,29 @@ class ServiceEndpointApiContractTest : ApiContainer(){
                     NON_ADMIN_TOKEN_TMP)
 
             val status = result.getValue("status")
+            assume_authenticated(status)
+
             expect(status).to_equal("403")
         }
 
         /** TODO get admin token**/
         @Test
         fun `expect post to return 201 response for correct request`() {
+            val name = "newservice"
             val result = simplePost(TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
                     TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
                     SERVICE_ENDPOINT,
-                    mapServiceToJson("newservice"),
+                    mapServiceToJson(name),
                     ADMIN_TOKEN_TMP)
 
             val status = result.getValue("status")
+            assume_authenticated(status)
+
             expect(status).to_equal("201")
+
+            val headers = result.getValue("header")
+            expect(headers).to_contain("Location")
+            expect(headers).to_contain("\"http://nothing.org/${name}\"")
 
         }
 
@@ -66,6 +70,8 @@ class ServiceEndpointApiContractTest : ApiContainer(){
                                     token = ADMIN_TOKEN_TMP)
 
             val status = result.getValue("status")
+            assume_authenticated(status)
+
             expect(status).to_equal("400")
         }
         @Test
@@ -78,6 +84,8 @@ class ServiceEndpointApiContractTest : ApiContainer(){
                                       addUri = false),
                     token = ADMIN_TOKEN_TMP)
             val status = result.getValue("status")
+            assume_authenticated(status)
+
             expect(status).to_equal("400")
         }
         @Test
@@ -89,6 +97,8 @@ class ServiceEndpointApiContractTest : ApiContainer(){
                             addName = false),
                             token = ADMIN_TOKEN_TMP)
             val status = result.getValue("status")
+            assume_authenticated(status)
+
             expect(status).to_equal("400")
         }
 
@@ -102,8 +112,7 @@ class ServiceEndpointApiContractTest : ApiContainer(){
                     ADMIN_TOKEN_TMP)
 
             val setup_status = setup_result.getValue("status")
-            Assumptions.assumeTrue(setup_status.equals("201"))
-
+            assume_success(setup_status)
 
             val result = simplePost(TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
                     TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
@@ -114,7 +123,7 @@ class ServiceEndpointApiContractTest : ApiContainer(){
             expect(status).to_equal("409")
         }
     }
-/*
+
     @Nested
     inner class getServiceEndpoints {
         @Test
@@ -127,21 +136,22 @@ class ServiceEndpointApiContractTest : ApiContainer(){
             expect(body).to_contain("total")
             expect(body).to_contain("serviceEndpoints")
         }
-    }*/
+    }
 
     @Nested
     inner class getVersionForServiceEndpoints {
         @Test
         fun `expect a Version for existing service`() {
+            val name = "version-service"
 
             val setup_result = simplePost(TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
                     TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
                     SERVICE_ENDPOINT,
-                    mapServiceToJson("duplicateservice"),
+                    mapServiceToJson(name),
                     ADMIN_TOKEN_TMP)
 
             val setup_status = setup_result.getValue("status")
-            Assumptions.assumeTrue(setup_status.contains("201"))
+            assume_success(setup_status)
 
             /**TODO Get id of version object**/
 
@@ -150,15 +160,15 @@ class ServiceEndpointApiContractTest : ApiContainer(){
                     "/serviceendpoints/11111/version"
             )
             val status = result.getValue("status")
-            val body = result.getValue("body")
+            val body = result.getValue("body") as LinkedHashMap<String,String>
 
             expect(status).to_contain("200")
             expect(body).to_contain("repositoryUrl")
+            expect(body["repositoryUrl"]).to_contain(name)
             expect(body).to_contain("branchName")
             expect(body).to_contain("buildTime")
             expect(body).to_contain("sha")
             expect(body).to_contain("versionId")
-
         }
 
 

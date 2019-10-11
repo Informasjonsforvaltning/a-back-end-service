@@ -1,6 +1,5 @@
 package no.brreg.informasjonsforvaltning.abackendservice.utils;
 
-import no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.TestUtilsKt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.DockerComposeContainer;
@@ -20,13 +19,13 @@ public abstract class AbstractDockerTestContainer {
     static {
         if (testComposeFile != null && testComposeFile.exists()) {
             TEST_API = new DockerComposeContainer<>(testComposeFile)
-                    .withExposedService(no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.TestDataKt.MONGO_SERVICE_NAME, no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.TestDataKt.MONGO_PORT, Wait.forListeningPort())
-                    .withExposedService(no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.TestDataKt.API_SERVICE_NAME, no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.TestDataKt.API_PORT, Wait.forHttp("/version").forStatusCode(200))
+                    .withExposedService(TestDataKt.MONGO_SERVICE_NAME, TestDataKt.MONGO_PORT, Wait.forListeningPort())
+                    .withExposedService(TestDataKt.API_SERVICE_NAME, TestDataKt.API_PORT, Wait.forHttp("/version").forStatusCode(200))
                     .withTailChildContainers(true)
                     .withPull(false)
                     .withLocalCompose(true)
-                    .withLogConsumer(no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.TestDataKt.MONGO_SERVICE_NAME, mongoLog)
-                    .withLogConsumer(no.brreg.informasjonsforvaltning.abackendservice.no.brreg.informasjonsforvaltning.abackendservice.utils.TestDataKt.API_SERVICE_NAME, apiLog);
+                    .withLogConsumer(TestDataKt.MONGO_SERVICE_NAME, mongoLog)
+                    .withLogConsumer(TestDataKt.API_SERVICE_NAME, apiLog);
 
             TEST_API.start();
 

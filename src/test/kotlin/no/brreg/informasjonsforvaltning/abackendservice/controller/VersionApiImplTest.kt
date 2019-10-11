@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 
 @Tag("unit")
-class VersionApiServiceTest {
+class VersionApiImplTest {
 
     private val httpServletRequestMock: HttpServletRequest = mock()
     private val versionApi: VersionApiImpl = VersionApiImpl()
