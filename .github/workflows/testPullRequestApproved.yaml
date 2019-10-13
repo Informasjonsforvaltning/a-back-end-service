@@ -1,0 +1,13 @@
+name: Pull request approved
+# This workflow is triggered (hopefully...) when a pull request is approved
+on: [pull_request_review]
+
+jobs:
+  build:
+    # Job name is Greeting
+    name: Greeting
+    # This job runs on Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull request approved event
+        run: echo 'Pull request approved'

@@ -9,5 +9,5 @@ jobs:
     # This job runs on Linux
     runs-on: ubuntu-latest
     steps:
-      - name: Tell that this is a pull request evebt
+      - name: Pull request created event
         run: echo 'Pull request created'
