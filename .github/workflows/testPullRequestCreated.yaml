@@ -1,4 +1,4 @@
-name: Pull request created
+name: Pull request created or updated
 # This workflow is triggered when a pull request is created
 on: [pull_request]
 
