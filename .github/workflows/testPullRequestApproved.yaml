@@ -1,6 +1,10 @@
 name: Pull request approved
 # This workflow is triggered (hopefully...) when a pull request is approved
-on: [pull_request_review]
+on:
+  pull_request_review:
+    types: [submitted]
+
+#må få tak i state APPROVED "state" : "APPROVED"
 
 jobs:
   build:
