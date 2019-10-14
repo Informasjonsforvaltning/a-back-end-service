@@ -2,6 +2,7 @@ package no.brreg.informasjonsforvaltning.abackendservice.contract
 
 import no.brreg.informasjonsforvaltning.abackendservice.utils.*
 import no.brreg.informasjonsforvaltning.abackendservice.utils.simplePost
+import org.junit.BeforeClass
 import no.brreg.informasjonsforvaltning.abackendservice.utils.AbstractDockerTestContainer as ApiContainer
 import no.brreg.informasjonsforvaltning.abackendservice.utils.jsonServiceEndpointObject as mapServiceToJson
 import no.brreg.informasjonsforvaltning.abackendservice.utils.Expect as expect
@@ -140,6 +141,7 @@ class ServiceEndpointApiContractTest : ApiContainer(){
 
     @Nested
     inner class getVersionForServiceEndpoints {
+
         @Test
         fun `expect a Version for existing service`() {
             val name = "version-service"
@@ -159,10 +161,11 @@ class ServiceEndpointApiContractTest : ApiContainer(){
                     ApiContainer.TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
                     "/serviceendpoints/11111/version"
             )
-            val status = result.getValue("status")
-            val body = result.getValue("body") as LinkedHashMap<String,String>
+            val status = result.getValue("status") as String
+            assume_implemented(status)
 
-            expect(status).to_contain("200")
+            val body = result.getValue("body") as LinkedHashMap<String,String>
+            expect(status).to_equal("200")
             expect(body).to_contain("repositoryUrl")
             expect(body["repositoryUrl"]).to_contain(name)
             expect(body).to_contain("branchName")
@@ -179,7 +182,8 @@ class ServiceEndpointApiContractTest : ApiContainer(){
                     "/serviceendpoints/11111/version"
             )
 
-            val status = result.getValue("status")
+            val status = result.getValue("status") as String
+            assume_implemented(status)
             expect(status).to_equal("404")
         }
     }

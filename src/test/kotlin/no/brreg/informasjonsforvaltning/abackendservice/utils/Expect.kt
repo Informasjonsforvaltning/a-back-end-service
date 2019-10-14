@@ -33,3 +33,7 @@ fun assume_authenticated(status: String) {
 fun assume_success(status: String) {
     Assumptions.assumeTrue(status.equals("201"))
 }
+
+fun assume_implemented(status: String){
+    Assumptions.assumeFalse(status.equals("501"))
+}
