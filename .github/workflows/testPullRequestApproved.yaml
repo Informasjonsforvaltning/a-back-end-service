@@ -1,17 +1,20 @@
-name: Pull request approved
+name: Label approved pull request
 # This workflow is triggered (hopefully...) when a pull request is approved
 on:
   pull_request_review:
-    types: [submitted]
+    types:
+      - submitted
 
 #må få tak i state APPROVED "state" : "APPROVED"
 
 jobs:
-  build:
-    # Job name is Greeting
-    name: Greeting
-    # This job runs on Linux
+  labelWhenApproved:
+    name: Label when approved
     runs-on: ubuntu-latest
     steps:
-      - name: Pull request approved event
-        run: echo 'Pull request approved'
+    - name: Label when approved
+      uses: pullreminders/label-when-approved-action@master
+      env:
+        APPROVALS: "1"
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        ADD_LABEL: "deploy_staging"
