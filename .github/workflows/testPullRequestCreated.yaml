@@ -1,0 +1,13 @@
+name: Pull request created or updated
+# This workflow is triggered when a pull request is created
+on: [pull_request]
+
+jobs:
+  build:
+    # Job name is Greeting
+    name: Greeting
+    # This job runs on Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull request created event
+        run: echo 'Pull request created'
