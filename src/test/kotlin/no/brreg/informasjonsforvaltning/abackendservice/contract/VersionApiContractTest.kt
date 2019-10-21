@@ -26,7 +26,8 @@ class VersionApiContractTest : ApiContainer() {
 
             expect(status).to_equal("200")
             expect(body).to_contain("repositoryUrl")
-            expect(body["repositoryUrl"]).to_equal("https://github.com/Informasjonsforvaltning/a-back-end-service.git")
+            //TODO get full path when test is run on github actions (then change test to to_equal ("https://github.com/Informasjonsforvaltning/a-back-end-service.git)"
+            expect(body["repositoryUrl"]).to_contain("https://github.com/Informasjonsforvaltning/a-back-end-service")
             expect(body).to_contain("branchName")
             expect(body).to_contain("buildTime")
             expect(body).to_contain("sha")
