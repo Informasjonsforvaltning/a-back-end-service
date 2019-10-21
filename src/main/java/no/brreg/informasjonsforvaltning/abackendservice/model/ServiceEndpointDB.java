@@ -5,6 +5,8 @@ import javax.validation.constraints.NotNull;
 
 import org.bson.types.ObjectId;
 import java.net.URI;
+import java.net.URL;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -13,7 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class ServiceEndpointDB {
     @Id private ObjectId id;
     @Indexed(unique = true) @NotBlank private String name;
-    @Indexed(unique = true) @NotNull private URI uri;
+    @Indexed(unique = true) @NotNull private URL uri;
 
     public ObjectId getId() {
         return id;
@@ -31,11 +33,11 @@ public class ServiceEndpointDB {
         this.name = name;
     }
 
-    public URI getUri() {
+    public URL getUri() {
         return uri;
     }
 
-    public void setUri(URI uri) {
+    public void setUri(URL uri) {
         this.uri = uri;
     }
 }

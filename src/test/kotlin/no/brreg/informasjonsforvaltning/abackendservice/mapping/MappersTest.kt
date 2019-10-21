@@ -1,8 +1,8 @@
 package no.brreg.informasjonsforvaltning.abackendservice.mapping
 
-import no.brreg.informasjonsforvaltning.abackendservice.GENERATED_ID_0
-import no.brreg.informasjonsforvaltning.abackendservice.createServiceEndpoint
-import no.brreg.informasjonsforvaltning.abackendservice.createServiceEndpointDB
+import no.brreg.informasjonsforvaltning.abackendservice.utils.GENERATED_ID_0
+import no.brreg.informasjonsforvaltning.abackendservice.utils.createServiceEndpoint
+import no.brreg.informasjonsforvaltning.abackendservice.utils.createServiceEndpointDB
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 

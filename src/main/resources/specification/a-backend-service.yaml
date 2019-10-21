@@ -54,6 +54,14 @@ paths:
                 type: string
                 format: uri
               description: url to the new service endpoint
+        '400':
+          description: Bad request. Required arguments name and url is missing or invalid.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden. User does not have access to edit resource
+        '409':
+          description: Conflict. Attempt to add existing service endpoint was denied.
       requestBody:
         required: true
         content:
@@ -73,6 +81,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServiceEndpointCollection'
+  /serviceendpoints/{id}/version:
+    get:
+      tags:
+        - serviceEndpoint
+      summary: Get the version object for a given service endpoint.
+      description: Returns a version object.
+      operationId: getVersionForServiceEndpoint
+      parameters:
+      - name: id
+        in: path
+        description: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Version'
+        404:
+          description: Service endpoint with requested id does not exist
+
 components:
   schemas:
     Version:
@@ -121,8 +153,6 @@ components:
           type: string
           format: uri
           description: the uri to a service endpoint that is monitored
-        version:
-          $ref: '#/components/schemas/Version'
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme
       type: http

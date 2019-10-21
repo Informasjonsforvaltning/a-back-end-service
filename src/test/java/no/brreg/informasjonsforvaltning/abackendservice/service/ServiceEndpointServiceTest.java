@@ -17,13 +17,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static no.brreg.informasjonsforvaltning.abackendservice.TestDataKt.*;
+import static  no.brreg.informasjonsforvaltning.abackendservice.utils.TestDataKt.*;
 
 @ExtendWith(MockitoExtension.class)
 @RunWith(JUnitPlatform.class)
 @Tag("unit")
 class ServiceEndpointServiceTest {
-
     @Mock
     ServiceEndpointRepository repositoryMock;
 
@@ -49,9 +48,6 @@ class ServiceEndpointServiceTest {
         Mockito.when(repositoryMock.findAll())
             .thenReturn(getENDPOINTS_DB_LIST());
 
-        Mockito.when(adapterMock.getVersionData(Mockito.any()))
-            .thenReturn(getVERSION_DATA());
-
         ServiceEndpointCollection result = serviceEndpointService.getServiceEndpoints();
 
         Assertions.assertEquals(1, result.getTotal());
@@ -67,7 +63,7 @@ class ServiceEndpointServiceTest {
         ServiceEndpoint result = serviceEndpointService.createServiceEndpoint(createServiceEndpoint(null));
 
         ServiceEndpoint expected = createServiceEndpoint(saved.getId().toHexString());
-
-        Assertions.assertEquals(expected, result);
+        Assertions.assertEquals(result, expected);
     }
+
 }

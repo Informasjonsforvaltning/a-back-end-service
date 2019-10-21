@@ -8,7 +8,7 @@ fun ServiceEndpointDB.mapToGenerated(): ServiceEndpoint {
 
     mapped.id = id.toHexString()
     mapped.name = name
-    mapped.uri = uri
+    mapped.uri = uri.toURI()
 
     return mapped
 }
@@ -17,7 +17,7 @@ fun ServiceEndpoint.mapForCreation(): ServiceEndpointDB {
     val mapped = ServiceEndpointDB()
 
     mapped.name = name
-    mapped.uri = uri
+    mapped.uri = uri.toURL()
 
     return mapped
 }

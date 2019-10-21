@@ -21,7 +21,6 @@ class ServiceEndpointService (
         serviceEndpointRepository
             .findAll()
             .map { it.mapToGenerated() }
-            .map { it.apply { version = adapter.getVersionData(uri.toURL()) } }
             .let {
                 ServiceEndpointCollection().apply {
                     total = it.size
