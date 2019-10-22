@@ -12,10 +12,12 @@ class VersionAdapter {
 
     fun getVersionData(url: URL): Version {
 
-        val jsonBody = url.openConnection()
-                                  .inputStream
-                                  .bufferedReader()
-                                   .use(BufferedReader::readText)
+        val jsonBody = url
+                .openConnection()
+                .inputStream
+                .bufferedReader()
+                .use(BufferedReader::readText)
+
         return jacksonObjectMapper().readValue(jsonBody)
     }
 
