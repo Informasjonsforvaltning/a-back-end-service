@@ -19,7 +19,7 @@ class ServiceEndpointApiContractTest : ApiContainer(){
         fun `expect post to return 401 for unauthenticated users`() {
             val result = simplePost(TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
                                     TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
-                    SERVICE_ENDPOINT,
+                                    SERVICE_ENDPOINT,
                                     mapServiceToJson("uniqeservice"))
 
             val status = result.getValue("status")
@@ -32,9 +32,9 @@ class ServiceEndpointApiContractTest : ApiContainer(){
 
             val result = simplePost(TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
                                     TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
-                    SERVICE_ENDPOINT,
+                                    SERVICE_ENDPOINT,
                                     mapServiceToJson("nonadmin"),
-                    NON_ADMIN_TOKEN_TMP)
+                                    NON_ADMIN_TOKEN_TMP)
 
             val status = result.getValue("status")
             assume_authenticated(status)

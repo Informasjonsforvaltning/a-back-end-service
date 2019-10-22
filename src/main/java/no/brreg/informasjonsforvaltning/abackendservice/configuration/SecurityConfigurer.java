@@ -51,6 +51,7 @@ public class SecurityConfigurer extends ResourceServerConfigurerAdapter {
 
         http.authorizeRequests()
             .antMatchers(HttpMethod.GET).permitAll()
+            .antMatchers(HttpMethod.OPTIONS).permitAll()
             .anyRequest().authenticated();
     }
 

@@ -141,7 +141,7 @@ components:
       type: object
       required:
         - name
-        - uri
+        - url
       properties:
         id:
           type: string
@@ -149,10 +149,10 @@ components:
         name:
           type: string
           description: the name of the service (repository name)
-        uri:
+        url:
           type: string
           format: uri
-          description: the uri to a service endpoint that is monitored
+          description: the url to a service endpoint that is monitored
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme
       type: http

@@ -2,6 +2,7 @@ package no.brreg.informasjonsforvaltning.abackendservice.model;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import org.bson.types.ObjectId;
 import java.net.URI;
@@ -13,17 +14,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection="service-endpoints")
 public class ServiceEndpointDB {
-    @Id private ObjectId id;
-    @Indexed(unique = true) @NotBlank private String name;
-    @Indexed(unique = true) @NotNull private URL uri;
 
-    public ObjectId getId() {
-        return id;
-    }
-
-    public void setId(ObjectId id) {
-        this.id = id;
-    }
+    @Id @Pattern(regexp = "[A-Za-z\\-]+") private String name;
+    @Indexed(unique = true) @NotNull private URL url;
 
     public String getName() {
         return name;
@@ -33,11 +26,11 @@ public class ServiceEndpointDB {
         this.name = name;
     }
 
-    public URL getUri() {
-        return uri;
+    public URL getUrl() {
+        return url;
     }
 
-    public void setUri(URL uri) {
-        this.uri = uri;
+    public void setUrl(URL uri) {
+        this.url = uri;
     }
 }

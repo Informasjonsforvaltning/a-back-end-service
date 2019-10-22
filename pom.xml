@@ -128,7 +128,13 @@
             <artifactId>mockito-kotlin</artifactId>
             <version>2.2.0</version>
         </dependency>
-
+        <!-- Mocking http server -->
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock</artifactId>
+            <version>2.25.1</version>
+            <scope>test</scope>
+        </dependency>
         <!-- TEST JUnit5 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
