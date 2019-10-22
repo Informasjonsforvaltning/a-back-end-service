@@ -16,9 +16,9 @@ import java.net.URL
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class VersionAdapterGatewayTest {
-     private val versionAdapter = VersionAdapter()
-     private val port = 8080
-     private val mockServer = WireMockServer(port)
+    private val versionAdapter = VersionAdapter()
+    private val port = 8080
+    private val mockServer = WireMockServer(port)
     private val urlFoAdapter  = URL("http://localhost:${port}/version")
 
     @BeforeAll
@@ -29,9 +29,9 @@ class VersionAdapterGatewayTest {
     @Test
     fun `expect VersionAdapter to get version from a existing endpoint`(){
         val jsonString = VERSION_JSON
-        mockServer.stubFor(get(urlEqualTo("/version"))
-                .willReturn(aResponse()
-                        .withBody(jsonString))
+        mockServer.stubFor(
+                get(urlEqualTo("/version"))
+                    .willReturn(aResponse().withBody(jsonString))
         )
 
         val expeted = VERSION_DATA
