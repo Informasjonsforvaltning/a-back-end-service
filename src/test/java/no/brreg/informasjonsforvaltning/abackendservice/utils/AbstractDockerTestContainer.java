@@ -29,6 +29,8 @@ public abstract class AbstractDockerTestContainer {
 
             TEST_API.start();
 
+            //Legg inn testdata i mongodb
+
         } else {
             logger.debug("Unable to start containers, missing test-compose.yml");
         }

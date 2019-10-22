@@ -12,6 +12,17 @@ import org.junit.jupiter.api.*
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Tag("service")
 class ServiceEndpointApiContractTest : ApiContainer(){
+    val authMock = AuthMock()
+
+    @BeforeAll
+    fun setup(){
+        authMock.startMockAuth()
+    }
+
+    @AfterAll
+    fun teardown() {
+        authMock.stopAuthMock()
+    }
 
     @Nested
     inner class postServiceEndpoint {
@@ -46,7 +57,7 @@ class ServiceEndpointApiContractTest : ApiContainer(){
         @Test
         fun `expect post to return 201 response for correct request`() {
             val name = "newservice"
-            val result = simplePost(TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
+            val result = postWithWritePermission(TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
                     TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
                     SERVICE_ENDPOINT,
                     mapServiceToJson(name),
@@ -187,5 +198,6 @@ class ServiceEndpointApiContractTest : ApiContainer(){
             expect(status).to_equal("404")
         }
     }
+
 
 }
