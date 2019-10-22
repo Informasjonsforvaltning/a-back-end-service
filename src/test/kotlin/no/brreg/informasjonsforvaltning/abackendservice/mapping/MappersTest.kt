@@ -1,33 +1,29 @@
 package no.brreg.informasjonsforvaltning.abackendservice.mapping
 
-import no.brreg.informasjonsforvaltning.abackendservice.utils.GENERATED_ID_0
-import no.brreg.informasjonsforvaltning.abackendservice.utils.createServiceEndpoint
-import no.brreg.informasjonsforvaltning.abackendservice.utils.createServiceEndpointDB
+import no.brreg.informasjonsforvaltning.abackendservice.utils.*
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNull
 
 @Tag("unit")
 class MappersTest {
 
     @Test
-    fun fromDatabaseObjectToGenerated() {
-        val serviceEndpointDB = createServiceEndpointDB(GENERATED_ID_0)
-        val expected = createServiceEndpoint(GENERATED_ID_0.toHexString())
+
+    fun `expect mapToGenerated to return a ServiceEndpoint`() {
+        val serviceEndpointDB = createServiceEndpointDB(TestNames.CORRECT, TestUrls.CORRECT)
+        val expected = createServiceEndpoint(TestNames.CORRECT,TestUrls.CORRECT)
 
         assertEquals(expected, serviceEndpointDB.mapToGenerated())
     }
 
     @Test
-    fun mapForCreationOfDatabaseObject() {
-        val serviceEndpoint = createServiceEndpoint(GENERATED_ID_0.toHexString())
-        val expected = createServiceEndpointDB(GENERATED_ID_0)
+    fun `expect mapForCreation to return a ServiceEndpoinDBt`() {
+        val serviceEndpoint = createServiceEndpoint(TestNames.CORRECT, TestUrls.CORRECT)
+        val expected = createServiceEndpointDB(TestNames.CORRECT,TestUrls.CORRECT)
         val result = serviceEndpoint.mapForCreation()
 
-        assertNull(result.id)
         assertEquals(expected.name, result.name)
-        assertEquals(expected.name, result.name)
+        assertEquals(expected.url, result.url)
     }
-}
+ }

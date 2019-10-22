@@ -31,18 +31,16 @@ const val SERVICE_ENDPOINT = "/serviceendpoints"
 fun mongoUri(host: String, port: Int): String =
     "mongodb://$MONGO_USER:$MONGO_PASSWORD@$host:$port/$DATABASE_NAME$MONGO_AUTH"
 
-fun createServiceEndpointDB(objectId: ObjectId?) =
+fun createServiceEndpointDB(testName: String, testUrl: String) =
     ServiceEndpointDB().apply {
-        id = objectId
-        name = "Endpoint name"
-        uri = URL("http://localhost:$API_PORT/version")
+        name = testName
+        url = URL(testUrl)
     }
 
-fun createServiceEndpoint(hexStringId: String?) =
+fun createServiceEndpoint(testName: String,testUrl: String) =
     ServiceEndpoint().apply {
-        id = hexStringId
-        name = "Endpoint name"
-        uri = URI("http://localhost:$API_PORT/version")
+        name = testName
+        url = URI(testUrl)
     }
 
 fun jsonServiceEndpointObject (name: String, addName: Boolean = true, addUri: Boolean = true ): String? {
@@ -57,11 +55,11 @@ private fun createServiceEndpointWithVersionData(hexStringId: String?) =
     ServiceEndpoint().apply {
         id = hexStringId
         name = "Endpoint name"
-        uri = URI("http://localhost:$API_PORT/version")
+        url = URI("http://localhost:$API_PORT/version")
     }
 
 val EMPTY_DB_LIST = emptyList<ServiceEndpointDB>()
-val ENDPOINTS_DB_LIST = listOf(createServiceEndpointDB(GENERATED_ID_0))
+val ENDPOINTS_DB_LIST = listOf(createServiceEndpointDB(TestNames.CORRECT,TestUrls.CORRECT))
 
 val EMPTY_ENDPOINTS_LIST = emptyList<ServiceEndpoint>()
 val ENDPOINTS_LIST = listOf(createServiceEndpointWithVersionData(GENERATED_ID_0.toHexString()))
@@ -73,5 +71,19 @@ val VERSION_DATA = Version().apply{
     buildTime = "buildTime"
     sha = "sha"
     versionId = "versionId"
+}
+
+val VERSION_JSON = (
+        jacksonObjectMapper().writeValueAsString(VERSION_DATA))
+object TestNames{
+    val CORRECT = "a-bakcend-service"
+    val WITH_WHITE_SPACE= "a backend service"
+    val WITH_NUMBER = "a-back3nd-servi3"
+}
+
+object TestUrls{
+    val CORRECT = "http://localhost:8080/version"
+    val NOT_URL = "this is not a url"
+    val INVALID_FORMAT = "http:8080/version"
 }
 

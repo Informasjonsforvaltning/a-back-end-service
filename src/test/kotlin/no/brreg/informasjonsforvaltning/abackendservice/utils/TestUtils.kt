@@ -10,7 +10,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 
 fun createTmpComposeFile(): File {
     val tmpFile = File.createTempFile("test-compose", ".yml")
-    val rootDir = " ${System.getProperty("user.dir")}/target".trim()
     tmpFile.writeText("version: \"3.2\"\n" +
         "\n" +
         "services:\n" +
