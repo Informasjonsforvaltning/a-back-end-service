@@ -26,7 +26,7 @@ import com.github.tomakehurst.wiremock.client.WireMock
                         "}"))
         )
 
-        mockserver.stubFor(get(urlEqualTo("/check"))
+        mockserver.stubFor(get(urlEqualTo("/ping"))
                 .willReturn(aResponse()
                         .withStatus(200)))
 
@@ -36,7 +36,6 @@ import com.github.tomakehurst.wiremock.client.WireMock
 
     fun stopAuthMock() {
         mockserver.verify(getRequestedFor(urlEqualTo("/auth/realms/fdk/protocol/openid-connect/certs")))
-        mockserver.verify(getRequestedFor(urlEqualTo("/check")))
         if (mockserver.isRunning) {
             mockserver.stop()
         }

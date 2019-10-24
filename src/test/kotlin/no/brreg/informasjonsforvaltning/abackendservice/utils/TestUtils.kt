@@ -58,12 +58,11 @@ fun getContent(host: String, port: Int, address: String): Map<String,Any> {
 }
 
 
-fun simplePost(host: String, port: Int, address: String,body: String? = null, token: String? = null): Map<String, String> {
-    val connection  = URL("http", host, port, address).openConnection() as HttpURLConnection
+fun simplePost(endpoint : String, body: String?): Map<String, String> {
+    val connection  = URL(getApiAddress(endpoint)).openConnection() as HttpURLConnection
     connection.requestMethod = "POST"
     connection.setRequestProperty("Content-type", "application/json")
     connection.setRequestProperty("Accept", "application/json")
-    if(token!= null) connection.setRequestProperty("Authorization", "Bearer {$token}")
 
     try {
 

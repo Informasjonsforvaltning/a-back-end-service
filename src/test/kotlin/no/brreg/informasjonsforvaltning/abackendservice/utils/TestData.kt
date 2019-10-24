@@ -7,6 +7,10 @@ import org.bson.types.ObjectId
 import java.net.URI
 import java.net.URL
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import no.brreg.informasjonsforvaltning.abackendservice.utils.AbstractDockerTestContainer.TEST_API
+import org.apiguardian.api.API
+import org.testcontainers.containers.GenericContainer
+import org.testcontainers.shaded.com.google.common.collect.ImmutableMap
 
 const val API_SERVICE_NAME = "a-backend-service"
 const val API_PORT = 8080
@@ -16,6 +20,19 @@ const val MONGO_PORT = 27017
 
 const val MONGO_USER = "testuser"
 const val MONGO_PASSWORD = "testpassword"
+
+val MONGO_ENV_VALUES: Map<String, String> = ImmutableMap.of(
+        "MONGO_INITDB_ROOT_USERNAME", MONGO_USER,
+        "MONGO_INITDB_ROOT_PASSWORD", MONGO_PASSWORD
+)
+
+val API_ENV_VALUES : Map<String,String> = ImmutableMap.of(
+        "MONGO_USERNAME", MONGO_USER,
+        "MONGO_PASSWORD", MONGO_PASSWORD,
+        "MONGO_HOST", "$MONGO_SERVICE_NAME:$MONGO_PORT",
+        "SPRING_PROFILES_ACTIVE" , "test"
+)
+
 
 const val LOCAL_SERVER_PORT = 5000
 
@@ -32,6 +49,11 @@ const val SERVICE_ENDPOINT = "/serviceendpoints"
 
 fun mongoUri(host: String, port: Int): String =
     "mongodb://$MONGO_USER:$MONGO_PASSWORD@$host:$port/$DATABASE_NAME$MONGO_AUTH"
+
+fun getApiAddress( endpoint: String ): String{
+   return "http://${TEST_API.getContainerIpAddress()}:${TEST_API.getMappedPort(API_PORT)}$endpoint"
+}
+
 
 fun createServiceEndpointDB(objectId: ObjectId?) =
     ServiceEndpointDB().apply {
