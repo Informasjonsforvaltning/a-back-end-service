@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.Container;
-import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
@@ -16,10 +15,9 @@ import java.io.IOException;
 import static no.brreg.informasjonsforvaltning.abackendservice.utils.AuthMockKt.startMockAuth;
 import static no.brreg.informasjonsforvaltning.abackendservice.utils.TestDataKt.*;
 
-public abstract class AbstractDockerTestContainer {
+public abstract class ApiTestContainer {
 
-    private static File testComposeFile = TestUtilsKt.createTmpComposeFile();
-    private final static Logger logger = LoggerFactory.getLogger(AbstractDockerTestContainer.class);
+    private final static Logger logger = LoggerFactory.getLogger(ApiTestContainer.class);
     private static Slf4jLogConsumer mongoLog = new Slf4jLogConsumer(logger).withPrefix("mongo-container");
     private static Slf4jLogConsumer apiLog = new Slf4jLogConsumer(logger).withPrefix("api-container");
     private static GenericContainer mongoContainer;
@@ -27,9 +25,8 @@ public abstract class AbstractDockerTestContainer {
     static {
 
         startMockAuth();
+
         Testcontainers.exposeHostPorts(LOCAL_SERVER_PORT);
-
-
         Network apiNetwork = Network.newNetwork();
 
         mongoContainer = new GenericContainer("mongo:latest")
@@ -50,8 +47,10 @@ public abstract class AbstractDockerTestContainer {
 
             mongoContainer.start();
             TEST_API.start();
+
+
         try {
-            Container.ExecResult result =TEST_API.execInContainer("wget", "-O", "-", "http://host.testcontainers.internal:5000/ping");
+            Container.ExecResult result =TEST_API.execInContainer("wget", "-O", "-", "http://host.testcontainers.internal:5000/auth/realms/fdk/protocol/openid-connect/certs");
             if (!result.getStderr().contains("200")){
                 logger.debug("Ping to AuthMock server failed");
             }
