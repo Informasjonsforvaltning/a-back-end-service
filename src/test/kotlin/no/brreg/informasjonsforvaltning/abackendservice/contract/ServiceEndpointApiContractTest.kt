@@ -2,12 +2,15 @@ package no.brreg.informasjonsforvaltning.abackendservice.contract
 
 import no.brreg.informasjonsforvaltning.abackendservice.utils.*
 import no.brreg.informasjonsforvaltning.abackendservice.utils.simplePost
+import org.junit.BeforeClass
 import no.brreg.informasjonsforvaltning.abackendservice.utils.AbstractDockerTestContainer as ApiContainer
 import no.brreg.informasjonsforvaltning.abackendservice.utils.jsonServiceEndpointObject as mapServiceToJson
 import no.brreg.informasjonsforvaltning.abackendservice.utils.Expect as expect
 import org.junit.jupiter.api.*
-import no.brreg.informasjonsforvaltning.abackendservice.utils.stopAuthMock
 
+import no.brreg.informasjonsforvaltning.abackendservice.utils.stopAuthMock
+import java.net.URL
+import java.net.URLConnection
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Tag("service")
@@ -22,17 +25,16 @@ class ServiceEndpointApiContractTest : ApiContainer(){
     inner class postServiceEndpoint {
         @Test
         fun `expect post to return 401 for unauthenticated users`() {
-            
-            val result = simplePost(TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
-                                    TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
-                                    SERVICE_ENDPOINT,
-                                    mapServiceToJson("uniqeservice"))
+            val result = simplePost(
+                    SERVICE_ENDPOINT,
+                    mapServiceToJson("uniqeservice")
+            )
 
             val status = result.getValue("status")
             expect(status).to_equal("401")
         }
-
-        /** TODO get non-admin token**/
+    }
+   /*     /** TODO get non-admin token**/
         @Test
         fun `expect post to return 403 for non-admin users`() {
 
@@ -199,7 +201,7 @@ class ServiceEndpointApiContractTest : ApiContainer(){
             assume_implemented(status)
             expect(status).to_equal("404")
         }
-    }
+    }*/
 
 
 }
