@@ -17,6 +17,8 @@ const val MONGO_PORT = 27017
 const val MONGO_USER = "testuser"
 const val MONGO_PASSWORD = "testpassword"
 
+const val LOCAL_SERVER_PORT = 5000
+
 val GENERATED_ID_0 = ObjectId("5d846c475f599c04093216c3")
 
 const val DATABASE_NAME = "a-backend-service"

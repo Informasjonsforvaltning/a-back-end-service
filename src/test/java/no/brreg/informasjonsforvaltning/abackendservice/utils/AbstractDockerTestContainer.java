@@ -2,12 +2,15 @@ package no.brreg.informasjonsforvaltning.abackendservice.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 import java.io.File;
 
+import static no.brreg.informasjonsforvaltning.abackendservice.utils.AuthMockKt.startMockAuth;
+import static no.brreg.informasjonsforvaltning.abackendservice.utils.TestDataKt.LOCAL_SERVER_PORT;
 
 public abstract class AbstractDockerTestContainer {
 
@@ -17,6 +20,10 @@ public abstract class AbstractDockerTestContainer {
     private static Slf4jLogConsumer apiLog = new Slf4jLogConsumer(logger).withPrefix("api-container");
     public static DockerComposeContainer TEST_API;
     static {
+
+        startMockAuth();
+        Testcontainers.exposeHostPorts(LOCAL_SERVER_PORT);
+
         if (testComposeFile != null && testComposeFile.exists()) {
             TEST_API = new DockerComposeContainer<>(testComposeFile)
                     .withExposedService(TestDataKt.MONGO_SERVICE_NAME, TestDataKt.MONGO_PORT, Wait.forListeningPort())
