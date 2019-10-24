@@ -9,51 +9,18 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.http.HttpStatus
 
 
-fun createTmpComposeFile(): File {
-    val tmpFile = File.createTempFile("test-compose", ".yml")
-    tmpFile.writeText("version: \"3.2\"\n" +
-        "\n" +
-        "services:\n" +
-        "  a-backend-service:\n" +
-        "    image: brreg/a-backend-service:latest\n" +
-        "    environment:\n" +
-        "      - MONGO_USERNAME=$MONGO_USER\n" +
-        "      - MONGO_PASSWORD=$MONGO_PASSWORD\n" +
-        "      - MONGO_HOST=mongodb:27017\n" +
-        "      - \"SPRING_PROFILES_ACTIVE=test\"\n" +
-        "    depends_on:\n" +
-        "      - $MONGO_SERVICE_NAME\n" +
-        "\n" +
-        "  $MONGO_SERVICE_NAME:\n" +
-        "    image: mongo:latest\n" +
-        "    environment:\n" +
-        "      - MONGO_INITDB_ROOT_USERNAME=$MONGO_USER\n" +
-        "      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD\n" )
-
-    return tmpFile
-}
-
-fun simpleGet(host: String, port: Int, address: String): String =
-    URL("http", host, port, address)
-        .openConnection()
-        .inputStream
-        .bufferedReader()
-        .use(BufferedReader::readText)
-
-fun getContent(host: String, port: Int, address: String): Map<String,Any> {
+fun apiGet(endpoint: String): Map<String,Any> {
     try {
-        val connection = URL("http", host, port, address)
-                .openConnection() as HttpURLConnection
-        connection.requestMethod = "GET"
-        connection.connect()
+    val connection = URL(getApiAddress(endpoint))
+            .openConnection() as HttpURLConnection
 
-        return if (HttpStatus.resolve(connection.responseCode)?.is2xxSuccessful == true) {
-            val responseBody = connection.getInputStream().bufferedReader().use(BufferedReader::readText)
-            mapOf<String, Any>(
-                "body" to jacksonObjectMapper().readValue(responseBody),
-                "header" to connection.headerFields.toString(),
-                "status" to connection.responseCode.toString())
-        } else mapOf("status" to connection.responseCode.toString())
+    val responseBody = connection.getInputStream().bufferedReader().use (BufferedReader :: readText)
+    val response = mapOf<String,Any>(
+            "body" to jacksonObjectMapper().readValue(responseBody),
+            "header" to connection.getHeaderFields().toString(),
+            "status" to connection.responseCode)
+
+        return response
 
     } catch (e: Exception){
         return mapOf("error" to e.toString())
@@ -61,55 +28,26 @@ fun getContent(host: String, port: Int, address: String): Map<String,Any> {
 }
 
 
-fun simplePost(endpoint : String, body: String?): Map<String, String> {
+fun apiPost(endpoint : String, body: String?, token: String?): Map<String, String> {
     val connection  = URL(getApiAddress(endpoint)).openConnection() as HttpURLConnection
     connection.requestMethod = "POST"
     connection.setRequestProperty("Content-type", "application/json")
     connection.setRequestProperty("Accept", "application/json")
 
-    try {
-
-    if (body!=null) {
-        connection.doOutput = true
-
-        connection.outputStream.bufferedWriter().write(body)
-        connection.outputStream.flush()
-        connection.outputStream.close()
-    }
-        val response = mapOf<String,String>(
-                "body" to connection.getInputStream().bufferedReader().use (BufferedReader :: readText),
-                "header" to connection.getHeaderFields().toString(),
-                "status" to getStatus(connection.getHeaderField(0))
-        )
-
-        return response
-
-    } catch (e: Exception){
-        return mapOf("status" to getStatus(e.message?:"uknown"))
-    }
-}
-
-fun postWithWritePermission(host: String, port: Int, address: String,body: String? = null, token: String? = null): Map<String, String> {
-
-    val connection = URL("http", host, port, address).openConnection() as HttpURLConnection
-    connection.requestMethod = "POST"
-    connection.setRequestProperty("Content-type", "application/json")
-    connection.setRequestProperty("Accept", "application/json")
-    connection.setRequestProperty("Authorization", "Bearer $ADMIN_TOKEN")
+    if(!token.isNullOrEmpty()) {connection.setRequestProperty("Authorization", "Bearer $token")}
 
     try {
-
         if (body!=null) {
             connection.doOutput = true
-
             connection.outputStream.bufferedWriter().write(body)
             connection.outputStream.flush()
             connection.outputStream.close()
         }
+
         val response = mapOf<String,String>(
                 "body" to connection.getInputStream().bufferedReader().use (BufferedReader :: readText),
                 "header" to connection.getHeaderFields().toString(),
-                "status" to getStatus(connection.getHeaderField(0))
+                "status" to connection.responseMessage
         )
 
         return response
