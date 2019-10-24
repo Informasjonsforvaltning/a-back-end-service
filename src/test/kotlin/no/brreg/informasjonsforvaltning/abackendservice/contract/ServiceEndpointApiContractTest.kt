@@ -2,36 +2,32 @@ package no.brreg.informasjonsforvaltning.abackendservice.contract
 
 import no.brreg.informasjonsforvaltning.abackendservice.utils.*
 import no.brreg.informasjonsforvaltning.abackendservice.utils.simplePost
-import org.junit.BeforeClass
 import no.brreg.informasjonsforvaltning.abackendservice.utils.AbstractDockerTestContainer as ApiContainer
 import no.brreg.informasjonsforvaltning.abackendservice.utils.jsonServiceEndpointObject as mapServiceToJson
 import no.brreg.informasjonsforvaltning.abackendservice.utils.Expect as expect
 import org.junit.jupiter.api.*
+import no.brreg.informasjonsforvaltning.abackendservice.utils.stopAuthMock
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Tag("service")
 class ServiceEndpointApiContractTest : ApiContainer(){
-    val authMock = AuthMock()
-
-    @BeforeAll
-    fun setup(){
-        authMock.startMockAuth()
-    }
 
     @AfterAll
     fun teardown() {
-        authMock.stopAuthMock()
+        stopAuthMock()
     }
 
     @Nested
     inner class postServiceEndpoint {
         @Test
         fun `expect post to return 401 for unauthenticated users`() {
-            val result = simplePost(TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
-                                    TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
+            val result = simplePost(
+                    TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
+                    TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
                     SERVICE_ENDPOINT,
-                                    mapServiceToJson("uniqeservice"))
+                    mapServiceToJson("uniqeservice")
+            )
 
             val status = result.getValue("status")
             expect(status).to_equal("401")
@@ -41,11 +37,13 @@ class ServiceEndpointApiContractTest : ApiContainer(){
         @Test
         fun `expect post to return 403 for non-admin users`() {
 
-            val result = simplePost(TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
-                                    TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
-                                    SERVICE_ENDPOINT,
-                                    mapServiceToJson("nonadmin"),
-                                    NON_ADMIN_TOKEN_TMP)
+            val result = simplePost(
+                    TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
+                    TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
+                    SERVICE_ENDPOINT,
+                    mapServiceToJson("nonadmin"),
+                    NON_ADMIN_TOKEN_TMP
+            )
 
             val status = result.getValue("status")
             assume_authenticated(status)
@@ -57,11 +55,13 @@ class ServiceEndpointApiContractTest : ApiContainer(){
         @Test
         fun `expect post to return 201 response for correct request`() {
             val name = "newservice"
-            val result = postWithWritePermission(TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
+            val result = postWithWritePermission(
+                    TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
                     TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
                     SERVICE_ENDPOINT,
                     mapServiceToJson(name),
-                    ADMIN_TOKEN_TMP)
+                    ADMIN_TOKEN
+            )
 
             val status = result.getValue("status")
             assume_authenticated(status)
@@ -76,10 +76,11 @@ class ServiceEndpointApiContractTest : ApiContainer(){
 
         @Test
         fun `expect post to return 400 for request with empty body`() {
-            val result = simplePost(TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
-                                    TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
+            val result = simplePost(
+                    TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
+                    TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
                     SERVICE_ENDPOINT,
-                                    token = ADMIN_TOKEN_TMP)
+                    token = ADMIN_TOKEN)
 
             val status = result.getValue("status")
             assume_authenticated(status)
@@ -89,12 +90,12 @@ class ServiceEndpointApiContractTest : ApiContainer(){
         @Test
 
         fun `expect post to return 400 for request with missing uri`() {
-            val result = simplePost(TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
+            val result = simplePost(
+                    TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
                     TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
                     SERVICE_ENDPOINT,
-                    mapServiceToJson("missinguriservice",
-                                      addUri = false),
-                    token = ADMIN_TOKEN_TMP)
+                    mapServiceToJson("missinguriservice", addUri = false),
+                    token = ADMIN_TOKEN)
             val status = result.getValue("status")
             assume_authenticated(status)
 
@@ -102,12 +103,13 @@ class ServiceEndpointApiContractTest : ApiContainer(){
         }
         @Test
         fun `expect post to return 400 for request with missing name`() {
-            val result = simplePost(TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
+            val result = simplePost(
+                    TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
                     TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
                     SERVICE_ENDPOINT,
                     mapServiceToJson("missingnameservice",
                             addName = false),
-                            token = ADMIN_TOKEN_TMP)
+                    token = ADMIN_TOKEN)
             val status = result.getValue("status")
             assume_authenticated(status)
 
@@ -117,11 +119,12 @@ class ServiceEndpointApiContractTest : ApiContainer(){
         @Test
         fun `expect post to return 409 for duplicate service name`() {
 
-            val setup_result = simplePost(TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
+            val setup_result = simplePost(
+                    TEST_API.getServiceHost(API_SERVICE_NAME, API_PORT),
                     TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
                     SERVICE_ENDPOINT,
                     mapServiceToJson("duplicateservice"),
-                    ADMIN_TOKEN_TMP)
+                    ADMIN_TOKEN)
 
             val setup_status = setup_result.getValue("status")
             assume_success(setup_status)
@@ -130,7 +133,7 @@ class ServiceEndpointApiContractTest : ApiContainer(){
                     TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
                     SERVICE_ENDPOINT,
                     mapServiceToJson("duplicateservice"),
-                    token = ADMIN_TOKEN_TMP)
+                    token = ADMIN_TOKEN)
             val status = result.getValue("status")
             expect(status).to_equal("409")
         }
@@ -161,7 +164,7 @@ class ServiceEndpointApiContractTest : ApiContainer(){
                     TEST_API.getServicePort(API_SERVICE_NAME, API_PORT),
                     SERVICE_ENDPOINT,
                     mapServiceToJson(name),
-                    ADMIN_TOKEN_TMP)
+                    ADMIN_TOKEN)
 
             val setup_status = setup_result.getValue("status")
             assume_success(setup_status)
