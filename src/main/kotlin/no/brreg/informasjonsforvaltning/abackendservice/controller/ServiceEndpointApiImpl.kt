@@ -22,21 +22,21 @@ open class ServiceEndpointApiImpl (
 ) : no.brreg.informasjonsforvaltning.abackendservice.generated.api.ServiceEndpointApi {
 
   override fun getServiceEndpoints(httpServletRequest: HttpServletRequest): ResponseEntity<ServiceEndpointCollection> =
-      ResponseEntity(endpointService.getServiceEndpoints(), HttpStatus.OK)
+          ResponseEntity(endpointService.getServiceEndpoints(), HttpStatus.OK)
 
   override fun createServiceEndpoint(httpServletRequest: HttpServletRequest, serviceEndpoint: ServiceEndpoint): ResponseEntity<Void> =
       if (endpointPermissions.hasAdminPermission()) {
-        try {
-            endpointService.createServiceEndpoint(serviceEndpoint)
-            ResponseEntity<Void>(HttpStatus.CREATED)
-        } catch (exception: Exception) {
-          LOGGER.error("createServiceEndpoint failed:", exception)
-          when (exception){
-            is MalformedURLException -> ResponseEntity<Void>(HttpStatus.BAD_REQUEST)
-            is ConstraintViolationException -> ResponseEntity<Void>(HttpStatus.BAD_REQUEST)
-            is DuplicateKeyException -> ResponseEntity(HttpStatus.CONFLICT)
-            else -> ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
+          try {
+              endpointService.createServiceEndpoint(serviceEndpoint)
+              ResponseEntity<Void>(HttpStatus.CREATED)
+          } catch (exception: Exception) {
+              LOGGER.error("createServiceEndpoint failed:", exception)
+              when (exception){
+                  is MalformedURLException -> ResponseEntity<Void>(HttpStatus.BAD_REQUEST)
+                  is ConstraintViolationException -> ResponseEntity<Void>(HttpStatus.BAD_REQUEST)
+                  is DuplicateKeyException -> ResponseEntity(HttpStatus.CONFLICT)
+                  else -> ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
+              }
           }
-        }
       } else ResponseEntity(HttpStatus.FORBIDDEN)
 }

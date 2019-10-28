@@ -19,7 +19,7 @@ class Expect(_result: Any?){
 
     fun to_contain(expected: String) {
         when(result) {
-           is String -> Assertions.assertTrue(result.contains(expected))
+           is String -> Assertions.assertTrue(result.contains(expected), "expected string to contain $expected")
            is LinkedHashMap<*, *> -> Assertions.assertTrue(result.contains(expected))
            else -> throw AssertionError("Unexpected datatype in result");
         }
