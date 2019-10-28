@@ -6,8 +6,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import org.springframework.http.HttpStatus
-
+import java.io.OutputStreamWriter
 
 fun apiGet(endpoint: String): Map<String,Any> {
     try {
@@ -39,15 +38,16 @@ fun apiPost(endpoint : String, body: String?, token: String?): Map<String, Strin
     try {
         if (body!=null) {
             connection.doOutput = true
-            connection.outputStream.bufferedWriter().write(body)
-            connection.outputStream.flush()
-            connection.outputStream.close()
+            val writer = OutputStreamWriter(connection.outputStream)
+            writer.write(body)
+            writer.close()
+
         }
 
         val response = mapOf<String,String>(
                 "body" to connection.getInputStream().bufferedReader().use (BufferedReader :: readText),
                 "header" to connection.getHeaderFields().toString(),
-                "status" to connection.responseMessage
+                "status" to getStatus(connection.getHeaderField(0))
         )
 
         return response
