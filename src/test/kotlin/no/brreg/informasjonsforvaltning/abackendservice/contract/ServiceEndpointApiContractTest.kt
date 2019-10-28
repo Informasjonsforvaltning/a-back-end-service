@@ -3,6 +3,7 @@ package no.brreg.informasjonsforvaltning.abackendservice.contract
 import no.brreg.informasjonsforvaltning.abackendservice.utils.*
 import no.brreg.informasjonsforvaltning.abackendservice.utils.apiPost
 import no.brreg.informasjonsforvaltning.abackendservice.utils.ApiTestContainer
+import no.brreg.informasjonsforvaltning.abackendservice.utils.jwk.JwtToken
 import no.brreg.informasjonsforvaltning.abackendservice.utils.jsonServiceEndpointObject as mapServiceToJson
 import no.brreg.informasjonsforvaltning.abackendservice.utils.Expect as expect
 import org.junit.jupiter.api.*
@@ -14,7 +15,7 @@ import no.brreg.informasjonsforvaltning.abackendservice.utils.stopAuthMock
 class ServiceEndpointApiContractTest : ApiTestContainer(){
 
     //Placeholders
-    var adminToken = "dfghjkløaksfjhaghjfksl8agdsfhdjklgahsfjdgkbxc87678909876trvgbhjakfldsvjnbdasfjklvxcj"
+    val adminToken = JwtToken.buildRoot()
     var nonAdminToken = "jhagsfjhflaksjflkjfklasjfkasjfkjalksfjlasjflafs jææasfjk as7f89adfshasfjlo02hh"
 
     @AfterAll
