@@ -21,6 +21,10 @@ class ServiceEndpointApiContractTest : ApiTestContainer(){
     @AfterAll
     fun teardown() {
         stopAuthMock()
+        val dockerClient = TEST_API.getDockerClient()
+                dockerClient.stopContainerCmd(TEST_API.getContainerId())
+                .withTimeout(100)
+                .exec()
     }
 
     @Nested
