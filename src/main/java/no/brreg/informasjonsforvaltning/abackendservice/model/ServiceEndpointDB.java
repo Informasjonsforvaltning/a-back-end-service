@@ -1,11 +1,8 @@
 package no.brreg.informasjonsforvaltning.abackendservice.model;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-import org.bson.types.ObjectId;
-import java.net.URI;
 import java.net.URL;
 
 import org.springframework.data.annotation.Id;

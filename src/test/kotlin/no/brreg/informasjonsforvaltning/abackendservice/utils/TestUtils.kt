@@ -6,6 +6,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import org.springframework.http.HttpStatus
 
 
 fun createTmpComposeFile(): File {
@@ -40,18 +41,21 @@ fun simpleGet(host: String, port: Int, address: String): String =
 
 fun getContent(host: String, port: Int, address: String): Map<String,Any> {
     try {
-    val connection = URL("http", host, port, address)
-            .openConnection()
-    val responseBody = connection.getInputStream().bufferedReader().use (BufferedReader :: readText)
-    val response = mapOf<String,Any>(
-            "body" to jacksonObjectMapper().readValue(responseBody),
-            "header" to connection.getHeaderFields().toString(),
-            "status" to getStatus(connection.getHeaderField(0)))
+        val connection = URL("http", host, port, address)
+                .openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+        connection.connect()
 
-        return response
+        return if (HttpStatus.resolve(connection.responseCode)?.is2xxSuccessful == true) {
+            val responseBody = connection.getInputStream().bufferedReader().use(BufferedReader::readText)
+            mapOf<String, Any>(
+                "body" to jacksonObjectMapper().readValue(responseBody),
+                "header" to connection.headerFields.toString(),
+                "status" to connection.responseCode.toString())
+        } else mapOf("status" to connection.responseCode.toString())
 
     } catch (e: Exception){
-        return mapOf("status" to getStatus(e.message?:"uknown"))
+        return mapOf("error" to e.toString())
     }
 }
 
@@ -89,6 +93,6 @@ fun getStatus(response: String): String =
     Regex("\\d{3}")
             .find(response)
             ?.value
-            ?: "unkown"
+            ?: "unknown"
 
 
