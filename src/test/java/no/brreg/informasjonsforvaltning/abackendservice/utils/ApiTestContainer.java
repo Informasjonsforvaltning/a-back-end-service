@@ -9,14 +9,13 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
-
-import java.io.File;
 import java.io.IOException;
 
 import static no.brreg.informasjonsforvaltning.abackendservice.utils.AuthMockKt.startMockAuth;
 import static no.brreg.informasjonsforvaltning.abackendservice.utils.TestDataKt.*;
 
 public abstract class ApiTestContainer {
+
 
     private final static Logger logger = LoggerFactory.getLogger(ApiTestContainer.class);
     private static Slf4jLogConsumer mongoLog = new Slf4jLogConsumer(logger).withPrefix("mongo-container");
@@ -70,4 +69,11 @@ public abstract class ApiTestContainer {
         //Legg inn testdata i mongodb
     }
 
+    public static void stopGracefully(){
+        logger.debug("Shutting down container gracefully");
+        TEST_API.getDockerClient()
+                .stopContainerCmd(ApiTestContainer.TEST_API.getContainerId())
+                .withTimeout(100)
+                .exec();
+    }
 }

@@ -14,17 +14,12 @@ import no.brreg.informasjonsforvaltning.abackendservice.utils.stopAuthMock
 @Tag("service")
 class ServiceEndpointApiContractTest : ApiTestContainer(){
 
-    //Placeholders
     val adminToken = JwtToken.buildRoot()
     var nonAdminToken = JwtToken.buildRead()
 
     @AfterAll
     fun teardown() {
         stopAuthMock()
-        val dockerClient = TEST_API.getDockerClient()
-                dockerClient.stopContainerCmd(TEST_API.getContainerId())
-                .withTimeout(100)
-                .exec()
     }
 
     @Nested

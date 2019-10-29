@@ -442,6 +442,13 @@
                     <includes>
                         <include>**/*.java</include>
                     </includes>
+                    <!-- System properties for conditional execution in listener-->
+                    <systemProperties>
+                        <property>
+                            <name>test.type</name>
+                            <value>unit</value>
+                        </property>
+                    </systemProperties>
                 </configuration>
             </plugin>
 
@@ -456,6 +463,13 @@
                     <includes>
                         <include>**/*.java</include>
                     </includes>
+             <!-- System properties for conditional execution in listener-->
+                    <systemProperties>
+                        <property>
+                            <name>test.type</name>
+                            <value>contract</value>
+                        </property>
+                    </systemProperties>
                 </configuration>
             </plugin>
             <plugin>
