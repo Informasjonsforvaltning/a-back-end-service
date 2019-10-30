@@ -13,6 +13,9 @@ fun apiGet(endpoint: String): Map<String,Any> {
     return try{
         val connection = URL(getApiAddress(endpoint))
                 .openConnection() as HttpURLConnection
+
+        connection.connect()
+
         val responseBody = connection.getInputStream().bufferedReader().use (BufferedReader :: readText)
         mapOf(
                 "body" to jacksonObjectMapper().readValue(responseBody),
@@ -20,7 +23,9 @@ fun apiGet(endpoint: String): Map<String,Any> {
                 "status" to connection.responseCode)
 
     } catch (e: Exception){
-        return mapOf("error" to e.toString())
+        return mapOf(
+                "status" to e.toString()
+        )
     }
 }
 

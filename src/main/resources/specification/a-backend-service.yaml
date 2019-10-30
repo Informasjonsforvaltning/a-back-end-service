@@ -143,9 +143,6 @@ components:
         - name
         - url
       properties:
-        id:
-          type: string
-          description: system-generated id (GUID)
         name:
           type: string
           description: the name of the service (repository name)

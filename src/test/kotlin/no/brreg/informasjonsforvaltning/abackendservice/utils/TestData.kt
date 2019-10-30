@@ -70,14 +70,13 @@ fun createServiceEndpoint(testName: String,testUrl: String) =
 fun jsonServiceEndpointObject (name: String, addName: Boolean = true, addUri: Boolean = true ): String? {
     val map = mapOf<String,String?>(
             "name" to if(addName) name else null ,
-            "uri" to if(addUri) "http://nothing.org/${name}" else null
+            "url" to if(addUri) "http://nothing.org/${name}" else null
     )
     return jacksonObjectMapper().writeValueAsString(map)
 }
 
 private fun createServiceEndpointWithVersionData(hexStringId: String?) =
     ServiceEndpoint().apply {
-        id = hexStringId
         name = "Endpoint name"
         url = URI("http://localhost:$API_PORT/version")
     }
