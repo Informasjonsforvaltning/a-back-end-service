@@ -52,7 +52,7 @@ class ServiceEndpointApiContractTest : ApiTestContainer(){
 
         @Test
         fun `expect post to return 201 response for correct request`() {
-            val name = "newservice"
+
             val result = apiPost(
                     SERVICE_ENDPOINT,
                     mapServiceToJson("correct-service"),
@@ -71,7 +71,7 @@ class ServiceEndpointApiContractTest : ApiTestContainer(){
 
         @Test
         fun `expect post to return 400 for request with empty body`() {
-            val name = "newservice"
+
             val result = apiPost(
                     SERVICE_ENDPOINT,
                     body = null,
@@ -127,7 +127,7 @@ class ServiceEndpointApiContractTest : ApiTestContainer(){
 
             val result = apiPost(
                     SERVICE_ENDPOINT,
-                    mapServiceToJson(EXISTING_SERVICE),
+                    jsonServiceDuplicateObject(EXISTING_SERVICE),
                     token = adminToken
             )
 

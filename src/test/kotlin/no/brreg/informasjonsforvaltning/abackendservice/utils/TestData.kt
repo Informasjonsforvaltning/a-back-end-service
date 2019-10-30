@@ -12,7 +12,6 @@ import org.apiguardian.api.API
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.shaded.com.google.common.collect.ImmutableMap
 
-const val API_SERVICE_NAME = "a-backend-service"
 const val API_PORT = 8080
 
 const val MONGO_SERVICE_NAME = "mongodb"
@@ -39,16 +38,8 @@ val API_ENV_VALUES : Map<String,String> = ImmutableMap.of(
 const val LOCAL_SERVER_PORT = 5000
 
 val GENERATED_ID_0 = ObjectId("5d846c475f599c04093216c3")
-
-const val DATABASE_NAME = "a-backend-service"
-private const val MONGO_AUTH = "?authSource=admin&authMechanism=SCRAM-SHA-1"
-
 const val SERVICE_ENDPOINT = "/serviceendpoints"
 const val VERSION_API_ENDPOINT = "/version"
-
-
-fun mongoUri(host: String, port: Int): String =
-    "mongodb://$MONGO_USER:$MONGO_PASSWORD@$host:$port/$DATABASE_NAME$MONGO_AUTH"
 
 fun getApiAddress( endpoint: String ): String{
    return "http://${TEST_API.getContainerIpAddress()}:${TEST_API.getMappedPort(API_PORT)}$endpoint"
@@ -74,18 +65,16 @@ fun jsonServiceEndpointObject (name: String, addName: Boolean = true, addUri: Bo
     )
     return jacksonObjectMapper().writeValueAsString(map)
 }
-
-private fun createServiceEndpointWithVersionData(hexStringId: String?) =
-    ServiceEndpoint().apply {
-        name = "Endpoint name"
-        url = URI("http://localhost:$API_PORT/version")
-    }
+fun jsonServiceDuplicateObject (name: String, addName: Boolean = true, addUri: Boolean = true ): String? {
+    val map = mapOf<String,String?>(
+            "name" to "name-that-should-fail" ,
+            "url" to if(addUri) "http://nothing.org/${name}" else null
+    )
+    return jacksonObjectMapper().writeValueAsString(map)
+}
 
 val EMPTY_DB_LIST = emptyList<ServiceEndpointDB>()
 val ENDPOINTS_DB_LIST = listOf(createServiceEndpointDB(TestNames.CORRECT,TestUrls.CORRECT))
-
-val EMPTY_ENDPOINTS_LIST = emptyList<ServiceEndpoint>()
-val ENDPOINTS_LIST = listOf(createServiceEndpointWithVersionData(GENERATED_ID_0.toHexString()))
 
 
 val VERSION_DATA = Version().apply{
