@@ -24,7 +24,7 @@ class ServiceEndpointApiContractTest : ApiTestContainer(){
     }
 
     @Nested
-    inner class postServiceEndpoint {
+    inner class PostServiceEndpoint {
         @Test
         fun `expect post to return 401 for user withouth token`() {
             val result = apiPost(
@@ -151,7 +151,7 @@ class ServiceEndpointApiContractTest : ApiTestContainer(){
 
 
     @Nested
-    inner class getVersionForServiceEndpoints {
+    inner class GetVersionForServiceEndpoints {
 
         @Test
         fun `expect a Version for existing service`() {
