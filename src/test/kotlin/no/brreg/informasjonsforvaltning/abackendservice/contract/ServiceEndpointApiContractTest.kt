@@ -169,7 +169,7 @@ class ServiceEndpointApiContractTest : ApiTestContainer(){
             assume_success(sResult)
 
             val result = apiGet("/some-new-service/version")
-            val status = result.getValue("status") as String
+            val status = result.getValue("status") 
 
             /*
 

@@ -36,8 +36,6 @@ val API_ENV_VALUES : Map<String,String> = ImmutableMap.of(
 
 
 const val LOCAL_SERVER_PORT = 5000
-
-val GENERATED_ID_0 = ObjectId("5d846c475f599c04093216c3")
 const val SERVICE_ENDPOINT = "/serviceendpoints"
 const val VERSION_API_ENDPOINT = "/version"
 

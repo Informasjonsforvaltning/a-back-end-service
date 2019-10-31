@@ -15,16 +15,19 @@ fun apiGet(endpoint: String): Map<String,Any> {
                 .openConnection() as HttpURLConnection
 
         connection.connect()
-
-        val responseBody = connection.getInputStream().bufferedReader().use (BufferedReader :: readText)
-        mapOf(
-                "body" to jacksonObjectMapper().readValue(responseBody),
-                "header" to connection.headerFields.toString(),
-                "status" to connection.responseCode)
-
+        if(isOK(connection.responseCode)) {
+            val responseBody = connection.getInputStream().bufferedReader().use(BufferedReader::readText)
+            mapOf(
+                    "body" to jacksonObjectMapper().readValue(responseBody),
+                    "header" to connection.headerFields.toString(),
+                    "status" to connection.responseCode)
+        } else {
+            mapOf(
+                    "status" to connection.responseCode
+            )
+        }
     } catch (e: Exception){
-        return mapOf(
-                "status" to e.toString()
+         mapOf("status" to e.toString()
         )
     }
 }
@@ -48,7 +51,7 @@ fun apiPost(endpoint : String, body: String?, token: String?): Map<String, Strin
             writer.close()
         }
 
-        if(isOK(connection.responseCode)){
+            if(isOK(connection.responseCode)){
             mapOf(
                 "body" to connection.inputStream.bufferedReader().use(BufferedReader :: readText),
                 "header" to connection.headerFields.toString(),
