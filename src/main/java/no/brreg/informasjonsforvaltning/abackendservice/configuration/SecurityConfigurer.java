@@ -1,6 +1,8 @@
 package no.brreg.informasjonsforvaltning.abackendservice.configuration;
 
+import no.brreg.informasjonsforvaltning.abackendservice.Application;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,6 +19,9 @@ import org.springframework.web.cors.CorsConfiguration;
 @EnableResourceServer
 public class SecurityConfigurer extends ResourceServerConfigurerAdapter {
 
+    @Value("${security.oauth2.resource.jwk.key-set-uri:}")
+    private String server;
+
     private ResourceServerProperties resourceServerProperties;
 
     @Autowired
@@ -27,6 +32,7 @@ public class SecurityConfigurer extends ResourceServerConfigurerAdapter {
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) {
         resources.resourceId(resourceServerProperties.getResourceId());
+        System.out.println("[authentication]loaded properties: " + server);
     }
 
     @Override

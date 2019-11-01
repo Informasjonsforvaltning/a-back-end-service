@@ -11,7 +11,6 @@ import java.net.URL
 class VersionAdapter {
 
     fun getVersionData(url: URL): Version {
-
         val jsonBody = url
                 .openConnection()
                 .inputStream

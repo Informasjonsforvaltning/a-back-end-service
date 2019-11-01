@@ -26,7 +26,6 @@ class ServiceEndpointServiceTest {
     fun `expect getServiceEnpoints to return empty ServiceEndpointCollection`(){
         whenever(repository.findAll()).thenReturn(EMPTY_DB_LIST)
         val result = service.getServiceEndpoints()
-        assertTrue(result is ServiceEndpointCollection)
         assertEquals(result.total,0)
         assertEquals(result.serviceEndpoints.size, 0)
     }
@@ -36,7 +35,6 @@ class ServiceEndpointServiceTest {
         whenever(repository.findAll()).thenReturn(ENDPOINTS_DB_LIST)
         val result = service.getServiceEndpoints()
         val dbList = result.serviceEndpoints
-        assertTrue(result is ServiceEndpointCollection)
 
         assertEquals(result.total,1)
         assertEquals(dbList.size, 1)
