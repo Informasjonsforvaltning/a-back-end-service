@@ -14,7 +14,6 @@ import no.brreg.informasjonsforvaltning.abackendservice.utils.stopAuthMock
 @Tag("service")
 class ServiceEndpointApiContractTest : ApiTestContainer(){
 
-    //Placeholders
     val adminToken = JwtToken.buildRoot()
     var nonAdminToken = JwtToken.buildRead()
 
@@ -41,7 +40,7 @@ class ServiceEndpointApiContractTest : ApiTestContainer(){
 
             val result = apiPost(
                     SERVICE_ENDPOINT,
-                    mapServiceToJson("uniqeservice"),
+                    mapServiceToJson("different-service"),
                     token = nonAdminToken
             )
 
@@ -62,7 +61,7 @@ class ServiceEndpointApiContractTest : ApiTestContainer(){
             val status = result.getValue("status")
             expect(status).to_equal("201")
 
-            /* TODO : implement endpoint for getting serviceendpoint object
+            /* TODO : implement location header
             val headers = result.getValue("header")
             expect(headers).to_contain("Location")
             expect(headers).to_contain("\"http://nothing.org/${name}\"")
@@ -114,20 +113,9 @@ class ServiceEndpointApiContractTest : ApiTestContainer(){
         @Test
         fun `expect post to return 409 for duplicate service name`() {
 
-            //TODO: populate db with existing service
-
-            val setup_result = apiPost(
-                    SERVICE_ENDPOINT,
-                    mapServiceToJson(EXISTING_SERVICE),
-                    token = adminToken
-            )
-
-            val setup_status = setup_result.getValue("status")
-            assume_success(setup_status)
-
             val result = apiPost(
                     SERVICE_ENDPOINT,
-                    jsonServiceDuplicateObject(EXISTING_SERVICE),
+                    jsonServiceDuplicateObject(),
                     token = adminToken
             )
 
@@ -138,7 +126,7 @@ class ServiceEndpointApiContractTest : ApiTestContainer(){
     }
 
     @Nested
-    inner class getServiceEndpoints {
+    inner class GetServiceEndpoints {
         @Test
         fun `expect a ServiceEndpointCollection`() {
             val result = apiGet(SERVICE_ENDPOINT)
@@ -155,21 +143,9 @@ class ServiceEndpointApiContractTest : ApiTestContainer(){
 
         @Test
         fun `expect a Version for existing service`() {
-            /**TODO populate DB, use name from service in db*/
-            val name = "some-new-service"
 
-
-            val setup = apiPost(
-                    SERVICE_ENDPOINT,
-                    mapServiceToJson(name),
-                    token = adminToken
-            )
-
-            val sResult = setup.getValue("status")
-            assume_success(sResult)
-
-            val result = apiGet("/some-new-service/version")
-            val status = result.getValue("status") 
+            val result = apiGet("/$EXISTING_SERVICE/version")
+            val status = result.getValue("status")
 
             /*
 
