@@ -26,16 +26,21 @@ fun apiGet(endpoint: String): Map<String,Any> {
         if(isOK(connection.responseCode)) {
             val responseBody = connection.getInputStream().bufferedReader().use(BufferedReader::readText)
             mapOf(
-                    "body" to jacksonObjectMapper().readValue(responseBody),
+                    "body"   to jacksonObjectMapper().readValue(responseBody),
                     "header" to connection.headerFields.toString(),
                     "status" to connection.responseCode)
         } else {
             mapOf(
-                    "status" to connection.responseCode
+                    "status" to connection.responseCode,
+                    "header" to " ",
+                    "body"   to " "
             )
         }
     } catch (e: Exception){
-         mapOf("status" to e.toString()
+         mapOf(
+                 "status" to e.toString(),
+                 "header" to " ",
+                 "body"   to " "
         )
     }
 }
@@ -61,17 +66,23 @@ fun apiPost(endpoint : String, body: String?, token: String?): Map<String, Strin
 
             if(isOK(connection.responseCode)){
             mapOf(
-                "body" to connection.inputStream.bufferedReader().use(BufferedReader :: readText),
+                "body"   to connection.inputStream.bufferedReader().use(BufferedReader :: readText),
                 "header" to connection.headerFields.toString(),
                 "status" to connection.responseCode.toString()
             )
         } else {
             mapOf<String,String>(
-                    "status" to connection.responseCode.toString()
+                    "status" to connection.responseCode.toString(),
+                    "header" to " ",
+                    "body" to " "
             )
         }
     } catch (e: Exception) {
-        mapOf("status" to getStatus(e.message?:"unknown"))
+        mapOf(
+                "status" to getStatus(e.message?:"unknown"),
+                "header" to " ",
+                "body"   to " "
+        )
     }
 }
 
@@ -84,7 +95,6 @@ fun getStatus(response: String): String =
 fun isOK(response: Int?): Boolean =
         if(response == null) false
         else HttpStatus.resolve(response)?.is2xxSuccessful == true
-
 
 fun populateDB(){
     val uri= "mongodb://${MONGO_USER}:${MONGO_PASSWORD}@localhost:${mongoContainer.getMappedPort(MONGO_PORT)}/a-backend-service?authSource=admin&authMechanism=SCRAM-SHA-1"

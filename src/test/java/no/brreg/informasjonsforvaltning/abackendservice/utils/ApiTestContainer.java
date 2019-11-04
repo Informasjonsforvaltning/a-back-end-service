@@ -9,10 +9,9 @@ import org.testcontainers.containers.Network;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-import java.io.File;
 import java.io.IOException;
 
-import static no.brreg.informasjonsforvaltning.abackendservice.utils.AuthMockKt.startMockAuth;
+import static no.brreg.informasjonsforvaltning.abackendservice.utils.ContractMockKt.startMockServer;
 import static no.brreg.informasjonsforvaltning.abackendservice.utils.TestDataKt.*;
 
 public abstract class ApiTestContainer {
@@ -24,7 +23,7 @@ public abstract class ApiTestContainer {
     public static GenericContainer TEST_API;
     static {
 
-        startMockAuth();
+        startMockServer();
 
         Testcontainers.exposeHostPorts(LOCAL_SERVER_PORT);
         Network apiNetwork = Network.newNetwork();
