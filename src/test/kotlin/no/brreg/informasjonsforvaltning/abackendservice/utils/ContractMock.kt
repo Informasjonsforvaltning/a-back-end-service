@@ -5,20 +5,25 @@ import no.brreg.informasjonsforvaltning.abackendservice.utils.jwk.JwkStore
 
 private val mockserver = WireMockServer(LOCAL_SERVER_PORT)
 
-fun startMockAuth() {
-
-        mockserver.stubFor(get(urlEqualTo("/auth/realms/fdk/protocol/openid-connect/certs"))
-                .willReturn(okJson(JwkStore.get() as String))
-        )
-
+fun startMockServer() {
+    if(!mockserver.isRunning) {
         mockserver.stubFor(get(urlEqualTo("/ping"))
                 .willReturn(aResponse()
-                        .withStatus(200)))
+                        .withStatus(200))
+        )
+
+        mockserver.stubFor(get(urlEqualTo("/auth/realms/fdk/protocol/openid-connect/certs"))
+                .willReturn(okJson(JwkStore.get())))
+
+        mockserver.stubFor(get(urlEqualTo("/$EXISTING_SERVICE/version"))
+                .willReturn(okJson(CONTRACT_VERSION_JSON)))
 
         mockserver.start()
-
     }
+}
 
-fun stopAuthMock() {
+fun stopMockServer() {
+
     if (mockserver.isRunning) mockserver.stop()
+
 }

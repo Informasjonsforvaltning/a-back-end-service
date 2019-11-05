@@ -3,16 +3,16 @@ package no.brreg.informasjonsforvaltning.abackendservice.utils
 import no.brreg.informasjonsforvaltning.abackendservice.generated.model.ServiceEndpoint
 import no.brreg.informasjonsforvaltning.abackendservice.generated.model.Version
 import no.brreg.informasjonsforvaltning.abackendservice.model.ServiceEndpointDB
-import org.bson.types.ObjectId
 import java.net.URI
 import java.net.URL
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.brreg.informasjonsforvaltning.abackendservice.utils.ApiTestContainer.TEST_API
-import org.apiguardian.api.API
-import org.testcontainers.containers.GenericContainer
 import org.testcontainers.shaded.com.google.common.collect.ImmutableMap
 
+
 const val API_PORT = 8080
+const val LOCAL_SERVER_PORT = 5000
+
 
 const val MONGO_SERVICE_NAME = "mongodb"
 const val MONGO_PORT = 27017
@@ -20,7 +20,9 @@ const val MONGO_PORT = 27017
 const val MONGO_USER = "testuser"
 const val MONGO_PASSWORD = "testpassword"
 
-const val EXISTING_SERVICE="a-duplicate-service"
+const val EXISTING_SERVICE = "a-db-service"
+const val EXPECT_NAME_CONFLICT = "existing-url-trouble"
+const val EXISTING_SERVICE_URL = "http://host.testcontainers.internal:5000/${EXISTING_SERVICE}"
 
 val MONGO_ENV_VALUES: Map<String, String> = ImmutableMap.of(
         "MONGO_INITDB_ROOT_USERNAME", MONGO_USER,
@@ -35,7 +37,6 @@ val API_ENV_VALUES : Map<String,String> = ImmutableMap.of(
 )
 
 
-const val LOCAL_SERVER_PORT = 5000
 const val SERVICE_ENDPOINT = "/serviceendpoints"
 const val VERSION_API_ENDPOINT = "/version"
 
@@ -56,6 +57,11 @@ fun createServiceEndpoint(testName: String,testUrl: String) =
         url = URI(testUrl)
     }
 
+fun dataForPopulate(): org.bson.Document? =
+        org.bson.Document()
+                .append("_id", EXISTING_SERVICE)
+                .append("url", EXISTING_SERVICE_URL)
+
 fun jsonServiceEndpointObject (name: String, addName: Boolean = true, addUri: Boolean = true ): String? {
     val map = mapOf<String,String?>(
             "name" to if(addName) name else null ,
@@ -63,10 +69,10 @@ fun jsonServiceEndpointObject (name: String, addName: Boolean = true, addUri: Bo
     )
     return jacksonObjectMapper().writeValueAsString(map)
 }
-fun jsonServiceDuplicateObject (name: String, addName: Boolean = true, addUri: Boolean = true ): String? {
+fun jsonServiceDuplicateObject (): String? {
     val map = mapOf<String,String?>(
-            "name" to "name-that-should-fail" ,
-            "url" to if(addUri) "http://nothing.org/${name}" else null
+            "name" to EXPECT_NAME_CONFLICT,
+            "url" to EXISTING_SERVICE_URL
     )
     return jacksonObjectMapper().writeValueAsString(map)
 }
@@ -83,17 +89,27 @@ val VERSION_DATA = Version().apply{
     versionId = "versionId"
 }
 
-val VERSION_JSON = (
-        jacksonObjectMapper().writeValueAsString(VERSION_DATA))
+val CONTRACT_VERSION_DATA = Version().apply{
+    repositoryUrl = "$EXISTING_SERVICE_URL.git"
+    branchName = "master"
+    buildTime = "54.775"
+    sha = "sha"
+    versionId = "1.0.4-SNAPSHOT"
+}
+
+val VERSION_JSON : String =
+        jacksonObjectMapper().writeValueAsString(VERSION_DATA)
+
+val CONTRACT_VERSION_JSON : String =
+        jacksonObjectMapper().writeValueAsString(CONTRACT_VERSION_DATA)
+
+
 object TestNames{
-    val CORRECT = "a-bakcend-service"
-    val WITH_WHITE_SPACE= "a backend service"
-    val WITH_NUMBER = "a-back3nd-servi3"
+    const val CORRECT = "a-bakcend-service"
+    const val WITH_WHITE_SPACE= "a backend service"
 }
 
 object TestUrls{
-    val CORRECT = "http://localhost:8080/version"
-    val NOT_URL = "this is not a url"
-    val INVALID_FORMAT = "http:8080/version"
+    const val CORRECT = "http://localhost:8080/version"
 }
 

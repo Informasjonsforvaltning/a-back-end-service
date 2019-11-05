@@ -16,6 +16,9 @@ class Expect(_result: Any?){
     fun to_equal(expected: String) {
         Assertions.assertEquals(expected,result)
     }
+    fun to_equal(expected: Int) {
+        Assertions.assertEquals(expected,result)
+    }
 
     fun to_contain(expected: String) {
         when(result) {

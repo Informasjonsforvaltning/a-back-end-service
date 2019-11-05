@@ -9,10 +9,9 @@ import org.testcontainers.containers.Network;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-import java.io.File;
 import java.io.IOException;
 
-import static no.brreg.informasjonsforvaltning.abackendservice.utils.AuthMockKt.startMockAuth;
+import static no.brreg.informasjonsforvaltning.abackendservice.utils.ContractMockKt.startMockServer;
 import static no.brreg.informasjonsforvaltning.abackendservice.utils.TestDataKt.*;
 
 public abstract class ApiTestContainer {
@@ -20,11 +19,11 @@ public abstract class ApiTestContainer {
     private final static Logger logger = LoggerFactory.getLogger(ApiTestContainer.class);
     private static Slf4jLogConsumer mongoLog = new Slf4jLogConsumer(logger).withPrefix("mongo-container");
     private static Slf4jLogConsumer apiLog = new Slf4jLogConsumer(logger).withPrefix("api-container");
-    private static GenericContainer mongoContainer;
+    public static GenericContainer mongoContainer;
     public static GenericContainer TEST_API;
     static {
 
-        startMockAuth();
+        startMockServer();
 
         Testcontainers.exposeHostPorts(LOCAL_SERVER_PORT);
         Network apiNetwork = Network.newNetwork();
@@ -36,6 +35,8 @@ public abstract class ApiTestContainer {
                 .withNetwork(apiNetwork)
                 .withNetworkAliases("mongodb")
                 .waitingFor(Wait.forListeningPort());
+        mongoContainer.start();
+        TestUtilsKt.populateDB();
 
         TEST_API = new GenericContainer("brreg/a-backend-service:latest")
                 .withExposedPorts(API_PORT)
@@ -45,7 +46,7 @@ public abstract class ApiTestContainer {
                 .waitingFor(Wait.forHttp("/version").forStatusCode(200))
                 .withNetwork(apiNetwork);
 
-            mongoContainer.start();
+
             TEST_API.start();
 
 

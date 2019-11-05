@@ -7,20 +7,24 @@ import no.brreg.informasjonsforvaltning.abackendservice.utils.jwk.JwtToken
 import no.brreg.informasjonsforvaltning.abackendservice.utils.jsonServiceEndpointObject as mapServiceToJson
 import no.brreg.informasjonsforvaltning.abackendservice.utils.Expect as expect
 import org.junit.jupiter.api.*
-import no.brreg.informasjonsforvaltning.abackendservice.utils.stopAuthMock
+import no.brreg.informasjonsforvaltning.abackendservice.utils.stopMockServer
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Tag("service")
 class ServiceEndpointApiContractTest : ApiTestContainer(){
 
-    //Placeholders
     val adminToken = JwtToken.buildRoot()
     var nonAdminToken = JwtToken.buildRead()
 
+    @BeforeAll
+    fun setup() {
+        startMockServer()
+    }
+
     @AfterAll
     fun teardown() {
-        stopAuthMock()
+        stopMockServer()
     }
 
     @Nested
@@ -41,7 +45,7 @@ class ServiceEndpointApiContractTest : ApiTestContainer(){
 
             val result = apiPost(
                     SERVICE_ENDPOINT,
-                    mapServiceToJson("uniqeservice"),
+                    mapServiceToJson("different-service"),
                     token = nonAdminToken
             )
 
@@ -62,7 +66,7 @@ class ServiceEndpointApiContractTest : ApiTestContainer(){
             val status = result.getValue("status")
             expect(status).to_equal("201")
 
-            /* TODO : implement endpoint for getting serviceendpoint object
+            /* TODO : implement location header
             val headers = result.getValue("header")
             expect(headers).to_contain("Location")
             expect(headers).to_contain("\"http://nothing.org/${name}\"")
@@ -114,20 +118,9 @@ class ServiceEndpointApiContractTest : ApiTestContainer(){
         @Test
         fun `expect post to return 409 for duplicate service name`() {
 
-            //TODO: populate db with existing service
-
-            val setup_result = apiPost(
-                    SERVICE_ENDPOINT,
-                    mapServiceToJson(EXISTING_SERVICE),
-                    token = adminToken
-            )
-
-            val setup_status = setup_result.getValue("status")
-            assume_success(setup_status)
-
             val result = apiPost(
                     SERVICE_ENDPOINT,
-                    jsonServiceDuplicateObject(EXISTING_SERVICE),
+                    jsonServiceDuplicateObject(),
                     token = adminToken
             )
 
@@ -138,7 +131,7 @@ class ServiceEndpointApiContractTest : ApiTestContainer(){
     }
 
     @Nested
-    inner class getServiceEndpoints {
+    inner class GetServiceEndpoints {
         @Test
         fun `expect a ServiceEndpointCollection`() {
             val result = apiGet(SERVICE_ENDPOINT)
@@ -155,42 +148,27 @@ class ServiceEndpointApiContractTest : ApiTestContainer(){
 
         @Test
         fun `expect a Version for existing service`() {
-            /**TODO populate DB, use name from service in db*/
-            val name = "some-new-service"
 
+            val result = apiGet("$SERVICE_ENDPOINT/$EXISTING_SERVICE/version")
 
-            val setup = apiPost(
-                    SERVICE_ENDPOINT,
-                    mapServiceToJson(name),
-                    token = adminToken
-            )
+            val status = result.getValue("status" as String)
+            expect(status).to_equal(200 )
 
-            val sResult = setup.getValue("status")
-            assume_success(sResult)
+            val body = result.getValue( "body") as LinkedHashMap<String,String>
 
-            val result = apiGet("/some-new-service/version")
-            val status = result.getValue("status") 
-
-            /*
-
-            val body = result.getValue("body") as LinkedHashMap<String,String>
-            expect(status).to_equal("200")
-            expect(body).to_contain("repositoryUrl")
-            expect(body["repositoryUrl"]).to_contain(name)
-            expect(body).to_contain("branchName")
-            expect(body).to_contain("buildTime")
-            expect(body).to_contain("sha")
-            expect(body).to_contain("versionId")*/
-
+            expect(body["repositoryUrl"]).to_equal(CONTRACT_VERSION_DATA.repositoryUrl)
+            expect(body["buildTime"]).to_equal(CONTRACT_VERSION_DATA.buildTime)
+            expect(body["branchName"]).to_equal(CONTRACT_VERSION_DATA.branchName)
+            expect(body["versionId"]).to_equal(CONTRACT_VERSION_DATA.versionId)
         }
 
 
         @Test
         fun `expect get to return 404 for non-existing id`() {
             val result = apiGet("/serviceendpoints/notfound/version")
-        /*
-            val status = result.getValue("status") as String
-            expect(status).to_equal("404")*/
+
+            val status = result.getValue("status") as Int
+            expect(status).to_equal(404)
         }
     }
 }
