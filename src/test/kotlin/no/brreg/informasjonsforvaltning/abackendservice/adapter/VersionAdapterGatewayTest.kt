@@ -5,16 +5,14 @@ import com.github.tomakehurst.wiremock.client.WireMock.*
 import no.brreg.informasjonsforvaltning.abackendservice.utils.VERSION_DATA
 
 import no.brreg.informasjonsforvaltning.abackendservice.utils.VERSION_JSON
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 
 import java.net.URL
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Tag("unit")
 class VersionAdapterGatewayTest {
     private val versionAdapter = VersionAdapter()
     private val port = 8080

@@ -3,6 +3,7 @@ package no.brreg.informasjonsforvaltning.abackendservice.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.Testcontainers;
+import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.Container;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
@@ -44,7 +45,13 @@ public abstract class ApiTestContainer {
                 .dependsOn(mongoContainer)
                 .withEnv(getAPI_ENV_VALUES())
                 .waitingFor(Wait.forHttp("/version").forStatusCode(200))
-                .withNetwork(apiNetwork);
+                .withNetwork(apiNetwork)
+                .withFileSystemBind("./target/jacoco-agent", "/jacoco-agent", BindMode.READ_WRITE)
+                .withFileSystemBind("./target/jacoco-report", "/jacoco-report",BindMode.READ_WRITE)
+                .withCommand("java",
+                        "-javaagent:/jacoco-agent/org.jacoco.agent-runtime.jar=destfile=/jacoco-report/jacoco-it.exec",
+                        "-jar",
+                        "/app.jar");
 
 
             TEST_API.start();
@@ -60,8 +67,14 @@ public abstract class ApiTestContainer {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
 
-        //Legg inn testdata i mongodb
+    public static void stopGracefully() {
+        logger.debug("Shutting down container gracefully");
+        TEST_API.getDockerClient()
+                .stopContainerCmd(ApiTestContainer.TEST_API.getContainerId())
+                .withTimeout(100)
+                .exec();
     }
 
 }

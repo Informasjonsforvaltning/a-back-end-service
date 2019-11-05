@@ -11,7 +11,7 @@ import no.brreg.informasjonsforvaltning.abackendservice.utils.stopMockServer
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Tag("service")
+@Tag("contract")
 class ServiceEndpointApiContractTest : ApiTestContainer(){
 
     val adminToken = JwtToken.buildRoot()

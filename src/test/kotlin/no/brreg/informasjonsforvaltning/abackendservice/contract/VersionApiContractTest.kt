@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Tag
 
 
-@Tag("service")
+@Tag("contract")
 class VersionApiContractTest : ApiTestContainer() {
 
     @Nested
