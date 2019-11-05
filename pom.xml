@@ -462,7 +462,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>3.0.0-M3</version>
                 <configuration>
-                    <groups>service</groups>
+                    <groups>contract</groups>
                     <excludedGroups>unit</excludedGroups>
                     <includes>
                         <include>**/*.java</include>
