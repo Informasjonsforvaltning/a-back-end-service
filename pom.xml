@@ -53,7 +53,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -178,7 +177,14 @@
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>8.2</version>
         </dependency>
-
+        <!-- Contract code coverage-->
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>org.jacoco.agent</artifactId>
+            <version>${jacoco.version}</version>
+            <classifier>runtime</classifier>
+            <scope>test</scope>
+        </dependency>
         <!-- Generated code dependencies -->
         <dependency>
             <groupId>io.springfox</groupId>
@@ -441,6 +447,12 @@
                     <includes>
                         <include>**/*.java</include>
                     </includes>
+                    <systemProperties>
+                        <property>
+                            <name>test.type</name>
+                            <value>unit</value>
+                        </property>
+                    </systemProperties>
                 </configuration>
             </plugin>
 
@@ -455,12 +467,34 @@
                     <includes>
                         <include>**/*.java</include>
                     </includes>
-                    <argLine>
-                      --illegal-access=permit
-                    </argLine>
+                    <!-- System properties for conditional execution in ExecutionListener-->
+                    <systemProperties>
+                        <property>
+                            <name>test.type</name>
+                            <value>contract</value>
+                        </property>
+                    </systemProperties>
                 </configuration>
             </plugin>
-
+            <!-- Jacoco integration, copy agent to testcontainer-->
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-jacoco</id>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <includeArtifactIds>org.jacoco.agent</includeArtifactIds>
+                            <includeClassifiers>runtime</includeClassifiers>
+                            <outputDirectory>${project.build.directory}/jacoco-agent</outputDirectory>
+                            <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -509,6 +543,15 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                    </execution>
+                    <execution>
+                        <id>integration-coverage-report</id>
+                        <goals>
+                            <goal>report-integration</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${project.build.directory}/jacoco-report/jacoco-it.exec</dataFile>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
