@@ -467,7 +467,7 @@
                     <includes>
                         <include>**/*.java</include>
                     </includes>
-                    <!-- System properties for conditional execution in ExecutionListener-->
+                    <!--System property used in TestPlanExecutionListener fo tests to determine test type-->
                     <systemProperties>
                         <property>
                             <name>test.type</name>
