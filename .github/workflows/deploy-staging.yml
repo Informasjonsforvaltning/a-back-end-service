@@ -10,15 +10,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
-      - name: Build Docker image
-        run: docker build . --tag dcatno/a-backend-service:latest --tag eu.gcr.io/fdk-infra/a-backend-service:latest --tag eu.gcr.io/fdk-infra/a-backend-service:staging_latest --tag eu.gcr.io/fdk-infra/a-backend-service:$GITHUB_SHA
-      - name: Connect to Google Cloud
-        uses: actions-hub/gcloud@master
-        env:
-          PROJECT_ID: fdk-infra
-          APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_FDK_JENKINS_GCR }}
+      - uses: actions/checkout@v1
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
         with:
-          args: auth configure-docker -q
+          java-version: '11'
+      - name: Build with Maven
+        run: mvn clean install -B -T 2C
+      - name: Tag Docker image
+        run: docker tag brreg/a-backend-service:latest eu.gcr.io/fdk-infra/brreg/a-backend-service:latest eu.gcr.io/fdk-infra/a-backend-service:staging_latest eu.gcr.io/fdk-infra/brreg/a-backend-service:$GITHUB_SHA
       - name: Push docker image to Google Cloud
         uses: actions/gcloud/cli@master
         env:
