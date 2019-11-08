@@ -57,4 +57,4 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         uses: pullreminders/slack-action@master
         with:
-          args: '{\"channel\":\"C7NTH118T\",\"text\":\"Application a-backend-service deployed to staging\"}'
+          args: '{\"channel\":\"C7NTH118T\",\"text\":\"Application: a-backend-service deployed to staging\"}'
