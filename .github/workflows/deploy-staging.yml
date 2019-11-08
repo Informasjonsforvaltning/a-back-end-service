@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Build Docker image
-        run: docker build . --tag dcatno/a-backend-service:latest --tag eu.gcr.io/fdk-infra/a-backend-service:latest --tag eu.gcr.io/fdk-infra/a-backend-service:staging_latest --tag eu.gcr.io/fdk-infra/a-backend-service:$GITHUB_SHA
+        run: docker build . --tag dcatno/a-back-end-service:latest --tag eu.gcr.io/fdk-infra/a-back-end-service:latest --tag eu.gcr.io/fdk-infra/a-back-end-service:staging_latest --tag eu.gcr.io/fdk-infra/a-back-end-service:$GITHUB_SHA
       - name: Connect to Google Cloud
         uses: actions-hub/gcloud@master
         env:
@@ -26,7 +26,7 @@ jobs:
           APPLICATION_NAME: myproject
         with:
           runs: "sh -c"
-          args: "docker -- push eu.gcr.io/fdk-infra/a-backend-service:$GITHUB_SHA"
+          args: "docker -- push eu.gcr.io/fdk-infra/a-back-end-service:$GITHUB_SHA"
       - name: Apply Helm template
         uses: stefanprodan/kube-tools@v1
         with:
@@ -34,8 +34,8 @@ jobs:
           command: |
             helm init --client-only
             helm repo add fdk https://informasjonsforvaltning.github.io/helm-chart/
-            helm fetch --untar --untardir ./helm fdk/a-backend-service
-            helm template --set DOCKER_IMAGE_NAME="eu.gcr.io/fdk-infra/a-backend-service:$GITHUB_SHA" -f ./helm/a-backend-service/values/staging.yaml ./helm/a-backend-service/ > ./kubectlapply.yaml
+            helm fetch --untar --untardir ./helm fdk/a-back-end-service
+            helm template --set DOCKER_IMAGE_NAME="eu.gcr.io/fdk-infra/a-back-end-service:$GITHUB_SHA" -f ./helm/a-back-end-service/values/staging.yaml ./helm/a-back-end-service/ > ./kubectlapply.yaml
             cat ./kubectlapply.yaml
             chmod o+w ./kubectlapply.yaml
             cat kubectlapply.yaml
@@ -57,4 +57,4 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         uses: pullreminders/slack-action@master
         with:
-          args: '{\"channel\":\"C7NTH118T\",\"text\":\"Application: a-backend-service deployed to staging\"}'
+          args: '{\"channel\":\"C7NTH118T\",\"text\":\"Application: a-back-end-service deployed to staging\"}'
