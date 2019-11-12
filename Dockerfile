@@ -8,6 +8,6 @@ WORKDIR /app
 VOLUME /tmp
 ARG JAR_FILE
 RUN ls
-ADD *SNAPSHOT.jar app.jar
+ADD target/*SNAPSHOT.jar app.jar
 RUN sh -c 'touch /app.jar'
 CMD java -jar $JAVA_OPTS app.jar
