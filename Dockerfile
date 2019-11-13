@@ -1,11 +1,11 @@
-FROM openjdk:11-jre
+FROM openjdk:11
 
 ENV TZ=Europe/Oslo
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 #VOLUME /tmp
-COPY . /app
-WORKDIR /app
+#COPY . /app
+#WORKDIR /app
 ARG JAR_FILE
 # RUN ls
 RUN echo ${JAR_FILE}
