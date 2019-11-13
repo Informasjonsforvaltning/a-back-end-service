@@ -10,9 +10,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
-      - name: Maven build phase
-        - run: |
-          mvn clean package
+      - name: Maven package phase
+        run: mvn clean package
       - name: Build Docker image
         run: docker build . --tag brreg/a-back-end-service:latest --tag eu.gcr.io/fdk-infra/brreg/a-back-end-service:latest --tag eu.gcr.io/fdk-infra/brreg/a-back-end-service:staging_latest --tag eu.gcr.io/fdk-infra/brreg/a-back-end-service:$GITHUB_SHA
       - name: Push docker image to Google Cloud
