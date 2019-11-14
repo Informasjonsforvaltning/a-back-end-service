@@ -4,7 +4,6 @@ ENV TZ=Europe/Oslo
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 VOLUME /tmp
-WORKDIR /home/runner/work/a-backend-service/a-backend-service
 ARG JAR_FILE
 RUN echo ${JAR_FILE}
 ADD target/${JAR_FILE} app.jar
