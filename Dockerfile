@@ -4,6 +4,7 @@ ENV TZ=Europe/Oslo
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 VOLUME /tmp
+WORKDIR /
 ARG JAR_FILE
 RUN echo ${JAR_FILE}
 COPY target/${JAR_FILE} app.jar
