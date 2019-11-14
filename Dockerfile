@@ -6,13 +6,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 VOLUME /tmp
 ARG JAR_FILE
 RUN echo ${JAR_FILE}
-WORKDIR /bin
-RUN ls
-WORKDIR /root
-RUN ls
-WORKDIR /home
-RUN ls
-WORKDIR /usr
+WORKDIR /usr/src
 RUN ls
 COPY target/${JAR_FILE} app.jar
 RUN sh -c 'touch /app.jar'
