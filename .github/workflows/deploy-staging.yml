@@ -1,7 +1,8 @@
 name: Deploy to staging when pull request is created
 
 on:
-  - push
+  #- push
+- deployment
 
 jobs:
   build:

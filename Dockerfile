@@ -7,6 +7,7 @@ VOLUME /tmp
 ARG JAR_FILE
 EXPOSE 8080
 RUN ls
+RUN pwd
 RUN sh -c 'touch /app.jar'
 ADD target/${JAR_FILE} app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
