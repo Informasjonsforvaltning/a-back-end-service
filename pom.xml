@@ -512,18 +512,36 @@
                         </goals>
                     </execution>
                     <execution>
-                        <id>tag</id>
+                        <id>tag-latest</id>
                         <goals>
                             <goal>tag</goal>
                         </goals>
+                        <configuration>
+                            <tag>latest-0</tag>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>tag-latest-1</id>
+                        <goals>
+                            <goal>tag</goal>
+                        </goals>
+                        <configuration>
+                            <tag>latest-1</tag>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>tag-latest-2</id>
+                        <goals>
+                            <goal>tag</goal>
+                        </goals>
+                        <configuration>
+                            <tag>latest-2</tag>
+                        </configuration>
                     </execution>
                 </executions>
                 <configuration>
                     <dockerfile>Dockerfile</dockerfile>
                     <repository>${docker.image.name}</repository>
-                    <tag>test0</tag>
-                    <tag>test1</tag>
-                    <tag>test2</tag>
                     <buildArgs>
                         <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
                     </buildArgs>
