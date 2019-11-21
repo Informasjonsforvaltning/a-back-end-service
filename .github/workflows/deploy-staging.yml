@@ -33,18 +33,18 @@ jobs:
         with:
           runs: "sh -c"
           args: "docker -- push eu.gcr.io/fdk-infra/a-backend-service:$GITHUB_SHA"
-#      - name: Apply Helm template
-#        uses: stefanprodan/kube-tools@v1
-#        with:
-#          helm: 2.14.3
-#          command: |
-#            helm init --client-only
-#            helm repo add fdk https://informasjonsforvaltning.github.io/helm-chart/
-#            helm fetch --untar --untardir ./helm fdk/a-backend-service
-#            helm template --set DOCKER_IMAGE_NAME="eu.gcr.io/fdk-infra/a-backend-service:$GITHUB_SHA" -f ./helm/a-backend-service/values/staging.yaml ./helm/a-backend-service/ > ./kubectlapply.yaml
-#            cat ./kubectlapply.yaml
-#            chmod o+w ./kubectlapply.yaml
-#            cat kubectlapply.yaml
+      - name: Apply Helm template
+        uses: stefanprodan/kube-tools@v1
+        with:
+          helm: 2.14.3
+          command: |
+            helm init --client-only
+            helm repo add fdk https://informasjonsforvaltning.github.io/helm-chart/
+            helm fetch --untar --untardir ./helm fdk/a-backend-service
+            helm template --set DOCKER_IMAGE_NAME="eu.gcr.io/fdk-infra/a-backend-service:$GITHUB_SHA" -f ./helm/a-backend-service/values/staging.yaml ./helm/a-backend-service/ > ./kubectlapply.yaml
+            cat ./kubectlapply.yaml
+            chmod o+w ./kubectlapply.yaml
+            cat kubectlapply.yaml
 #      - name: Get kubeconfig file from GKE
 #        uses: machine-learning-apps/gke-kubeconfig@master
 #        with:
