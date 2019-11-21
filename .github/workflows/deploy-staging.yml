@@ -18,6 +18,13 @@ jobs:
         run: mvn clean package -B -T 2C
       - name: Rebuild Docker image with tags
         run: docker build . --tag brreg/a-back-end-service:latest --tag eu.gcr.io/fdk-infra/brreg/a-back-end-service:latest --tag eu.gcr.io/fdk-infra/brreg/a-backend-service:staging_latest --tag eu.gcr.io/fdk-infra/brreg/a-backend-service:$GITHUB_SHA
+      - name: Connect to Google Cloud
+        uses: actions-hub/gcloud@master
+        env:
+          PROJECT_ID: fdk-infra
+          APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_FDK_JENKINS_GCR }}
+        with:
+          args: auth configure-docker -q
       - name: Push docker image to Google Cloud
         uses: actions/gcloud/cli@master
         env:
