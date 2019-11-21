@@ -521,7 +521,9 @@
                 <configuration>
                     <dockerfile>Dockerfile</dockerfile>
                     <repository>${docker.image.name}</repository>
-                    <tag>${docker.image.tag}</tag>
+                    <tag>test0</tag>
+                    <tag>test1</tag>
+                    <tag>test2</tag>
                     <buildArgs>
                         <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
                     </buildArgs>
