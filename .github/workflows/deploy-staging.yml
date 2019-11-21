@@ -10,6 +10,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+      - name: Set up java version
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
 #      - name: Build Docker image
 #        run: docker build . --tag brreg/a-back-end-service:latest --tag eu.gcr.io/fdk-infra/brreg/a-back-end-service:latest --tag eu.gcr.io/fdk-infra/brreg/a-backend-service:staging_latest --tag eu.gcr.io/fdk-infra/brreg/a-backend-service:$GITHUB_SHA
       - name: Build with Maven
@@ -22,34 +26,34 @@ jobs:
         with:
           runs: "sh -c"
           args: "docker -- push eu.gcr.io/fdk-infra/a-backend-service:$GITHUB_SHA"
-      - name: Apply Helm template
-        uses: stefanprodan/kube-tools@v1
-        with:
-          helm: 2.14.3
-          command: |
-            helm init --client-only
-            helm repo add fdk https://informasjonsforvaltning.github.io/helm-chart/
-            helm fetch --untar --untardir ./helm fdk/a-backend-service
-            helm template --set DOCKER_IMAGE_NAME="eu.gcr.io/fdk-infra/a-backend-service:$GITHUB_SHA" -f ./helm/a-backend-service/values/staging.yaml ./helm/a-backend-service/ > ./kubectlapply.yaml
-            cat ./kubectlapply.yaml
-            chmod o+w ./kubectlapply.yaml
-            cat kubectlapply.yaml
-      - name: Get kubeconfig file from GKE
-        uses: machine-learning-apps/gke-kubeconfig@master
-        with:
-          application_credentials: ${{ secrets.FDK_DEV_AUTODEPLOY }}
-          project_id: fdk-dev
-          location_zone: europe-north1-a
-          cluster_name: fdk-dev
-      - name: Deploy to staging
-        uses: docker://bitnami/kubectl:latest
-        env:
-          KUBECONFIG: '/github/workspace/.kube/config'
-        with:
-          args: "apply -f ./kubectlapply.yaml --force"
-      - name: Notify slack of deploy
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        uses: pullreminders/slack-action@master
-        with:
-          args: '{\"channel\":\"C7NTH118T\",\"text\":\"Application: a-backend-service deployed to staging\"}'
+#      - name: Apply Helm template
+#        uses: stefanprodan/kube-tools@v1
+#        with:
+#          helm: 2.14.3
+#          command: |
+#            helm init --client-only
+#            helm repo add fdk https://informasjonsforvaltning.github.io/helm-chart/
+#            helm fetch --untar --untardir ./helm fdk/a-backend-service
+#            helm template --set DOCKER_IMAGE_NAME="eu.gcr.io/fdk-infra/a-backend-service:$GITHUB_SHA" -f ./helm/a-backend-service/values/staging.yaml ./helm/a-backend-service/ > ./kubectlapply.yaml
+#            cat ./kubectlapply.yaml
+#            chmod o+w ./kubectlapply.yaml
+#            cat kubectlapply.yaml
+#      - name: Get kubeconfig file from GKE
+#        uses: machine-learning-apps/gke-kubeconfig@master
+#        with:
+#          application_credentials: ${{ secrets.FDK_DEV_AUTODEPLOY }}
+#          project_id: fdk-dev
+#          location_zone: europe-north1-a
+#          cluster_name: fdk-dev
+#      - name: Deploy to staging
+#        uses: docker://bitnami/kubectl:latest
+#        env:
+#          KUBECONFIG: '/github/workspace/.kube/config'
+#        with:
+#          args: "apply -f ./kubectlapply.yaml --force"
+#      - name: Notify slack of deploy
+#        env:
+#          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+#        uses: pullreminders/slack-action@master
+#        with:
+#          args: '{\"channel\":\"C7NTH118T\",\"text\":\"Application: a-backend-service deployed to staging\"}'
