@@ -6,6 +6,5 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 VOLUME /tmp
 ARG JAR_FILE
 RUN echo ${JAR_FILE}
-ADD target/${JAR_FILE} target/app.jar
-RUN sh -c 'touch target/app.jar'
-CMD java -jar $JAVA_OPTS target/app.jar
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT ["java", "-jar", "$JAVA_OPTS", "/app.jar"]
