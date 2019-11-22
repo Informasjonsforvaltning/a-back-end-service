@@ -15,7 +15,7 @@ jobs:
         with:
           java-version: '11'
       - name: Package with Maven
-        run: mvn clean package -B -T 2C
+        run: mvn clean install -B -T 2C -DskipTests
       - name: Rebuild Docker image with tags
         run: docker build . --tag brreg/a-backend-service:latest --tag eu.gcr.io/fdk-infra/a-backend-service:latest --tag eu.gcr.io/fdk-infra/a-backend-service:staging_latest --tag eu.gcr.io/fdk-infra/a-backend-service:$GITHUB_SHA
       - name: Connect to Google Cloud
