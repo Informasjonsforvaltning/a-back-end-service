@@ -17,7 +17,7 @@ jobs:
       - name: Package with Maven
         run: mvn clean package -B -T 2C
       - name: Rebuild Docker image with tags
-        run: docker build . --tag brreg/a-back-end-service:latest --tag eu.gcr.io/fdk-infra/brreg/a-back-end-service:latest --tag eu.gcr.io/fdk-infra/brreg/a-backend-service:staging_latest --tag eu.gcr.io/fdk-infra/brreg/a-backend-service:$GITHUB_SHA
+        run: docker build . --tag brreg/a-backend-service:latest --tag eu.gcr.io/fdk-infra/brreg/a-backend-service:latest --tag eu.gcr.io/fdk-infra/brreg/a-backend-service:staging_latest --tag eu.gcr.io/fdk-infra/brreg/a-backend-service:$GITHUB_SHA
       - name: Connect to Google Cloud
         uses: actions-hub/gcloud@master
         env:
