@@ -1,7 +1,7 @@
 name: Deploy to staging when pull request is created
 
 on:
-  - push
+  - pull_request
 
 jobs:
   build:
@@ -15,9 +15,9 @@ jobs:
         with:
           java-version: '11'
       - name: Package with Maven
-        run: mvn clean install -B -T 2C -DskipTests
+        run: mvn clean package -B -T 2C -DskipTests
       - name: Rebuild Docker image with tags
-        run: docker build --build-arg JAR_FILE=a-backend-service-1.0.0-SNAPSHOT.jar -t brreg/a-backend-service:latest -t eu.gcr.io/fdk-infra/a-backend-service:latest -t eu.gcr.io/fdk-infra/a-backend-service:staging_latest -t eu.gcr.io/fdk-infra/a-backend-service:$GITHUB_SHA .
+        run: docker build --build-arg JAR_FILE=a-backend-service-1.0.0-SNAPSHOT.jar -t eu.gcr.io/fdk-infra/a-backend-service:latest -t eu.gcr.io/fdk-infra/a-backend-service:staging_latest -t eu.gcr.io/fdk-infra/a-backend-service:$GITHUB_SHA .
       - name: Connect to Google Cloud
         uses: actions-hub/gcloud@master
         env:
@@ -32,7 +32,7 @@ jobs:
           APPLICATION_NAME: myproject
         with:
           runs: "sh -c"
-          args: "docker -- push eu.gcr.io/fdk-infra/a-backend-service:$GITHUB_SHA"
+          args: "docker -- push eu.gcr.io/fdk-infra/a-backend-service"
       - name: Apply Helm template
         uses: stefanprodan/kube-tools@v1
         with:
@@ -58,9 +58,9 @@ jobs:
           KUBECONFIG: '/github/workspace/.kube/config'
         with:
           args: "apply -f ./kubectlapply.yaml --force"
-#      - name: Notify slack of deploy
-#        env:
-#          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-#        uses: pullreminders/slack-action@master
-#        with:
-#          args: '{\"channel\":\"C7NTH118T\",\"text\":\"Application: a-backend-service deployed to staging\"}'
+      - name: Notify slack of deploy
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        uses: pullreminders/slack-action@master
+        with:
+          args: '{\"channel\":\"C7NTH118T\",\"text\":\"Application: a-backend-service deployed to staging: \",\"$GITHUB_SHA\"}'
