@@ -33,6 +33,12 @@ MONGO_PASSWORD=anything
   curl -H "Accept: application/json" http://localhost:8080/version
 ```
 
+## Run with mock authentication
+```
+docker-compose -f docker-compose-dev.yml up
+```
+
+
 ## The API
 
 A nice way to understand what this API does, check the [specification](./src/main/resources/specification/a-backend-service.yaml)
