@@ -321,7 +321,7 @@
                 <generateBackupPoms>false</generateBackupPoms>
               </configuration>
             </plugin>
-            <plugin>
+            <!--plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
                 <version>3.0.1</version>
@@ -342,7 +342,7 @@
                         <includeOnlyProperty>^git.remote.origin.url$</includeOnlyProperty>
                     </includeOnlyProperties>
                 </configuration>
-            </plugin>
+            </plugin-->
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
