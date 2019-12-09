@@ -10,6 +10,6 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Build Docker image
-        run: docker build . --build-arg JAR_FILE=organization-catalogue-1.0.0-SNAPSHOT.jar -t eu.gcr.io/fdk-infra/organization-catalogue:latest
+        run: docker build . --build-arg JAR_FILE=a-backend-service-1.0.0-SNAPSHOT.jar -t eu.gcr.io/fdk-infra/a-backend-service:latest
       - name: Run tests
         run: mvn verify
