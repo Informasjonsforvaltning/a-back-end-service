@@ -2,7 +2,7 @@ version: "3"
 
 services:
   a-backend-service:
-    image: brreg/a-backend-service:latest
+    build:
     depends_on:
       - mongodb
     restart: always

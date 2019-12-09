@@ -39,7 +39,7 @@ public abstract class ApiTestContainer {
         mongoContainer.start();
         TestUtilsKt.populateDB();
 
-        TEST_API = new GenericContainer("brreg/a-backend-service:latest")
+        TEST_API = new GenericContainer("eu.gcr.io/fdk-infra/a-backend-service:latest")
                 .withExposedPorts(API_PORT)
                 .withLogConsumer(apiLog)
                 .dependsOn(mongoContainer)

@@ -1,3 +1,12 @@
+FROM maven:3.6.3-jdk-11 AS MAVEN_BUILD_ENVIRONMENT
+
+COPY pom.xml /tmp/
+COPY src /tmp/src/
+COPY /.git/ /tmp/.git/
+WORKDIR /tmp/
+
+RUN mvn clean package
+
 FROM openjdk:11-jre
 
 ENV TZ=Europe/Oslo
@@ -5,6 +14,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 VOLUME /tmp
 ARG JAR_FILE
-ADD target/${JAR_FILE} app.jar
+
+COPY --from=MAVEN_BUILD_ENVIRONMENT /tmp/target/${JAR_FILE} app.jar
 RUN sh -c 'touch /app.jar'
-CMD java -jar $JAVA_OPTS app.jar
+CMD java -jar app.jar

@@ -1,6 +1,7 @@
 package no.brreg.informasjonsforvaltning.abackendservice.contract
 
 import no.brreg.informasjonsforvaltning.abackendservice.utils.*
+import org.junit.Ignore
 import no.brreg.informasjonsforvaltning.abackendservice.utils.Expect as expect
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
