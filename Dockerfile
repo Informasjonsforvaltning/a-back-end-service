@@ -1,4 +1,4 @@
-FROM maven:3.5.2-jdk-8-alpine AS MAVEN_BUILD_ENVIRONMENT
+FROM maven:3.6.3-jdk-11 AS MAVEN_BUILD_ENVIRONMENT
 
 COPY pom.xml /tmp/
 COPY src /tmp/src/
