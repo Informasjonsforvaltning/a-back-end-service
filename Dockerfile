@@ -1,4 +1,4 @@
-FROM maven:3.6.3-jdk-11 AS MAVEN_BUILD_ENVIRONMENT
+FROM openjdk:11-jre AS MAVEN_BUILD_ENVIRONMENT
 
 COPY pom.xml /tmp/
 COPY src /tmp/src/
