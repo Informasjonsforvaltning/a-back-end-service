@@ -15,6 +15,5 @@ VOLUME /tmp
 ARG JAR_FILE
 
 COPY --from=MAVEN_BUILD_ENVIRONMENT /tmp/target/${JAR_FILE} app.jar
-COPY --from=MAVEN_BUILD_ENVIRONMENT /tmp/.git/ /.git/
 RUN sh -c 'touch /app.jar'
 CMD java -jar app.jar
