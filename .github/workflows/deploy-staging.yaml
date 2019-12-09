@@ -1,7 +1,7 @@
 name: Build and deploy to staging when pull request is created
 
 on:
-  -push
+  - pull_request
 
 jobs:
   setup-build-publish-deploy:
@@ -28,7 +28,7 @@ jobs:
         run: mvn verify
 
       - name: Publish docker image to Google Cloud
-        run: docker -- push eu.gcr.io/fdk-infra/a-backend-service
+        run: docker -- push eu.gcr.io/fdk-infra/a-backend-service:$GITHUB_SHA
 
       - name: Apply Helm template
         uses: stefanprodan/kube-tools@v1
@@ -42,6 +42,7 @@ jobs:
             cat ./kubectlapply.yaml
             chmod o+w ./kubectlapply.yaml
             cat kubectlapply.yaml
+
       - name: Get kubeconfig file from GKE
         uses: machine-learning-apps/gke-kubeconfig@master
         with:
@@ -49,12 +50,14 @@ jobs:
           project_id: fdk-dev
           location_zone: europe-north1-a
           cluster_name: fdk-dev
+
       - name: Deploy to staging
         uses: docker://bitnami/kubectl:latest
         env:
           KUBECONFIG: '/github/workspace/.kube/config'
         with:
           args: "apply -f ./kubectlapply.yaml --force"
+
       - name: Notify slack of deploy
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
