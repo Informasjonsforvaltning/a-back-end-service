@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Tag
 
 
 @Tag("contract")
-@Ignore
 class VersionApiContractTest : ApiTestContainer() {
 
     @Nested

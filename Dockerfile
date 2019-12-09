@@ -2,6 +2,7 @@ FROM maven:3.6.3-jdk-11 AS MAVEN_BUILD_ENVIRONMENT
 
 COPY pom.xml /tmp/
 COPY src /tmp/src/
+COPY /.git/ /tmp/.git/
 WORKDIR /tmp/
 
 RUN mvn clean package
