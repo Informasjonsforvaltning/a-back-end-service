@@ -22,7 +22,7 @@ jobs:
           gcloud auth configure-docker
 
       - name: Build Docker image with tags
-        run: docker build --build-arg JAR_FILE=a-backend-service-1.0.0-SNAPSHOT.jar -t eu.gcr.io/fdk-infra/a-backend-service:$GITHUB_SHA .
+        run: docker build . -t eu.gcr.io/fdk-infra/a-backend-service:$GITHUB_SHA
 
       - name: Publish docker image to Google Cloud
         run: docker -- push eu.gcr.io/fdk-infra/a-backend-service:$GITHUB_SHA

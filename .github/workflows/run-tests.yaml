@@ -14,6 +14,6 @@ jobs:
         with:
           java-version: '11'
       - name: Build Docker image
-        run: docker build . --build-arg JAR_FILE=a-backend-service-1.0.0-SNAPSHOT.jar -t eu.gcr.io/fdk-infra/a-backend-service:latest
+        run: docker build . -t eu.gcr.io/fdk-infra/a-backend-service:latest
       - name: Run tests
         run: mvn verify
