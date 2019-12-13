@@ -447,7 +447,7 @@
                 <configuration>
                     <useSystemClassLoader>false</useSystemClassLoader>
                     <groups>unit</groups>
-                    <excludedGroups>service</excludedGroups>
+                    <excludedGroups>contract</excludedGroups>
                     <includes>
                         <include>**/*.java</include>
                     </includes>
