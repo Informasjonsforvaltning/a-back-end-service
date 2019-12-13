@@ -5,7 +5,7 @@ COPY src /tmp/src/
 COPY /.git/ /tmp/.git/
 WORKDIR /tmp/
 
-RUN mvn clean package
+RUN mvn clean package --no-transfer-progress
 
 FROM openjdk:11-jre
 
