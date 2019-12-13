@@ -2,7 +2,7 @@ version: "3"
 
 services:
   a-backend-service:
-    build:
+    build: ../a-backend-service
     depends_on:
       - mongodb
     restart: always
