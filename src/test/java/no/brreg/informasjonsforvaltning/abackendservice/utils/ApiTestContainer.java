@@ -7,7 +7,6 @@ import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.Container;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
-import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 import java.io.IOException;
@@ -18,8 +17,6 @@ import static no.brreg.informasjonsforvaltning.abackendservice.utils.TestDataKt.
 public abstract class ApiTestContainer {
 
     private final static Logger logger = LoggerFactory.getLogger(ApiTestContainer.class);
-    private static Slf4jLogConsumer mongoLog = new Slf4jLogConsumer(logger).withPrefix("mongo-container");
-    private static Slf4jLogConsumer apiLog = new Slf4jLogConsumer(logger).withPrefix("api-container");
     public static GenericContainer mongoContainer;
     public static GenericContainer TEST_API;
     static {
@@ -31,7 +28,6 @@ public abstract class ApiTestContainer {
 
         mongoContainer = new GenericContainer("mongo:latest")
                 .withEnv(getMONGO_ENV_VALUES())
-                .withLogConsumer(mongoLog)
                 .withExposedPorts(MONGO_PORT)
                 .withNetwork(apiNetwork)
                 .withNetworkAliases("mongodb")
@@ -41,7 +37,6 @@ public abstract class ApiTestContainer {
 
         TEST_API = new GenericContainer("eu.gcr.io/fdk-infra/a-backend-service:latest")
                 .withExposedPorts(API_PORT)
-                .withLogConsumer(apiLog)
                 .dependsOn(mongoContainer)
                 .withEnv(getAPI_ENV_VALUES())
                 .waitingFor(Wait.forHttp("/version").forStatusCode(200))
@@ -53,9 +48,7 @@ public abstract class ApiTestContainer {
                         "-jar",
                         "/app.jar");
 
-
-            TEST_API.start();
-
+        TEST_API.start();
 
         try {
             Container.ExecResult result =TEST_API.execInContainer("wget", "-O", "-", "http://host.testcontainers.internal:5000/auth/realms/fdk/protocol/openid-connect/certs");
