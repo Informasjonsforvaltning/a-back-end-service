@@ -61,3 +61,10 @@ jobs:
         uses: pullreminders/slack-action@master
         with:
           args: '{\"channel\":\"C7NTH118T\",\"text\":\"Application: a-backend-service deployed to staging: \",\"$GITHUB_SHA\"}'
+
+      - name: Trigger deploy to staging-ut1
+        uses: peter-evans/repository-dispatch@master
+        with:
+          token: ${{ secrets.DISPATCH_TOKEN }}
+          event-type: deploy-ut1
+          client-payload: '{"sha": "${{ github.sha }}"}'
