@@ -1,12 +1,15 @@
 package no.brreg.informasjonsforvaltning.abackendservice.contract
 
-import no.brreg.informasjonsforvaltning.abackendservice.utils.*
+import no.brreg.informasjonsforvaltning.abackendservice.utils.ApiTestContainer
+import no.brreg.informasjonsforvaltning.abackendservice.utils.VERSION_API_ENDPOINT
+import no.brreg.informasjonsforvaltning.abackendservice.utils.apiGet
 import no.brreg.informasjonsforvaltning.abackendservice.utils.Expect as expect
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.TestInstance
 
-
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Tag("contract")
 class VersionApiContractTest : ApiTestContainer() {
 

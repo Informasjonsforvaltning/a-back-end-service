@@ -1,9 +1,15 @@
 package no.brreg.informasjonsforvaltning.abackendservice.contract
 
-import no.brreg.informasjonsforvaltning.abackendservice.utils.*
 import no.brreg.informasjonsforvaltning.abackendservice.utils.apiPost
 import no.brreg.informasjonsforvaltning.abackendservice.utils.ApiTestContainer
+import no.brreg.informasjonsforvaltning.abackendservice.utils.CONTRACT_VERSION_DATA
+import no.brreg.informasjonsforvaltning.abackendservice.utils.EXISTING_SERVICE
+import no.brreg.informasjonsforvaltning.abackendservice.utils.SERVICE_ENDPOINT
+import no.brreg.informasjonsforvaltning.abackendservice.utils.apiGet
+import no.brreg.informasjonsforvaltning.abackendservice.utils.assume_authenticated
+import no.brreg.informasjonsforvaltning.abackendservice.utils.jsonServiceDuplicateObject
 import no.brreg.informasjonsforvaltning.abackendservice.utils.jwk.JwtToken
+import no.brreg.informasjonsforvaltning.abackendservice.utils.startMockServer
 import no.brreg.informasjonsforvaltning.abackendservice.utils.jsonServiceEndpointObject as mapServiceToJson
 import no.brreg.informasjonsforvaltning.abackendservice.utils.Expect as expect
 import org.junit.jupiter.api.*
@@ -12,7 +18,7 @@ import no.brreg.informasjonsforvaltning.abackendservice.utils.stopMockServer
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Tag("contract")
-class ServiceEndpointApiContractTest : ApiTestContainer(){
+class ServiceEndpointApiContractTest : ApiTestContainer() {
 
     val adminToken = JwtToken.buildRoot()
     var nonAdminToken = JwtToken.buildRead()

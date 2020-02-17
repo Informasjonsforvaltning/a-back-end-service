@@ -21,8 +21,19 @@ jobs:
       - run: |
           gcloud auth configure-docker
 
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+
+      - name: Package with maven
+        run: mvn clean package --no-transfer-progress -DskipTests
+
       - name: Build Docker image with tags
-        run: docker build --build-arg JAR_FILE=a-backend-service-1.0.0-SNAPSHOT.jar -t eu.gcr.io/fdk-infra/a-backend-service:$GITHUB_SHA .
+        run: docker build -f Dockerfile.prod . -t eu.gcr.io/fdk-infra/a-backend-service:$GITHUB_SHA -t eu.gcr.io/fdk-infra/a-backend-service:staging_latest
+
+      - name: Run tests
+        run: mvn -DtestImageName="eu.gcr.io/fdk-infra/a-backend-service:staging_latest" verify --no-transfer-progress
 
       - name: Publish docker image to Google Cloud
         run: docker -- push eu.gcr.io/fdk-infra/a-backend-service:$GITHUB_SHA
@@ -61,10 +72,3 @@ jobs:
         uses: pullreminders/slack-action@master
         with:
           args: '{\"channel\":\"C7NTH118T\",\"text\":\"Application: a-backend-service deployed to staging: \",\"$GITHUB_SHA\"}'
-
-      - name: Trigger deploy to staging-ut1
-        uses: peter-evans/repository-dispatch@master
-        with:
-          token: ${{ secrets.DISPATCH_TOKEN }}
-          event-type: deploy-ut1
-          client-payload: '{"sha": "${{ github.sha }}"}'
