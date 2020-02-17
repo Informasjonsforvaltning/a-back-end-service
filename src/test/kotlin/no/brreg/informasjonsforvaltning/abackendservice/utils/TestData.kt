@@ -6,7 +6,7 @@ import no.brreg.informasjonsforvaltning.abackendservice.model.ServiceEndpointDB
 import java.net.URI
 import java.net.URL
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import no.brreg.informasjonsforvaltning.abackendservice.utils.ApiTestContainer.TEST_API
+import no.brreg.informasjonsforvaltning.abackendservice.utils.ApiTestContainer.Companion.TEST_API
 import org.testcontainers.shaded.com.google.common.collect.ImmutableMap
 
 
@@ -41,7 +41,7 @@ const val SERVICE_ENDPOINT = "/serviceendpoints"
 const val VERSION_API_ENDPOINT = "/version"
 
 fun getApiAddress( endpoint: String ): String{
-   return "http://${TEST_API.getContainerIpAddress()}:${TEST_API.getMappedPort(API_PORT)}$endpoint"
+   return "http://${TEST_API.containerIpAddress}:${TEST_API.getMappedPort(API_PORT)}$endpoint"
 }
 
 
@@ -57,7 +57,7 @@ fun createServiceEndpoint(testName: String,testUrl: String) =
         url = URI(testUrl)
     }
 
-fun dataForPopulate(): org.bson.Document? =
+fun dataForPopulate(): org.bson.Document =
         org.bson.Document()
                 .append("_id", EXISTING_SERVICE)
                 .append("url", EXISTING_SERVICE_URL)
