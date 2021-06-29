@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [ready_for_review, opened, reopened, synchronize]
     branches:
-      # - master (depending on what is main branch)
+      # - main (depending on what is main branch)
       - never
 
 jobs:
